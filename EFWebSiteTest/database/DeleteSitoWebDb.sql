@@ -1,0 +1,11 @@
+USE master 
+go
+
+ALTER DATABASE SitoWeb SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+go
+
+USE master 
+go
+
+DROP DATABASE SitoWeb
+go
