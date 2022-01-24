@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,10 +20,15 @@ namespace EFWebSiteTest
         /// <summary>
         /// Returns a page of Brands with the relative products of the brands
         /// </summary>
-        /// <param name="pageNum">number of the page</param>
-        /// <param name="pagesize">size of the page</param>
+        /// <param name="pageNum">number of the page, must be positive, page starts from 1</param>
+        /// <param name="pagesize">size of the page, must be positive </param>
         public EntityPage<BrandSelect> GetBrandPage(int pageNum, int pagesize)
         {
+            if (pagesize <= 0)
+                throw new ArgumentOutOfRangeException("pageSize must be > 0");
+            if (pageNum <= 0)
+                throw new ArgumentOutOfRangeException("pageNum must be > 0");
+
             EntityPage<BrandSelect> brandPageTemp = new EntityPage<BrandSelect>();
             brandPageTemp.Entities =  _ctx.Brands
                 .Skip((pageNum - 1) * pagesize).Take(pagesize)

@@ -18,10 +18,15 @@ namespace EFWebSiteTest
         /// <summary>
         /// Returns a page of Products
         /// </summary>
-        /// <param name="pageNum">number of the page</param>
-        /// <param name="pagesize">size of the page</param>
+        /// <param name="pageNum">number of the page, must be positive, page starts from 1</param>
+        /// <param name="pagesize">size of the page,  must be positive</param>
         public EntityPage<ProductSelect> GetProductPage(int pageNum, int pagesize)
         {
+            if (pagesize <= 0)
+                throw new ArgumentOutOfRangeException("pageSize must be > 0");
+            if(pageNum <= 0)
+                throw new ArgumentOutOfRangeException("pageNum must be > 0");
+
             EntityPage<ProductSelect> productPageTemp = new EntityPage<ProductSelect>();
 
             productPageTemp.Entities = _ctx.Products
