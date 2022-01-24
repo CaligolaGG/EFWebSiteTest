@@ -1,4 +1,6 @@
-﻿namespace EFWebSiteTest
+﻿using System.Collections.Generic;
+
+namespace EFWebSiteTest
 {
     public class User:EntityBase
     {
@@ -7,5 +9,6 @@
         public string LastName { get; set; }
 
         public Account Account { get; set; }
+        public ICollection<InfoRequest> InfoRequests { get; set; }
     }
 }

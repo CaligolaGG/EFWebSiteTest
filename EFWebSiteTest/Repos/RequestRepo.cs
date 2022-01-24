@@ -4,12 +4,14 @@ using System.Linq;
 
 namespace EFWebSiteTest
 {
-    public class RequestClass
+    /// <summary>
+    /// Class to interact with the InfoRequest table in the db
+    /// </summary>
+    public class RequestRepo
     {
-
         private MyDbContext _ctx;
 
-        public RequestClass(MyDbContext ctx)
+        public RequestRepo(MyDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -35,9 +37,9 @@ namespace EFWebSiteTest
 
             return inforequest;
         }
-
     }
 
+    #region TempModels
     public class RequestDetail
     {
         public int RequestId { get; set; }
@@ -58,25 +60,6 @@ namespace EFWebSiteTest
         public string ReplyText { get; set; }
 
     }
+    #endregion
 }
 
-
-
-//var inforequest = _ctx.InfoRequests.Where(r => r.Id == requestId)
-//    .Select(r => new {
-//        r.Id,
-//        ProductId = r.ProductId,
-//        ProductName = r.Product.Name,
-//        ProductBrandName = r.Product.Brand.BrandName,
-//        UserFullName = r.Name + " " + r.LastName,
-//        r.Email,
-//        infoUser = r.City + " " + r.Cap + " " + r.Nation.Name,
-
-//        Replies = r.InfoRequestReplies.Select(ir => new {
-//            ir.Id,
-//            Name = ir.Account.AccountType == 1 ?
-//            ir.Account.User.Name :
-//            ir.Account.Brand.BrandName + " Brand",
-//            ir.ReplyText
-//        })
-//    });

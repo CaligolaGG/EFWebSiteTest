@@ -1,26 +1,31 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace EFWebSiteTest
 {
-    public class ProductService
+    /// <summary>
+    /// Class to interact with the Product table in the db
+    /// </summary>
+    public class ProductRepo
     {
         private MyDbContext _ctx;
-
-        public ProductService(MyDbContext ctx) 
+        public ProductRepo(MyDbContext ctx) 
         {
             _ctx = ctx;
         }
 
+        /// <summary>
+        /// Returns a page of Products
+        /// </summary>
+        /// <param name="pageNum">number of the page</param>
+        /// <param name="pagesize">size of the page</param>
         public EntityPage<ProductSelect> GetProductPage(int pageNum, int pagesize)
         {
             EntityPage<ProductSelect> productPageTemp = new EntityPage<ProductSelect>();
 
             productPageTemp.Entities = _ctx.Products
-            .Skip(pageNum * pagesize).Take(pagesize)
+            .Skip( (pageNum-1) * pagesize).Take(pagesize)
             .Select(p => new ProductSelect { Id = p.Id, ProductName = p.Name, Description = p.ShortDescription })
             .ToList();
 
@@ -31,6 +36,12 @@ namespace EFWebSiteTest
             return productPageTemp;
         }
 
+        /// <summary>
+        /// returns the detail of a product.
+        /// That includes the categories of the product and the requests relative to the product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns>a ProductDetail object, that hold the requested infos</returns>
         public ProductDetail GetProductDetail(int productId) 
         {
             ProductDetail product = _ctx.Products.Where(p => p.Id == productId)
@@ -58,7 +69,7 @@ namespace EFWebSiteTest
         }
     }
 
-
+    #region TempModels
     public class ProductDetail 
     {
         public int ProductId { get; set; }
@@ -69,7 +80,6 @@ namespace EFWebSiteTest
         
         public IEnumerable<Category> Categories { get; set; }
         public IEnumerable<InfoRequestTemp> Requests { get; set; }
-        
     }
 
     public class InfoRequestTemp 
@@ -78,7 +88,6 @@ namespace EFWebSiteTest
         public string FullName { get; set; }
         public int RepliesCount { get; set; }
         public DateTime LastReply { get; set; }
-
     }
 
     public class ProductSelect
@@ -87,26 +96,6 @@ namespace EFWebSiteTest
         public string ProductName { get; set; }
         public string Description { get; set; }
     }
-
+    #endregion
 }
 
-
-//var product = _ctx.Products.Where(p => p.Id == productId)
-//    .Select( p=> new {
-//        p.Id,
-//        p.Name,
-//        p.Brand.BrandName,
-//        categories = p.ProductCategory.Select(pc=> new 
-//        { 
-//            pc.IdCategory,
-//            pc.Category.Name
-//        }), 
-//        guestNumberRequest = p.InfoRequests.Where(u=>u.UserId ==null).Count(),
-//        loggedNumberrequest = p.InfoRequests.Where(u=> u.UserId != null).Count(),
-//        Requests = p.InfoRequests.Select(ir => new { 
-//            ir.Id,
-//            fullname = ir.UserId == null? ir.Name +" "+ir.LastName: ir.User.Name +" "+ ir.User.LastName + " LOGGED",
-//            ir.InfoRequestReplies.Count,
-//            lastReply = ir.InfoRequestReplies.OrderByDescending(r=>r.InsertDate).Select(reply=>reply.InsertDate).FirstOrDefault()
-//        })
-//    });

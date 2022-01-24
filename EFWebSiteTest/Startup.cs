@@ -29,13 +29,15 @@ namespace EFWebSiteTest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           // services.AddControllers();
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 //options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Error;
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
+            services.AddTransient<ProductRepo>();
+            services.AddTransient<BrandRepo>();
+            services.AddTransient<RequestRepo>();
 
             services.AddDbContextPool<MyDbContext>(optionsBuilder => {
                 string ConnectionString = Configuration.GetConnectionString("Default");
@@ -60,6 +62,24 @@ namespace EFWebSiteTest
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default2",
+                    pattern: "{controller=WebSite}/{action}/{pageNum}/{pagesize}"
+                );
+
+                #region esempi routing
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller=Home}/{action=Index}/{id?}"
+                //);
+                //endpoints.MapControllerRoute(name: "blog",
+                //pattern: "blog/{*article}",
+                //defaults: new { controller = "Blog", action = "Article" });
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller=Home}/{action=Index}/{id?}");
+                #endregion
+
             });
         }
     }
