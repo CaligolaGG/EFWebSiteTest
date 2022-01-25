@@ -2,6 +2,9 @@
 
 namespace EFWebSiteTest
 {
+    /// <summary>
+    /// class for the n:n relationship between product and category
+    /// </summary>
     public class ProductCategory
     {
         public int IdProduct { get; set; }

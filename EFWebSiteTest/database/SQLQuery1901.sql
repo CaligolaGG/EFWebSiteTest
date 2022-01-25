@@ -65,7 +65,18 @@ Create Procedure Paging
 )
 as
 	begin
+		set @pageNum -=1 
+
+		if (@pageNum < 0)
+			throw 51000,'page num must be > 0' ,1
+		if (@pageDimension <= 0)
+			throw 51000,'pageDimension cannot be negative' ,1
+		if (@orderBy > 3 or @orderBy <0)
+			throw 51000, 'orderby must be between 0 and 3',1
+
 		select * from Product
+		join ProductCategory on Product.Id = ProductCategory.IdProduct
+	    where @category = 0 or ProductCategory.IdCategory = @category    
 		order by 
 		case 
 			when @orderBy=1 then Product.Name
@@ -84,13 +95,17 @@ go
 use SitoWeb
 go
 
+
 IF EXISTS (SELECT 1 FROM sys.procedures WHERE [name] = 'PagingOld')
 BEGIN
 DROP PROCEDURE dbo.PagingOld;
 END;
 GO
 
---pagenum must be > 1
+---creates a procedure for the paging of the products, filtered by category, and ordered by either price(asc, desc) or Name(desc)
+--pagenum must be >= 1
+--pagesize must be > 0
+--orderby is between 0 and 3
 Create Procedure PagingOld
 (
 @pageDimension int,
@@ -104,7 +119,7 @@ begin
 
 	if (@pageNum < 0)
 		throw 51000,'page num must be > 0' ,1
-	if (@pageDimension < 0)
+	if (@pageDimension <= 0)
 		throw 51000,'pageDimension cannot be negative' ,1
 	if (@orderBy > 3 or @orderBy <0)
 		throw 51000, 'orderby must be between 0 and 3',1
@@ -138,7 +153,6 @@ exec dbo.Paging @pageDimension=30, @pageNum=0,@category=0,@orderBy=3
 go
 
 
-
 ------------------------------------
 --Restituire il seguente elenco prodotti con ordine Custom:
 --* come primi, i 20 più recenti,
@@ -146,7 +160,7 @@ go
 --* come terza fascia, i 10 con prezzo compreso tra 200 - 500€
 --* come quarta fascia, i 100 con nessuna richiesta informazione
 
---v1 Function
+--v1 Function. Usato come testing per la version con la union
 IF EXISTS (SELECT 1 FROM sys.objects WHERE [name] = 'CustomOrder' AND [type] = 'TF')
 BEGIN
 DROP FUNCTION dbo.CustomOrder;
@@ -251,7 +265,6 @@ DEALLOCATE MyCursor2
 go
 
 
-
 --individuare gli utenti guest e registrarli al sito come account utenti
 
 declare @Name nvarchar(50)
@@ -260,6 +273,7 @@ declare @Email nvarchar(50)
 declare @AccountId int
 declare @UserId int
 
+--select all info request where userId is null to find the guests
 DECLARE MyCursor3 CURSOR FORWARD_ONLY FOR SELECT [Name],LastName, Email FROM 
 InfoRequest where UserId is null
 OPEN MyCursor3
@@ -267,10 +281,11 @@ FETCH NEXT FROM MyCursor3 INTO @Name,@LastName,@Email
 
 WHILE @@FETCH_STATUS = 0  
 begin
+	--if does not exist an account with the same email as the request mail
 	if  NOT EXISTS( select top(1)* from Account where Email = @Email ) --request of transforming guest user into registered user
 	begin
+		--register new account
 		insert into Account values (@Email,'',1)
-		
 		--Update User
 		select @AccountId = Account.Id from Account WHERE Account.Email = @Email
 		insert into [User] values(@AccountId,@Name,@LastName)
@@ -278,12 +293,15 @@ begin
 		
 		--Update InfoRequest
 		Update InfoRequest set UserId = @UserId  where Email = @Email
-
 	end
-	else
+	else --if the guest did registered with the same mail, update just the info request
+	begin
+		--find user Id (mail -> account -> user -> userId) put user id in the request info
+		select @AccountId = Account.Id from Account WHERE Account.Email = @Email
+		select @UserId = u.Id from [User] as u WHERE u.AccountId = @AccountId
 		Update InfoRequest set UserId = @UserId  where Email = @Email
-
-	--- utente guest ma con mail registrata
+	end
+	
 	FETCH NEXT FROM MyCursor3 INTO @Name,@LastName,@Email
 end
 CLOSE MyCursor3

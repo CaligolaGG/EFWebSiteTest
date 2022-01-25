@@ -56,6 +56,9 @@ namespace EFWebSiteTest
         /// <returns>a BrandDetail object that holds the requested info</returns>
         public BrandDetail GetBrandDetail(int brandId)
         {
+            if (brandId < 1)
+                throw new ArgumentOutOfRangeException("brand id must be > 0");
+
             #region Categories
             var pc =
                 from product in _ctx.Products
@@ -114,15 +117,36 @@ namespace EFWebSiteTest
 
     }
 
-    #region TempModels
+    #region ProjectionModels
+
+    /// <summary>
+    /// class that holds detail of a brand
+    /// </summary>
     public class BrandDetail 
     {
+        /// <summary>
+        /// Name of the brand searched for
+        /// </summary>
         public string brandname { get; set; }
+        /// <summary>
+        /// number of the requests for the products of the brand
+        /// </summary>
         public int requestnum { get; set; }
+        /// <summary>
+        /// list of categories of the brand,with the number of the brand's products that belong to that category
+        /// </summary>
         public IEnumerable<CategoryTemp> listCategories { get; set; }
+
+        /// <summary>
+        /// list of product(projections) related to the brand
+        /// </summary>
         public IEnumerable<ProductTemp> products { get; set; }
     }
 
+    /// <summary>
+    /// Class for the BrandDetail class, with the category properties and 
+    /// the number of the brand's products that belong to that category
+    /// </summary>
     public class CategoryTemp 
     {
         public int CatId { get; set; }
@@ -130,6 +154,9 @@ namespace EFWebSiteTest
         public int TotalProducts { get; set; }
     }
 
+    /// <summary>
+    /// projection class of product for the BrandDetail class
+    /// </summary>
     public class ProductTemp 
     {
         public int ProductId { get; set; }
@@ -137,6 +164,9 @@ namespace EFWebSiteTest
         public int ProductRequestNumber { get; set; }
     }
 
+    /// <summary>
+    /// projection class for the brands paging method
+    /// </summary>
     public class BrandSelect
     {
         public int BrandId { get; set; } 

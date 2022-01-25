@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc; //!= API Web ASP.NET
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-//using System.Data.Entity;
 using System.Linq;
 
 
@@ -13,15 +12,14 @@ namespace EFWebSiteTest.Controllers
     [Route("[controller]")]
     public class WebSiteApiController : ControllerBase
     {
-        private readonly ILogger<WebSiteApiController> _logger;
+        //private readonly ILogger<WebSiteApiController> _logger;
         private readonly ProductRepo _productRepo;
         private readonly BrandRepo _brandRepo;
         private readonly RequestRepo _requestRepo;
         private MyDbContext _ctx;
 
-        public WebSiteApiController(ILogger<WebSiteApiController> logger, MyDbContext ctx, ProductRepo productRepo, BrandRepo brandRepo, RequestRepo requestRepo)
+        public WebSiteApiController( MyDbContext ctx, ProductRepo productRepo, BrandRepo brandRepo, RequestRepo requestRepo)
         {
-            _logger = logger;
             _ctx = ctx;
             _productRepo = productRepo;
             _brandRepo = brandRepo;
@@ -41,30 +39,101 @@ namespace EFWebSiteTest.Controllers
         //public List<InfoRequest> Get() => _ctx.InfoRequests.ToList();
         #endregion
 
+
+        /// <summary>
+        /// api get method for the paging of product
+        /// </summary>
+        /// <param name="pageNum"> number of the page, starts from 1, should always be positive </param>
+        /// <param name="pagesize">size of the page. should always be > 0</param>
+        /// <returns>BadRequest when pagenum and pagesize are less than 1.
+        /// Not found when the List of product is null or empty.
+        /// Ok result with a page of products in any other case.</returns>
         [HttpGet("Product/{pageNum}/{pagesize}")]
         public IActionResult ProductPage(int pageNum, int pagesize)
-            => Ok(_productRepo.GetProductPage(pageNum, pagesize));
+        {
+            if (pageNum < 1 || pagesize < 1)
+                return BadRequest("page num and pagesize must be greater than 0");
+            EntityPage<ProductSelect> result = _productRepo.GetProductPage(pageNum, pagesize);
+            if (result.Entities is null || !result.Entities.Any())
+                return  NotFound("page not found");
+            return Ok(result);
+        }
 
+        /// <summary>
+        /// api get method for the paging of Brand
+        /// </summary>
+        /// <param name="pageNum"> number of the page, starts from 1, should always be positive </param>
+        /// <param name="pagesize">size of the page. should always be > 0</param>
+        /// <returns> BadRequest when pagenum and pagesize are less than 1.
+        /// Not found when the List of brands is null or empty.
+        /// Ok result with a page of brands in any other case </returns>
         [HttpGet("Brand/{pageNum}/{pagesize}")]
-        public IActionResult BrandPage(int pageNum, int pagesize) 
-            => Ok(_brandRepo.GetBrandPage(pageNum, pagesize));
+        public IActionResult BrandPage(int pageNum, int pagesize)
+        {
+            if (pageNum < 1 || pagesize < 1)
+                return BadRequest("page num and pagesize must be greater than 0");
+            EntityPage<BrandSelect> result = _brandRepo.GetBrandPage(pageNum, pagesize);
+            if (result.Entities is null || !result.Entities.Any())
+                return NotFound("page not found");
+            return Ok(result);
+        }
 
+        /// <summary>
+        /// api get method to get a product with some details
+        /// </summary>
+        /// <param name="productId">id of the product. Should always be > 0</param>
+        /// <returns> BadRequest when id is less than 1.
+        /// Not found when the object with the specific id has not been found
+        /// Ok result with a ProductDetail model in any other case</returns>
         [HttpGet("ProductDetail/{productId}")]
-        public IActionResult ProductDetail(int productId) 
-            => Ok( _productRepo.GetProductDetail(productId));
+        public IActionResult ProductDetail(int productId)
+        {
+            if (productId < 1)
+                return BadRequest("id must be greater than 0");
+            ProductDetail result = _productRepo.GetProductDetail(productId);
+            if (result is null)
+                return NotFound("product not found");
+            return Ok(result);
+        }
 
+        /// <summary>
+        /// api get method to get a request with some details
+        /// </summary>
+        /// <param name="requestId">id of the request. Should always be > 0</param>
+        /// <returns> BadRequest when id is less than 1.
+        /// Not found when the object with the specific id has not been found.
+        /// Ok result with a RequestDetail model in any other case</returns>
         [HttpGet("RequestDetail/{requestId}")]
         public IActionResult RequestDetail(int requestId)
-            => Ok(_requestRepo.GetRequestDetail(requestId));
+        {
+            if (requestId < 1)
+                return BadRequest("id must be greater than 0");
+            RequestDetail result = _requestRepo.GetRequestDetail(requestId);
+            if(result is null)
+                return NotFound(String.Format ("request {0} not found", requestId));
+            return Ok(result);
+        }
 
+        /// <summary>
+        /// api get method to get a brand with some details
+        /// </summary>
+        /// <param name="brandId">id of the request. Should always be > 0</param>
+        /// <returns> BadRequest when id is less than 1.
+        /// Not found when the object with the specific id has not been found
+        /// Ok result with a BrandDetail model in any other case</returns>
         [HttpGet("BrandDetail/{brandId}")]
-        public IActionResult BrandDetail(int brandId) 
-            => Ok( _brandRepo.GetBrandDetail(brandId));
-
-
+        public IActionResult BrandDetail(int brandId)
+        {
+            if (brandId < 1)
+                return BadRequest("id must be greater than 0");
+            BrandDetail result = _brandRepo.GetBrandDetail(brandId);
+            if (result is null)
+                return NotFound("brand not found");
+            return Ok(result);
+        }
 
         # region BrandDetailTests
-        #region test
+        #region tests
         /*
         var y = _ctx.Products.Where(x => x.BrandId == brandId)
             .SelectMany(y => y.ProductCategory)
@@ -163,7 +232,7 @@ namespace EFWebSiteTest.Controllers
         //       .Select(group => group.FirstOrDefault());
         #endregion
         #endregion
-        #region tests
+        #region Api tests
         [HttpGet("brandtest/{id}")]
         public IActionResult GetBrandsProductsCategories(int id)
         {
@@ -195,18 +264,12 @@ namespace EFWebSiteTest.Controllers
 
 
 
-
-
-
-
-
-
-    public static class DistinctHelper
-    {
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            var identifiedKeys = new HashSet<TKey>();
-            return source.Where(element => identifiedKeys.Add(keySelector(element)));
-        }
-    }
+    //public static class DistinctHelper
+    //{
+    //    public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    //    {
+    //        var identifiedKeys = new HashSet<TKey>();
+    //        return source.Where(element => identifiedKeys.Add(keySelector(element)));
+    //    }
+    //}
 }

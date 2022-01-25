@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-
 namespace EFWebSiteTest
 {
     public class MyDbContext : DbContext
@@ -34,9 +33,7 @@ namespace EFWebSiteTest
                 entity.HasKey(k => k.Id);
 
                 //Configure NotNull Column
-                entity
-                .Property(p => p.BrandId)
-                .IsRequired();
+                entity.Property(p => p.BrandId).IsRequired();
 
                 //Configure length Column
                 entity.Property(p => p.ShortDescription)
@@ -44,7 +41,7 @@ namespace EFWebSiteTest
 
 
                 entity.HasOne<Brand>(p => p.Brand).WithMany(b => b.Products).HasForeignKey(fk=>fk.BrandId); //foreign key
-      //ha una relazione con <Brand> {tramite la proprieta (=> X) di Prod} su più prodotti {tramite la proprietà (=>Y) di brand}
+      //ha una relazione con <Brand> {tramite la proprieta (=> X) di Prod} su più prodotti {tramite la proprietà (=>Y) di brand}.product Possiede FK BrandID
                 
                 //entity.HasMany(n => n.ProductCategory).WithOne(etc...).HasForeignKey(fk => fk.IdProduct); alternativa
             });
@@ -58,11 +55,16 @@ namespace EFWebSiteTest
 
                 entity.HasMany(u=> u.InfoRequestReplies).WithOne(x=> x.Account).HasForeignKey(fk=>fk.AccountId);
 
+                entity.Property(p => p.Password).IsRequired();
+                entity.Property(p => p.Email).IsRequired();
+                entity.Property(p => p.AccountType).IsRequired();
             });
 
             modelBuilder.Entity<Brand>(entity =>
             {
                 entity.ToTable("Brand");
+                entity.Property(p => p.AccountId).IsRequired();
+                entity.Property(p => p.BrandName).IsRequired();
 
                 //entity.HasMany(x=>x.Products).WithOne(x=>x.Brand);//  Brand - Product
             });
@@ -70,7 +72,7 @@ namespace EFWebSiteTest
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.ToTable("Category");
-
+                entity.Property(p => p.Name).IsRequired();
             });
 
             modelBuilder.Entity<InfoRequest>(entity =>
@@ -81,21 +83,27 @@ namespace EFWebSiteTest
                 entity.HasOne(x=>x.Nation).WithMany(x=>x.InfoRequests).HasForeignKey(fk=> fk.NationId);
                 entity.HasOne(x=>x.Product).WithMany(x=>x.InfoRequests).HasForeignKey(fk=> fk.ProductId);
                 entity.HasOne(x => x.User).WithMany(x=>x.InfoRequests).HasForeignKey(fk => fk.UserId);
+
+                entity.Property(p => p.PhoneNumber).IsRequired();
             });
 
             modelBuilder.Entity<InfoRequestReply>(entity =>
             {
                 entity.ToTable("InfoRequestReply");
+
             });
 
             modelBuilder.Entity<Nation>(entity =>
             {
                 entity.ToTable("Nation");
+                entity.Property(p => p.Name).IsRequired();
             });
 
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("User");
+                entity.Property(p => p.Name).IsRequired();
+                entity.Property(p => p.LastName).IsRequired();
             });
 
             modelBuilder.Entity<ProductCategory>(entity =>

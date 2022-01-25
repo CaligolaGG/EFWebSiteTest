@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,8 +17,18 @@ namespace EFWebSiteTest
             _ctx = ctx;
         }
 
+        /// <summary>
+        /// returns the details of a specific Request given the id.
+        /// that includes the replies of that request, the infos of the product in the request
+        /// and the info of the user who made the request
+        /// </summary>
+        /// <param name="requestId">id of the request to fetch</param>
+        /// <returns></returns>
         public RequestDetail GetRequestDetail(int requestId)
         {
+            if (requestId < 1)
+                throw new ArgumentOutOfRangeException("requestId id must be > 0");
+
             RequestDetail inforequest = _ctx.InfoRequests.Where(r => r.Id == requestId)
                 .Select(r => new RequestDetail {
                     RequestId = r.Id,
@@ -39,7 +50,10 @@ namespace EFWebSiteTest
         }
     }
 
-    #region TempModels
+    #region ProjectionModels
+    /// <summary>
+    ///  projection class that hold details of a InfoRequest, and the replies to that request
+    /// </summary>
     public class RequestDetail
     {
         public int RequestId { get; set; }
@@ -53,6 +67,9 @@ namespace EFWebSiteTest
         public IEnumerable<RepliesTemp> Replies { get; set; }
     }
 
+    /// <summary>
+    /// projection class of InfoRequestReply for the RequestDetail class
+    /// </summary>
     public class RepliesTemp 
     {
         public int ReplyId { get; set; }

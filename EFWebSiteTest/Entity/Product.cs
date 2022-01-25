@@ -2,6 +2,10 @@
 
 namespace EFWebSiteTest
 {
+    /// <summary>
+    /// Represent a product.
+    /// A product belongs to one brand and can have multiple categories.
+    /// </summary>
     public class Product : EntityBase
     {
         public string Name { get; set; }

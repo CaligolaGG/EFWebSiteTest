@@ -49,6 +49,9 @@ namespace EFWebSiteTest
         /// <returns>a ProductDetail object, that hold the requested infos</returns>
         public ProductDetail GetProductDetail(int productId) 
         {
+            if (productId < 1)
+                throw new ArgumentOutOfRangeException("product id must be > 0");
+
             ProductDetail product = _ctx.Products.Where(p => p.Id == productId)
                 .Select(p => new ProductDetail
                 {
@@ -74,7 +77,10 @@ namespace EFWebSiteTest
         }
     }
 
-    #region TempModels
+    #region ProjectionModels
+    /// <summary>
+    /// projection class that hold details of a product
+    /// </summary>
     public class ProductDetail 
     {
         public int ProductId { get; set; }
@@ -82,11 +88,19 @@ namespace EFWebSiteTest
         public string BrandName { get; set; }
         public int guestNumberRequest { get; set; }
         public int loggedNumberRequest { get; set; }
-        
         public IEnumerable<Category> Categories { get; set; }
+
+        /// <summary>
+        /// list of projection of InfoRequests.
+        /// </summary>
         public IEnumerable<InfoRequestTemp> Requests { get; set; }
     }
 
+    /// <summary>
+    /// projection class of infoRequest  for the ProductDetail class.
+    /// Hold the id of the info request, name of the person who made the request, 
+    /// number of replies to that request and the date of the last reply.
+    /// </summary>
     public class InfoRequestTemp 
     { 
         public int RequestId { get; set; }
@@ -95,6 +109,9 @@ namespace EFWebSiteTest
         public DateTime LastReply { get; set; }
     }
 
+    /// <summary>
+    ///  projection class of Product  for the ProductDetail class
+    /// </summary>
     public class ProductSelect
     {
         public int Id { get; set; }
