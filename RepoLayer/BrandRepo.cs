@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RepoLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataLayer;
+using System.Threading.Tasks;
 
-namespace EFWebSiteTest
+namespace RepoLayer
 {
     /// <summary>
     /// Class to interact with the Brand table in the db
@@ -16,45 +19,42 @@ namespace EFWebSiteTest
         {
             _ctx = ctx;
         }
+        public int GetBrandNumber() => _ctx.Brands.Count();
 
         /// <summary>
-        /// Returns a page of Brands with the relative products of the brands
+        /// Fetch a page of Brands with the relative products of the brands
         /// </summary>
         /// <param name="pageNum">number of the page, must be positive, page starts from 1</param>
         /// <param name="pagesize">size of the page, must be positive </param>
-        public EntityPage<BrandSelect> GetBrandPage(int pageNum, int pagesize)
+        public async Task<IEnumerable<BrandSelect>> GetBrandPageAsync(int pageNum, int pagesize)
         {
             if (pagesize <= 0)
                 throw new ArgumentOutOfRangeException("pageSize must be > 0");
             if (pageNum <= 0)
                 throw new ArgumentOutOfRangeException("pageNum must be > 0");
 
-            EntityPage<BrandSelect> brandPageTemp = new EntityPage<BrandSelect>();
-            brandPageTemp.Entities =  _ctx.Brands
+            return await _ctx.Brands.OrderBy(x => x.BrandName)
                 .Skip((pageNum - 1) * pagesize).Take(pagesize)
                 .Select(brand => new BrandSelect
-                    {
-                        BrandId = brand.Id,
-                        BrandName=brand.BrandName,
-                        Description=brand.Description,
-                        ProductIds = brand.Products.Select(product =>product.Id )
-                    })
-                .ToList();
-            brandPageTemp.PageNum = pageNum;
-            brandPageTemp.PageSize = pagesize;
-            brandPageTemp.NumberEntities = _ctx.Brands.Count();
+                {
+                    BrandId = brand.Id,
+                    BrandName=brand.BrandName,
+                    Description=brand.Description,
+                    ProductIds = brand.Products.Select(product =>product.Id )
+                })
+                .ToListAsync();
 
-            return brandPageTemp;
+
         }
 
         /// <summary>
-        /// returns the details of a specific brand given the id.
+        /// Fetch the details of a specific brand given the id.
         /// That includes list of the products relative to the brand
         /// and the list of categories of the products of the brand
         /// </summary>
         /// <param name="brandId"></param>
         /// <returns>a BrandDetail object that holds the requested info</returns>
-        public BrandDetail GetBrandDetail(int brandId)
+        public async Task<BrandDetail> GetBrandDetailAsync(int brandId)
         {
             if (brandId < 1)
                 throw new ArgumentOutOfRangeException("brand id must be > 0");
@@ -65,7 +65,7 @@ namespace EFWebSiteTest
                 join productCategory in _ctx.ProductCategories on product.Id equals productCategory.IdProduct
                 join category in _ctx.Categories on productCategory.IdCategory equals category.Id
                 where product.BrandId == brandId
-                select new CategoryTemp { CatId = category.Id, CategoryName = category.Name , 
+                select new CategoryTemp { CategoryId = category.Id, CategoryName = category.Name , 
                     TotalProducts = category.ProductCategory.Where(p=>p.Product.BrandId == brandId).Count()};
 
             var pc2 = from product in _ctx.Set<Product>()
@@ -73,14 +73,14 @@ namespace EFWebSiteTest
                       join category in _ctx.Set<Category>() on productCategory.IdCategory equals category.Id
                       where product.BrandId == brandId
                       group category by new { category.Id, category.Name } into NewGroup
-                      select new CategoryTemp { CatId = NewGroup.Key.Id, CategoryName = NewGroup.Key.Name,
+                      select new CategoryTemp { CategoryId = NewGroup.Key.Id, CategoryName = NewGroup.Key.Name,
                           TotalProducts = NewGroup.Count() };
 
             var x = _ctx.Products.Where(x => x.BrandId == brandId)
                     .SelectMany(y => y.ProductCategory
                         .Select(z => new CategoryTemp
                         {
-                            CatId = z.Category.Id,
+                            CategoryId = z.Category.Id,
                             CategoryName = z.Category.Name,
                             TotalProducts = z.Category.ProductCategory.Select(c => c.Product).Where(v => v.BrandId == brandId).Count(),
                         }))
@@ -89,32 +89,29 @@ namespace EFWebSiteTest
             var categories1 = _ctx.Products.Where(x => x.BrandId == brandId)
                 .SelectMany(y => y.ProductCategory)
                 .GroupBy(x => new { CatId = x.Category.Id, CategoryName = x.Category.Name })
-                .Select(g => new CategoryTemp { CatId= g.Key.CatId, CategoryName= g.Key.CategoryName, TotalProducts = g.Count()});
+                .Select(g => new CategoryTemp { CategoryId= g.Key.CatId, CategoryName= g.Key.CategoryName, TotalProducts = g.Count()});
 
             #endregion
 
-            BrandDetail brandsProductsCategories = _ctx.Brands
+            BrandDetail brandsProductsCategories = await _ctx.Brands
                 .Where(x => x.Id == brandId)
                 .Select(brand => new BrandDetail
                 {
-                    brandname = brand.BrandName,
-                    requestnum = brand.Products.Select(x => x.InfoRequests).Count(),
-                    //listCategories = x,
-                    //listCategories = pc.Distinct().ToList(),
-                    //listCategories = pc2.ToList(),
-                    listCategories = categories1.ToList(),
+                    BrandName = brand.BrandName,
+                    NumberRequests = brand.Products.SelectMany(x => x.InfoRequests).Count(),
 
-                    products = brand.Products.Select(product => new ProductTemp
+                    ListCategories = categories1.ToList(),
+
+                    ListProducts = brand.Products.Select(product => new ProductTemp
                     {
                         ProductId = product.Id,
                         ProductName = product.Name,
                         ProductRequestNumber = product.InfoRequests.Count
                     })
-                }).FirstOrDefault();
+                }).FirstOrDefaultAsync();
 
             return brandsProductsCategories;
         }
-
     }
 
     #region ProjectionModels
@@ -127,20 +124,20 @@ namespace EFWebSiteTest
         /// <summary>
         /// Name of the brand searched for
         /// </summary>
-        public string brandname { get; set; }
+        public string BrandName { get; set; }
         /// <summary>
         /// number of the requests for the products of the brand
         /// </summary>
-        public int requestnum { get; set; }
+        public int NumberRequests { get; set; }
         /// <summary>
         /// list of categories of the brand,with the number of the brand's products that belong to that category
         /// </summary>
-        public IEnumerable<CategoryTemp> listCategories { get; set; }
+        public IEnumerable<CategoryTemp> ListCategories { get; set; }
 
         /// <summary>
         /// list of product(projections) related to the brand
         /// </summary>
-        public IEnumerable<ProductTemp> products { get; set; }
+        public IEnumerable<ProductTemp> ListProducts { get; set; }
     }
 
     /// <summary>
@@ -149,7 +146,7 @@ namespace EFWebSiteTest
     /// </summary>
     public class CategoryTemp 
     {
-        public int CatId { get; set; }
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public int TotalProducts { get; set; }
     }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// nationality of a person. Currently there are 20.

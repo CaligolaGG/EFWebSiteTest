@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// represent a user registered to the website.

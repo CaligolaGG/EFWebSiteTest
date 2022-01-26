@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// represents a basic account.
     /// </summary>
-    public class Account:EntityBase
+    public class Account: EntityBase
     {
         [MaxLength(50)]
         public string Email { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// represents a reply to an InfoRequest. The replier can be a user or a brand.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// Represent a request of informations for a specific product from a user that can be either a guest

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// basic class for all the entities that have an int Id as primary key

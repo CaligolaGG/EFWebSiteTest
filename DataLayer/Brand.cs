@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// Account of type brand.

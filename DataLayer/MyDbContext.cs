@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using DataLayer;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     public class MyDbContext : DbContext
     {
@@ -42,8 +43,6 @@ namespace EFWebSiteTest
 
                 entity.HasOne<Brand>(p => p.Brand).WithMany(b => b.Products).HasForeignKey(fk=>fk.BrandId); //foreign key
       //ha una relazione con <Brand> {tramite la proprieta (=> X) di Prod} su più prodotti {tramite la proprietà (=>Y) di brand}.product Possiede FK BrandID
-                
-                //entity.HasMany(n => n.ProductCategory).WithOne(etc...).HasForeignKey(fk => fk.IdProduct); alternativa
             });
 
             modelBuilder.Entity<Account>(entity =>

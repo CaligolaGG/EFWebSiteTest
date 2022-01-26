@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// represents a category for the products.

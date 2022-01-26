@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EFWebSiteTest
+namespace DataLayer
 {
     /// <summary>
     /// class for the n:n relationship between product and category

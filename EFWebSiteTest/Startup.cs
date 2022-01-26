@@ -13,6 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RepoLayer;
+using DataLayer;
+using ServiceLayer;
 
 
 namespace EFWebSiteTest
@@ -35,9 +38,12 @@ namespace EFWebSiteTest
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
-            services.AddTransient<ProductRepo>();
-            services.AddTransient<BrandRepo>();
-            services.AddTransient<RequestRepo>();
+            services.AddScoped<BrandService>();
+            services.AddScoped<InfoRequestService>();
+            services.AddScoped<ProductService>();
+            services.AddScoped<ProductRepo>();
+            services.AddScoped<BrandRepo>();
+            services.AddScoped<RequestRepo>();
 
             services.AddDbContextPool<MyDbContext>(optionsBuilder => {
                 string ConnectionString = Configuration.GetConnectionString("Default");
@@ -61,25 +67,11 @@ namespace EFWebSiteTest
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
                 endpoints.MapControllerRoute(
-                    name: "default2",
-                    pattern: "{controller=WebSite}/{action}/{pageNum}/{pagesize}"
+                    name: "default",
+                    pattern: "{controller}/{action}/{pageNum=1:int}/{pagesize=1:int:max(100)}"
                 );
-
-                #region esempi routing
-                //endpoints.MapControllerRoute(
-                //    name: "default",
-                //    pattern: "{controller=Home}/{action=Index}/{id?}"
-                //);
-                //endpoints.MapControllerRoute(name: "blog",
-                //pattern: "blog/{*article}",
-                //defaults: new { controller = "Blog", action = "Article" });
-                //endpoints.MapControllerRoute(
-                //    name: "default",
-                //    pattern: "{controller=Home}/{action=Index}/{id?}");
-                #endregion
-
+                endpoints.MapControllers();
             });
         }
     }

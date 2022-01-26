@@ -11,5 +11,11 @@
     <PackageReference Include="ServiceStack.Text" Version="5.13.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
+    <ProjectReference Include="..\RepoLayer\RepoLayer.csproj" />
+    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
+  </ItemGroup>
+
 
 </Project>
