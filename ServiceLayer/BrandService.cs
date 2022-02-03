@@ -10,7 +10,7 @@ namespace ServiceLayer
     /// <summary>
     /// Service that uses the BrandRepo for actions relative to the Brand table of the db
     /// </summary>
-    public class BrandService : IServiceGeneral<BrandSelect, BrandDetail>
+    public class BrandService : IServiceGeneral<BrandSelect, BrandDetail,Brand>
     {
         private readonly BrandRepo _brandRepo;
         public BrandService(BrandRepo brandRepo)
@@ -52,6 +52,12 @@ namespace ServiceLayer
             if (brandId < 1)
                 throw new ArgumentOutOfRangeException("brand id must be greater than 0");
             return await _brandRepo.GetBrandDetailAsync(brandId);
+        }
+
+
+        public Task<IEnumerable<Brand>> GetAll()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -49,6 +49,18 @@ namespace EFWebSiteTest
                 string ConnectionString = Configuration.GetConnectionString("Default");
                 optionsBuilder.UseSqlServer(ConnectionString).EnableSensitiveDataLogging(true);
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("VueCorsPolicy", builder =>
+                {
+                    builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .WithOrigins("http://localhost:8080"); 
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +70,7 @@ namespace EFWebSiteTest
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("VueCorsPolicy");
 
             app.UseHttpsRedirection();
 
@@ -73,6 +86,7 @@ namespace EFWebSiteTest
                 );
                 endpoints.MapControllers();
             });
+
         }
     }
 }

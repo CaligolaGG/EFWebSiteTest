@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using DataLayer;
 
 namespace ServiceLayer
 {
-    public class ProductService : IServiceGeneral<ProductSelect,ProductDetail>
+    public class ProductService : IServiceGeneral<ProductSelect,ProductDetail,Product>
     {
         private ProductRepo _productRepo;
         public ProductService(ProductRepo productRepo) 
@@ -49,6 +50,9 @@ namespace ServiceLayer
             return await _productRepo.GetProductDetailAsync(productId);
         }
 
-
+        public Task<IEnumerable<Product>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

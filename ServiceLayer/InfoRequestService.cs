@@ -7,13 +7,18 @@ using RepoLayer;
 
 namespace ServiceLayer
 {
-    public class InfoRequestService : IServiceGeneral<RequestDetail, RequestDetail>
+    public class InfoRequestService : IServiceGeneral<RequestDetail, RequestDetail, InfoRequest>
     {
         private RequestRepo _requestRepo;
 
         public InfoRequestService(RequestRepo requestRepo) 
         {
             _requestRepo = requestRepo;
+        }
+
+        public Task<IEnumerable<InfoRequest>> GetAll()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

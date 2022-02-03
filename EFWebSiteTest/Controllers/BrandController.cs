@@ -21,6 +21,16 @@ namespace EFWebSiteTest.Controllers
             _brandService = brandService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllBrands()
+        {
+            var result = await _brandService.GetAll();
+            if(result is null)
+                return NotFound("not found");
+            return Ok(result);
+        }
+
+
         /// <summary>
         /// api get method for the paging of Brand
         /// </summary>

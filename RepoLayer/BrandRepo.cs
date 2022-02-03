@@ -20,7 +20,9 @@ namespace RepoLayer
             _ctx = ctx;
         }
         public int GetBrandNumber() => _ctx.Brands.Count();
-
+        public List<Brand> GetAll() => _ctx.Brands.ToList();
+        
+            
         /// <summary>
         /// Fetch a page of Brands with the relative products of the brands
         /// </summary>
