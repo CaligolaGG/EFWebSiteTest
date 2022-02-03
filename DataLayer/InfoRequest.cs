@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DataLayer
+namespace Domain
 {
     /// <summary>
     /// Represent a request of informations for a specific product from a user that can be either a guest
@@ -21,13 +21,13 @@ namespace DataLayer
 
         [MaxLength(50)]
         public string LastName { get; set; }
-        
+
         [MaxLength(50)]
         public string Email { get; set; }
 
         [MaxLength(50)]
         public string City { get; set; }
-        public int NationId {get;set;}
+        public int NationId { get; set; }
 
         [MaxLength(15)]
         public string PhoneNumber { get; set; }
@@ -35,12 +35,12 @@ namespace DataLayer
         [MaxLength(5)]
         public string Cap { get; set; }
         public string RequestText { get; set; }
-        public DateTime InsertDate  { get; set; }
+        public DateTime InsertDate { get; set; }
 
-        public ICollection< InfoRequestReply> InfoRequestReplies { get; set; }
-        public Nation Nation{ get; set; }
-        public Product Product{ get; set; }
-        public User User{ get; set; }
+        public ICollection<InfoRequestReply> InfoRequestReplies { get; set; }
+        public Nation Nation { get; set; }
+        public Product Product { get; set; }
+        public User User { get; set; }
 
     }
 }

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DataLayer
+namespace Domain
 {
     /// <summary>
     /// represent a user registered to the website.
     /// </summary>
-    public class User:EntityBase
+    public class User : EntityBase
     {
         public int AccountId { get; set; }
 

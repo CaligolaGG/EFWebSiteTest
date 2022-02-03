@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DataLayer
+namespace Domain
 {
     /// <summary>
     /// Represent a product.
@@ -16,7 +16,7 @@ namespace DataLayer
 
         public int BrandId { get; set; }
         public Brand Brand { get; set; }
-        public ICollection< ProductCategory> ProductCategory { get; set; }
+        public ICollection<ProductCategory> ProductCategory { get; set; }
 
         public ICollection<InfoRequest> InfoRequests { get; set; }
     }

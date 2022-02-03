@@ -3,8 +3,8 @@ using RepoLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataLayer;
 using System.Threading.Tasks;
+using Domain;
 
 namespace RepoLayer
 {
@@ -19,35 +19,12 @@ namespace RepoLayer
         {
             _ctx = ctx;
         }
+
         public int GetBrandNumber() => _ctx.Brands.Count();
-        public List<Brand> GetAll() => _ctx.Brands.ToList();
-        
+        public IQueryable<Brand> GetAll() =>  _ctx.Brands;
+        public IQueryable<Brand> GetById(int Id) => _ctx.Brands.Where(brand=> brand.Id == Id);
+
             
-        /// <summary>
-        /// Fetch a page of Brands with the relative products of the brands
-        /// </summary>
-        /// <param name="pageNum">number of the page, must be positive, page starts from 1</param>
-        /// <param name="pagesize">size of the page, must be positive </param>
-        public async Task<IEnumerable<BrandSelect>> GetBrandPageAsync(int pageNum, int pagesize)
-        {
-            if (pagesize <= 0)
-                throw new ArgumentOutOfRangeException("pageSize must be > 0");
-            if (pageNum <= 0)
-                throw new ArgumentOutOfRangeException("pageNum must be > 0");
-
-            return await _ctx.Brands.OrderBy(x => x.BrandName)
-                .Skip((pageNum - 1) * pagesize).Take(pagesize)
-                .Select(brand => new BrandSelect
-                {
-                    BrandId = brand.Id,
-                    BrandName=brand.BrandName,
-                    Description=brand.Description,
-                    ProductIds = brand.Products.Select(product =>product.Id )
-                })
-                .ToListAsync();
-
-
-        }
 
         /// <summary>
         /// Fetch the details of a specific brand given the id.
@@ -114,6 +91,8 @@ namespace RepoLayer
 
             return brandsProductsCategories;
         }
+
+
     }
 
     #region ProjectionModels

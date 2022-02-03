@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DataLayer
+namespace Domain
 {
     /// <summary>
     /// class for the n:n relationship between product and category
@@ -10,7 +10,7 @@ namespace DataLayer
         public int IdProduct { get; set; }
         public int IdCategory { get; set; }
 
-        public  Product Product { get; set; }
+        public Product Product { get; set; }
         public Category Category { get; set; }
     }
 }

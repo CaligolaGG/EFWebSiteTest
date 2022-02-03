@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Domain;
 
 namespace RepoLayer
 {
@@ -19,25 +19,12 @@ namespace RepoLayer
             _ctx = ctx;
         }
 
+
         public int GetProductsNumber() => _ctx.Products.Count();
+        public IQueryable<Product> GetAll() => _ctx.Products;
 
-        /// <summary>
-        /// Fetch a page of Products
-        /// </summary>
-        /// <param name="pageNum">number of the page, must be positive, page starts from 1</param>
-        /// <param name="pagesize">size of the page,  must be positive</param>
-        public async Task<IEnumerable<ProductSelect>> GetProductPageAsync (int pageNum, int pagesize)
-        {
-            if (pagesize <= 0)
-                throw new ArgumentOutOfRangeException("pageSize must be > 0");
-            if(pageNum <= 0)
-                throw new ArgumentOutOfRangeException("pageNum must be > 0");
+       
 
-            return await _ctx.Products.OrderBy(x => x.Name)
-                .Skip( (pageNum-1) * pagesize).Take(pagesize)
-                .Select(p => new ProductSelect { Id = p.Id, ProductName = p.Name, Description = p.ShortDescription })
-                .ToListAsync();
-        }
 
         /// <summary>
         /// Fetch the detail of a product.
@@ -115,6 +102,8 @@ namespace RepoLayer
         public int Id { get; set; }
         public string ProductName { get; set; }
         public string Description { get; set; }
+        public string BrandName { get; set; }
+        public IEnumerable<string> Categories { get; set; }
     }
     #endregion
 }

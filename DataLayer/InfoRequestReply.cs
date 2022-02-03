@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DataLayer
+namespace Domain
 {
     /// <summary>
     /// represents a reply to an InfoRequest. The replier can be a user or a brand.
@@ -11,7 +11,7 @@ namespace DataLayer
         public int InfoRequestId { get; set; }
         public int? AccountId { get; set; }
         [MaxLength(50)]
-        public string ReplyText{ get; set; }
+        public string ReplyText { get; set; }
         public DateTime InsertDate { get; set; }
 
 

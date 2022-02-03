@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using DataLayer;
+using Domain;
 
 namespace RepoLayer
 {
@@ -19,6 +19,10 @@ namespace RepoLayer
         {
             _ctx = ctx;
         }
+
+        public IQueryable<InfoRequest> GetAll() => _ctx.InfoRequests;
+
+        public int GetNumber() => _ctx.InfoRequests.Count();
 
         /// <summary>
         /// Fetch the details of a specific Request given the id.

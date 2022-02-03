@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DataLayer
+namespace Domain
 {
     /// <summary>
     /// represents a basic account.
     /// </summary>
-    public class Account: EntityBase
+    public class Account : EntityBase
     {
         [MaxLength(50)]
         public string Email { get; set; }
@@ -18,7 +18,7 @@ namespace DataLayer
         /// <summary>
         /// specifies the type of account. 1 for User, 2 for Brand.
         /// </summary>
-        public byte AccountType { get; set; } 
+        public byte AccountType { get; set; }
 
         public User User { get; set; }
         public Brand Brand { get; set; }

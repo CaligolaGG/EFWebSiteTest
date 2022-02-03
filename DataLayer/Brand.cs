@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DataLayer
+namespace Domain
 {
     /// <summary>
     /// Account of type brand.
@@ -11,7 +11,7 @@ namespace DataLayer
     public class Brand : EntityBase
     {
         public int AccountId { get; set; }
-        
+
         [MaxLength(50)]
         public string BrandName { get; set; }
 
@@ -20,8 +20,9 @@ namespace DataLayer
 
         public Account Account { get; set; }
 
-        [ForeignKey("UserId")]
+        [ForeignKey("BrandId")]
         public ICollection<Product> Products { get; set; }
+
 
     }
 }

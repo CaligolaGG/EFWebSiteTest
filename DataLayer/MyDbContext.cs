@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using DataLayer;
 
-namespace DataLayer
+namespace Domain
 {
     public class MyDbContext : DbContext
     {
         public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)
-        {}
+        { }
 
         #region DbSets
         public DbSet<Account> Accounts { get; set; }
@@ -21,7 +20,7 @@ namespace DataLayer
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {}
+        { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,18 +40,18 @@ namespace DataLayer
                      .HasMaxLength(20);  //.IsFixedLength(); from varchar to char
 
 
-                entity.HasOne<Brand>(p => p.Brand).WithMany(b => b.Products).HasForeignKey(fk=>fk.BrandId); //foreign key
-      //ha una relazione con <Brand> {tramite la proprieta (=> X) di Prod} su più prodotti {tramite la proprietà (=>Y) di brand}.product Possiede FK BrandID
+                entity.HasOne(p => p.Brand).WithMany(b => b.Products).HasForeignKey(fk => fk.BrandId); //foreign key
+                                                                                                       //ha una relazione con <Brand> {tramite la proprieta (=> X) di Prod} su più prodotti {tramite la proprietà (=>Y) di brand}.product Possiede FK BrandID
             });
 
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("Account");
 
-                entity.HasOne(u => u.User).WithOne(a=> a.Account).HasForeignKey<User>( fk => fk.AccountId);
-                entity.HasOne(u => u.Brand).WithOne(b=> b.Account).HasForeignKey<Brand>(fk=> fk.AccountId);
+                entity.HasOne(u => u.User).WithOne(a => a.Account).HasForeignKey<User>(fk => fk.AccountId);
+                entity.HasOne(u => u.Brand).WithOne(b => b.Account).HasForeignKey<Brand>(fk => fk.AccountId);
 
-                entity.HasMany(u=> u.InfoRequestReplies).WithOne(x=> x.Account).HasForeignKey(fk=>fk.AccountId);
+                entity.HasMany(u => u.InfoRequestReplies).WithOne(x => x.Account).HasForeignKey(fk => fk.AccountId);
 
                 entity.Property(p => p.Password).IsRequired();
                 entity.Property(p => p.Email).IsRequired();
@@ -65,7 +64,6 @@ namespace DataLayer
                 entity.Property(p => p.AccountId).IsRequired();
                 entity.Property(p => p.BrandName).IsRequired();
 
-                //entity.HasMany(x=>x.Products).WithOne(x=>x.Brand);//  Brand - Product
             });
 
             modelBuilder.Entity<Category>(entity =>
@@ -78,10 +76,10 @@ namespace DataLayer
             {
                 entity.ToTable("InfoRequest");
 
-                entity.HasMany(x=>x.InfoRequestReplies).WithOne(x=>x.InfoRequest).HasForeignKey(fk => fk.InfoRequestId);  
-                entity.HasOne(x=>x.Nation).WithMany(x=>x.InfoRequests).HasForeignKey(fk=> fk.NationId);
-                entity.HasOne(x=>x.Product).WithMany(x=>x.InfoRequests).HasForeignKey(fk=> fk.ProductId);
-                entity.HasOne(x => x.User).WithMany(x=>x.InfoRequests).HasForeignKey(fk => fk.UserId);
+                entity.HasMany(x => x.InfoRequestReplies).WithOne(x => x.InfoRequest).HasForeignKey(fk => fk.InfoRequestId);
+                entity.HasOne(x => x.Nation).WithMany(x => x.InfoRequests).HasForeignKey(fk => fk.NationId);
+                entity.HasOne(x => x.Product).WithMany(x => x.InfoRequests).HasForeignKey(fk => fk.ProductId);
+                entity.HasOne(x => x.User).WithMany(x => x.InfoRequests).HasForeignKey(fk => fk.UserId);
 
                 entity.Property(p => p.PhoneNumber).IsRequired();
             });
@@ -108,12 +106,12 @@ namespace DataLayer
             modelBuilder.Entity<ProductCategory>(entity =>
             {
                 entity.ToTable("ProductCategory");
-                
+
                 entity.HasKey(k => new { k.IdCategory, k.IdProduct });
-                entity.Property(x=> x.IdProduct).HasColumnName("IdProduct");
+                entity.Property(x => x.IdProduct).HasColumnName("IdProduct");
                 entity.Property(x => x.IdCategory).HasColumnName("IdCategory");
 
-                entity.HasOne(x => x.Category).WithMany(x=>x.ProductCategory).HasForeignKey(fk => fk.IdCategory);
+                entity.HasOne(x => x.Category).WithMany(x => x.ProductCategory).HasForeignKey(fk => fk.IdCategory);
                 entity.HasOne(x => x.Product).WithMany(x => x.ProductCategory).HasForeignKey(fk => fk.IdProduct);
             });
 

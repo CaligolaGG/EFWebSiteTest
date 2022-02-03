@@ -16,15 +16,17 @@ namespace EFWebSiteTest.Controllers
     {
         private readonly BrandService _brandService;
 
+
         public BrandController( BrandService brandService)
         {
             _brandService = brandService;
         }
 
+
         [HttpGet]
         public async Task<IActionResult> GetAllBrands()
         {
-            var result = await _brandService.GetAll();
+            var result = await _brandService.GetAllAsync();
             if(result is null)
                 return NotFound("not found");
             return Ok(result);
@@ -39,12 +41,12 @@ namespace EFWebSiteTest.Controllers
         /// <returns> BadRequest when pagenum and pagesize are less than 1.
         /// Not found when the List of brands is null or empty.
         /// Ok result with a page of brands in any other case </returns>
-        [HttpGet("BrandPage/{pageNum:int=1}/{pagesize:int:max(10)=5}")]
-        public async Task<IActionResult> BrandPage(int pageNum, int pagesize)
+        [HttpGet("BrandPage/{pageNum:int=1}/{pagesize:int:max(10)=5}/{searchByName=}")]
+        public async Task<IActionResult> BrandPage(int pageNum, int pagesize, string searchByName)
         {
             if (pageNum < 1 || pagesize < 1)
                 return BadRequest("page num and pagesize must be greater than 0");
-            EntityPage<BrandSelect> result = await _brandService.GetPageAsync(pageNum, pagesize);
+            EntityPage<BrandSelect> result = await _brandService.GetPageAsync(pageNum, pagesize, searchByName);
             if (result.ListEntities is null || !result.ListEntities.Any())
                 return NotFound("page not found");
             return Ok(result);
