@@ -1,5 +1,4 @@
-﻿using RepoLayer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -19,92 +18,58 @@ namespace RepoLayer
             _ctx = ctx;
         }
 
-
-        public int GetProductsNumber() => _ctx.Products.Count();
+        public async Task<int> GetProductsNumber() => await _ctx.Products.CountAsync();
         public IQueryable<Product> GetAll() => _ctx.Products;
 
-       
 
 
         /// <summary>
-        /// Fetch the detail of a product.
-        /// That includes the categories of the product and the requests relative to the product
+        /// Insert or update a new product. 
+        /// Add the product if the product id is 0 (not set). Update if the id is != 0
+        /// </summary>
+        /// <param name="product">product to insert or change</param>
+        /// <returns>Number of rows affected</returns>
+        public async Task<int> CreateOrUpdateAsync(Product product)
+        {
+            if (product.Id != 0)
+                _ctx.Products.Update(product);
+            else
+                await _ctx.Products.AddAsync(product);
+            return await _ctx.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// delete an item from the table given its id.
         /// </summary>
         /// <param name="productId"></param>
-        /// <returns>a ProductDetail object, that hold the requested infos</returns>
-        public async Task<ProductDetail> GetProductDetailAsync(int productId) 
+        /// <returns>number of records affected</returns>
+        public async Task<int> DeleteAsync(int productId) 
         {
-            if (productId < 1)
-                throw new ArgumentOutOfRangeException("product id must be > 0");
+            _ctx.Products.Remove(new Product { Id = productId });
+            return await _ctx.SaveChangesAsync();
+        }
 
-            ProductDetail product = await _ctx.Products.Where(p => p.Id == productId)
-                .Select(p => new ProductDetail
+        public async Task<int> DeleteLogicalAsync(int productId)
+        {
+            Product product =_ctx.Products.Where(x=>x.Id == productId).FirstOrDefault();
+            if (product != null)
+            {
+                product.IsDeleted = true;
+                _ctx.Products.Update(product);
+
+                List <InfoRequest> requests = await _ctx.InfoRequests.Where(x => x.ProductId == productId).ToListAsync();
+                foreach (InfoRequest request in requests)
                 {
-                    ProductId = p.Id,
-                    ProductName = p.Name,
-                    BrandName = p.Brand.BrandName,
-                    GuestUsersRequestsNumber = p.InfoRequests.Where(u => u.UserId == null).Count(),
-                    LoggedUsersRequestsNumber = p.InfoRequests.Where(u => u.UserId != null).Count(),
-                    Categories =  p.ProductCategory.Select(pc => new Category
-                    {
-                        Id = pc.IdCategory,
-                        Name = pc.Category.Name
-                    }),
-                    Requests = p.InfoRequests.Select(ir => new InfoRequestTemp {
-                        RequestId=ir.Id,
-                        FullName = ir.UserId == null ? ir.Name + " " + ir.LastName : ir.User.Name + " " + ir.User.LastName + " LOGGED",
-                        RepliesCount = ir.InfoRequestReplies.Count,
-                        LastReply = ir.InfoRequestReplies.OrderByDescending(r => r.InsertDate).Select(reply => reply.InsertDate).FirstOrDefault()
-                    })
-                }).OrderBy(x=>x.ProductName).FirstOrDefaultAsync();
+                    request.IsDeleted = true;
+                }
+                _ctx.InfoRequests.UpdateRange(requests);
 
-            return product;
+                //TODO inforeply
+            }
+
+            return await _ctx.SaveChangesAsync();
         }
     }
 
-    #region ProjectionModels
-    /// <summary>
-    /// projection class that hold details of a product
-    /// </summary>
-    public class ProductDetail 
-    {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public string BrandName { get; set; }
-        public int GuestUsersRequestsNumber { get; set; }
-        public int LoggedUsersRequestsNumber { get; set; }
-        public IEnumerable<Category> Categories { get; set; }
-
-        /// <summary>
-        /// list of projection of InfoRequests.
-        /// </summary>
-        public IEnumerable<InfoRequestTemp> Requests { get; set; }
-    }
-
-    /// <summary>
-    /// projection class of infoRequest  for the ProductDetail class.
-    /// Hold the id of the info request, name of the person who made the request, 
-    /// number of replies to that request and the date of the last reply.
-    /// </summary>
-    public class InfoRequestTemp 
-    { 
-        public int RequestId { get; set; }
-        public string FullName { get; set; }
-        public int RepliesCount { get; set; }
-        public DateTime LastReply { get; set; }
-    }
-
-    /// <summary>
-    ///  projection class of Product  for the ProductDetail class
-    /// </summary>
-    public class ProductSelect
-    {
-        public int Id { get; set; }
-        public string ProductName { get; set; }
-        public string Description { get; set; }
-        public string BrandName { get; set; }
-        public IEnumerable<string> Categories { get; set; }
-    }
-    #endregion
 }
 

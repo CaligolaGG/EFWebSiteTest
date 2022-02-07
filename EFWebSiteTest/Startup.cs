@@ -43,6 +43,9 @@ namespace EFWebSiteTest
             services.AddScoped<ProductRepo>();
             services.AddScoped<BrandRepo>();
             services.AddScoped<RequestRepo>();
+            services.AddScoped<ProductCategoryRepo>();
+            services.AddScoped<ProductCategoryService>();
+
 
             services.AddDbContextPool<MyDbContext>(optionsBuilder => {
                 string ConnectionString = Configuration.GetConnectionString("Default");

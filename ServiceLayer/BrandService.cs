@@ -12,7 +12,7 @@ namespace ServiceLayer
     /// <summary>
     /// Service that uses the BrandRepo for actions relative to the Brand table of the db
     /// </summary>
-    public class BrandService //: IServiceGeneral<BrandSelect, BrandDetail,Brand>
+    public class BrandService
     {
         private readonly BrandRepo _brandRepo;
         public BrandService(BrandRepo brandRepo)
@@ -20,23 +20,43 @@ namespace ServiceLayer
             _brandRepo = brandRepo;
         }
 
+        public async Task<IEnumerable<Brand>> GetAllAsync() => await _brandRepo.GetAll().ToListAsync();
+
 
         /// <summary>
-        /// get the details of the brand
+        /// Fetch the details of a specific brand given the id.
+        /// That includes list of the products relative to the brand
+        /// and the list of categories of the products of the brand
         /// </summary>
-        /// <param name="brandId">id of the brand must be greater than 0</param>
-        /// <returns>a BrandDetail object  that holds the requested info</returns>
-        /// <exception cref="ArgumentOutOfRangeException">brand id must be greater than 0</exception>
+        /// <param name="brandId"></param>
+        /// <returns>a BrandDetail object that holds the requested info</returns>
         public async Task<BrandDetail> GetDetailAsync(int brandId)
         {
             if (brandId < 1)
-                throw new ArgumentOutOfRangeException("brand id must be greater than 0");
-            return await _brandRepo.GetBrandDetailAsync(brandId);
+                throw new ArgumentOutOfRangeException("brand id must be > 0");
+
+
+            var categories1 = _brandRepo.GetRelativeCategories(brandId);
+
+            BrandDetail brandsProductsCategories = await _brandRepo.GetAll()
+                .Where(x => x.Id == brandId)
+                .Select(brand => new BrandDetail
+                {
+                    BrandName = brand.BrandName,
+                    NumberRequests = brand.Products.SelectMany(x => x.InfoRequests).Count(),
+
+                    ListCategories = categories1,
+
+                    ListProducts = brand.Products.Select(product => new ProductTemp
+                    {
+                        ProductId = product.Id,
+                        ProductName = product.Name,
+                        ProductRequestNumber = product.InfoRequests.Count
+                    })
+                }).FirstOrDefaultAsync();
+
+            return brandsProductsCategories;
         }
-
-
-        public async Task<IEnumerable<Brand>> GetAllAsync() =>  await _brandRepo.GetAll().ToListAsync();
-        
 
 
         /// <summary>
@@ -74,6 +94,26 @@ namespace ServiceLayer
             return page;
         }
 
+        /// <summary>
+        /// Update a brand informations
+        /// </summary>
+        /// <param name="brand">brand to update</param>
+        /// <returns>Number of records affected</returns>
+        /// <exception cref="ArgumentException">Raise an exception if the inserted brand is null or his id is less than 1</exception>
+        public async Task<int> BrandUpdateAsync(Brand brand)
+        {
+            if (brand.Id < 0 || brand is null || String.IsNullOrEmpty(brand.BrandName))
+                throw new ArgumentException("invalid brand");
+            return await _brandRepo.UpdateBrandAsync(brand);
+        }
+
+        public async Task<int> BrandDeleteLogicalAsync(int brandId)
+        {
+            if (brandId < 0 )
+                throw new ArgumentException("invalid brandId");
+            return await _brandRepo.LogicalBrandDeleteAsync(brandId);
+
+        }
 
     }
 }

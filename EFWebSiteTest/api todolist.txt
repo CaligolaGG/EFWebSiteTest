@@ -1,0 +1,48 @@
+•aggiungi i pacchetti necessari: axios, bootstrap, b-icons	X
+•crea la pag principale + routing di base					X
+
+------------------------------------------------------------------
+•Cambiamenti Preliminari nel progetto api					X
+riposizionamento projection models a domain					X(smistamento in corso)			
+spostamento di alcune logiche da repo a servizi				X
+->(cosa mettere in repo, cosa mettere in servizi)
+rimozione iService 											X
+------------------------------------------------------------------
+
+•modifica api esistenti										X	
+Paginazione nuovi order e filtri:
+-Brand: ricerca per nome brand
+-Products: ordinabile (asc/desc) per: Brand, Nome Prodotto, Prezzo. 
+-> default -> Brand + Nome Prodotto ASC. 
+-> Filtro brand. Aggiungi brand e categorie alla pagina.
+
+
+•aggiungi api extra
+Leads/Requests:
+- paginazione leads 
+-> filtrabile per Nome Brand (select), Nome Prodotto (input text)
+-> ordinabile per Data di default: dalla più recente
+
+Products:
+-inserimento Prodotto -> getall( Brand, Categories ), InsertNew(ProductCategory) per la <select> front end. 
+-edit Prodotto  
+-remove Prodotto ?(incompleta)
+
+Brands:
+-edit brand													X
+-remove brand												<-<-<-(Here)
+-inserimento nuovo brand con relativi prodotti 
+
+
+Ricontrolla routing, optional routers.
+Unit Testing?
+iCrud interface? 
+
+
+
+-Valida,Testa, Commenta, Nomi, togli codice residuo e parti commentate inutili, Testa
+-------------------------------------------------------------------
+...Roba in Vue
+
+
+...Styling (NEVER!!!)

@@ -27,6 +27,7 @@ namespace Domain
 
             modelBuilder.Entity<Product>(entity =>
             {
+                entity.HasQueryFilter(x => !x.IsDeleted);
                 //map to table name
                 entity.ToTable("Product");
                 //map primary key
@@ -47,6 +48,7 @@ namespace Domain
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("Account");
+                entity.HasQueryFilter(x => !x.IsDeleted);
 
                 entity.HasOne(u => u.User).WithOne(a => a.Account).HasForeignKey<User>(fk => fk.AccountId);
                 entity.HasOne(u => u.Brand).WithOne(b => b.Account).HasForeignKey<Brand>(fk => fk.AccountId);
@@ -61,6 +63,8 @@ namespace Domain
             modelBuilder.Entity<Brand>(entity =>
             {
                 entity.ToTable("Brand");
+                entity.HasQueryFilter(x => !x.IsDeleted);
+
                 entity.Property(p => p.AccountId).IsRequired();
                 entity.Property(p => p.BrandName).IsRequired();
 
@@ -69,12 +73,16 @@ namespace Domain
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.ToTable("Category");
+                entity.HasQueryFilter(x => !x.IsDeleted);
+
                 entity.Property(p => p.Name).IsRequired();
             });
 
             modelBuilder.Entity<InfoRequest>(entity =>
             {
                 entity.ToTable("InfoRequest");
+                entity.HasQueryFilter(x => !x.IsDeleted);
+
 
                 entity.HasMany(x => x.InfoRequestReplies).WithOne(x => x.InfoRequest).HasForeignKey(fk => fk.InfoRequestId);
                 entity.HasOne(x => x.Nation).WithMany(x => x.InfoRequests).HasForeignKey(fk => fk.NationId);
@@ -87,18 +95,22 @@ namespace Domain
             modelBuilder.Entity<InfoRequestReply>(entity =>
             {
                 entity.ToTable("InfoRequestReply");
-
+                entity.HasQueryFilter(x => !x.IsDeleted);
             });
 
             modelBuilder.Entity<Nation>(entity =>
             {
                 entity.ToTable("Nation");
+                entity.HasQueryFilter(x => !x.IsDeleted);
+
                 entity.Property(p => p.Name).IsRequired();
             });
 
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("User");
+                entity.HasQueryFilter(x => !x.IsDeleted);
+
                 entity.Property(p => p.Name).IsRequired();
                 entity.Property(p => p.LastName).IsRequired();
             });

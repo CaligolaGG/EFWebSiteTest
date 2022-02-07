@@ -17,6 +17,10 @@ namespace EFWebSiteTest.Controllers
             _categoryService = categoryService;
         }
 
+        /// <summary>
+        /// Method to get all the categories from the db
+        /// </summary>
+        /// <returns>Not Found if no categories are found. Ok() with the list of categories otherwise</returns>
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {

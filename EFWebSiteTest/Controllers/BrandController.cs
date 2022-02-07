@@ -7,6 +7,7 @@ using System.Linq;
 using RepoLayer;
 using ServiceLayer;
 using System.Threading.Tasks;
+using Domain;
 
 namespace EFWebSiteTest.Controllers
 {
@@ -16,6 +17,11 @@ namespace EFWebSiteTest.Controllers
     {
         private readonly BrandService _brandService;
 
+
+        /// <summary>
+        /// Method to get all the brands from the db
+        /// </summary>
+        /// <returns>Not Found if no brands are found. Ok() with the list of brands otherwise</returns>
 
         public BrandController( BrandService brandService)
         {
@@ -69,6 +75,47 @@ namespace EFWebSiteTest.Controllers
                 return NotFound("brand not found");
             return Ok(result);
         }
+
+        /// <summary>
+        /// api method to update a brand
+        /// </summary>
+        /// <param name="brand">brand to update</param>
+        /// <returns>
+        /// BadRequest if the brand object or its properties are null
+        /// NotFound if the brand doesnt get updated for any reason
+        /// Ok() otherwise
+        /// </returns>
+        [HttpPut("BrandUpdate")]
+        public async Task<IActionResult> BrandUpdate (Brand brand)
+        {
+            if (brand.Id < 0 || brand is null|| String.IsNullOrEmpty(brand.BrandName))
+                return BadRequest("invalid brand selected");
+            int numChangedRows = await _brandService.BrandUpdateAsync(brand);
+            if (numChangedRows < 1)
+                return NotFound("brand not updated");
+            return Ok(brand);
+        }
+
+        /// <summary>
+        /// api method to logically delete a brand
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <returns> 
+        /// BadRequest if the brandId is less then 1
+        /// NotFound if the brand doesnt get updated for any reason
+        /// Ok() otherwise
+        /// </returns>
+        [HttpDelete("BrandDelete")]
+        public async Task<IActionResult> DeleteLogicalAsync(int brandId) 
+        {
+            if (brandId < 1)
+                return BadRequest("invalid brand id. Id must be greater than 0");
+            if (await _brandService.BrandDeleteLogicalAsync(brandId) < 1)
+                return NotFound("brand not deleted");
+            return Ok();
+        }
+
+
     }
 
 }

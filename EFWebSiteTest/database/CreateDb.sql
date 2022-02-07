@@ -155,6 +155,17 @@ ADD CONSTRAINT FK_Account_InfoRequestReply
 FOREIGN KEY (AccountId) REFERENCES Account(Id)
 go
 
+ALTER TABLE [User]  Add  isDeleted bit  default 0 not null
+ALTER TABLE brand  Add  isDeleted bit  default 0 not null
+ALTER TABLE Account  Add  isDeleted bit  default 0 not null
+ALTER TABLE Product  Add  isDeleted bit  default 0 not null
+ALTER TABLE Nation  Add  isDeleted bit  default 0 not null
+ALTER TABLE Category Add  isDeleted bit  default 0 not null
+ALTER TABLE ProductCategory  Add  isDeleted bit  default 0 not null
+ALTER TABLE InfoRequest  Add  isDeleted bit  default 0 not null
+ALTER TABLE InfoRequestReply  Add  isDeleted bit  default 0 not null
+
+
 
 --Indexes
 

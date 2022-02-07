@@ -3,6 +3,9 @@ using System.Linq;
 using RepoLayer;
 using ServiceLayer;
 using System.Threading.Tasks;
+using Domain;
+using System;
+using System.Collections.Generic;
 
 namespace EFWebSiteTest.Controllers
 {
@@ -12,11 +15,13 @@ namespace EFWebSiteTest.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ProductService _productService;
+        private readonly ProductCategoryService _productcategoryService;
 
 
-        public ProductController(ProductService productService) 
+        public ProductController(ProductService productService, ProductCategoryService productcategoryService) 
         {
             _productService = productService;
+            _productcategoryService = productcategoryService;
         }
 
         /// <summary>
@@ -50,10 +55,105 @@ namespace EFWebSiteTest.Controllers
         {
             if (productId < 1)
                 return BadRequest("id must be greater than 0");
-            ProductDetail result = await _productService.GetDetailAsync(productId);
+            ProductDetail result = await _productService.GetProductDetailAsync(productId);
             if (result is null)
                 return NotFound("product not found");
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Api post method to create a Product with the categories.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="categories">List of the ids of the categories selected</param>
+        [HttpPost("InsertProductCat")]
+        public async Task<IActionResult> InsertProductWithCategories(ProductAndCategoryModel model)
+        {
+            var result = await InsertOrUpdateProduct(model.Product);
+            List<ProductCategory> productCategories = new List<ProductCategory>();
+            foreach (int category in model.categories)
+                productCategories.Add(new ProductCategory { IdCategory = category, IdProduct = model.Product.Id });
+            await _productcategoryService.InsertMultiple(productCategories);
+            return result;
+        }
+
+        /// <summary>
+        /// Api post method update a  Product. 
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns>Bad request if the product inserted is null, doesnt have a brand or a valid name, or the price is negative.
+        /// Forbid if the product has not been inserted by the db for any reason
+        /// Created with the product created, if the product got created successfully
+        /// </returns>
+        [HttpPost("InsertProduct")]
+        public async Task<IActionResult> InsertProduct(Product product) => await InsertOrUpdateProduct(product);
+
+
+        /// <summary>
+        /// Api post method update a  Product. 
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns>Bad request if the product inserted is null, doesnt have a brand or a valid name, or the price is negative.
+        /// Forbid if the product has not been inserted by the db for any reason
+        /// Created with the product created, if the product got created successfully
+        /// </returns>
+        [HttpPut("UpdateProduct")]
+        public async Task<IActionResult> UpdateProduct(Product product) => await InsertOrUpdateProduct(product);
+
+
+        /// <summary>
+        /// Method to insert or update a new Product. 
+        /// Insert if the product id is 0 (not set). Update if the id is != 0
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns>Bad request if the product inserted is null, doesnt have a brand or a valid name, or the price is negative.
+        /// Forbid if the product has not been inserted by the db for any reason
+        /// Created with the product created, if the product got created successfully
+        /// </returns>
+        public async Task<IActionResult> InsertOrUpdateProduct(Product product) 
+        {
+            if (product is null || product.BrandId < 1 || String.IsNullOrEmpty(product.Name) || product.Price < 0)
+                return BadRequest("product not valid");
+
+            if (await _productService.InsertOrUpdateAsync(product) < 1)
+                return Forbid("product has not been inserted");
+            return Created("Product/InsertProduct", product);
+        }
+
+
+        /// <summary>
+        /// Api post method to Remove a  Product given its id.
+        /// </summary>
+        /// <param name="productId">the product id</param>
+        /// <returns>
+        /// BadRequest if the id provided is less then 1
+        /// NotFound if the call to the repo returns 0, therefore the product was either not found or not deleted
+        /// Ok otherwise
+        /// </returns>
+        [HttpDelete("DeleteProduct/{productId:min(0)}")]
+        public async Task<IActionResult> DeleteProduct(int productId) 
+        {
+            if (productId < 1)
+                return BadRequest("product must be > 0");
+            
+            var result = await _productService.DeleteAsync(productId);
+            if (result < 1)
+                return NotFound("product has not been found or not been deleted");
+
+            return Ok();
+        }
+
+        [HttpDelete("DeleteProductL/{productId:min(0)}")]
+        public async Task<IActionResult> DeleteProductLogical(int productId)
+        {
+            if (productId < 1)
+                return BadRequest("product must be > 0");
+
+            var result = await _productService.DeleteLogicalAsync(productId);
+            if (result < 1)
+                return NotFound("product has not been found or not been deleted");
+
+            return Ok();
         }
 
     }
