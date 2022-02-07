@@ -31,6 +31,8 @@ namespace EFWebSiteTest.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertNew(List<ProductCategory> productCategories)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             if (productCategories is null)
                 return BadRequest("list is not valid");
             var result = await _productCategoryService.InsertMultiple(productCategories);

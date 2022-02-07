@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using RepoLayer;
 using ServiceLayer;
 using System.Threading.Tasks;
 using Domain;
@@ -64,18 +63,21 @@ namespace EFWebSiteTest.Controllers
         /// <summary>
         /// Api post method to create a Product with the categories.
         /// </summary>
-        /// <param name="product"></param>
-        /// <param name="categories">List of the ids of the categories selected</param>
+        /// <param name="model">List of the of ProductAndCategoryModel which holds both 
+        /// the product to create and the list of categories associated </param>
         [HttpPost("InsertProductCat")]
         public async Task<IActionResult> InsertProductWithCategories(ProductAndCategoryModel model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var result = await InsertOrUpdateProduct(model.Product);
             List<ProductCategory> productCategories = new List<ProductCategory>();
-            foreach (int category in model.categories)
+            foreach (int category in model.Categories)
                 productCategories.Add(new ProductCategory { IdCategory = category, IdProduct = model.Product.Id });
             await _productcategoryService.InsertMultiple(productCategories);
             return result;
         }
+
 
         /// <summary>
         /// Api post method update a  Product. 
@@ -112,6 +114,8 @@ namespace EFWebSiteTest.Controllers
         /// </returns>
         public async Task<IActionResult> InsertOrUpdateProduct(Product product) 
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             if (product is null || product.BrandId < 1 || String.IsNullOrEmpty(product.Name) || product.Price < 0)
                 return BadRequest("product not valid");
 
@@ -119,6 +123,8 @@ namespace EFWebSiteTest.Controllers
                 return Forbid("product has not been inserted");
             return Created("Product/InsertProduct", product);
         }
+
+
 
 
         /// <summary>

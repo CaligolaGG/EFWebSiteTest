@@ -18,7 +18,7 @@ namespace ServiceLayer
         }
 
         /// <summary>
-        /// Insert a new product with the new 
+        /// Insert a new product with the associated categories
         /// </summary>
         /// <returns>number of records added</returns>
         /// <exception cref="ArgumentException">Raised if the product is null</exception>

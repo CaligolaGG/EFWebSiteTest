@@ -29,20 +29,22 @@ Products:
 -remove Prodotto ?(incompleta)
 
 Brands:
--edit brand													X
--remove brand												<-<-<-(Here)
--inserimento nuovo brand con relativi prodotti 
+-edit brand		 ?(incompleta)											
+-remove brand												
+-inserimento nuovo brand con relativi prodotti				<-<-<-(Here)
 
 
-Ricontrolla routing, optional routers.
-Unit Testing?
-iCrud interface? 
-
-
-
--Valida,Testa, Commenta, Nomi, togli codice residuo e parti commentate inutili, Testa
+Per ogni punto svolto: Valida,Testa, Commenta, Nomi, togli codice residuo e parti commentate inutili, Testa
 -------------------------------------------------------------------
 ...Roba in Vue
 
 
+
+
+-------------------------------------------------------------------
+•Api
+Unit Testing?
+iCrud interface?
+Ricontrolla routing, optional routers.
+-------------------------------------------------------------------
 ...Styling (NEVER!!!)

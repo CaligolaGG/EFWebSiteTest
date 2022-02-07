@@ -55,7 +55,6 @@ namespace RepoLayer
                         }))
                     .Distinct().ToList();
 
-
             var pc =
                 from product in _ctx.Products
                 join productCategory in _ctx.ProductCategories on product.Id equals productCategory.IdProduct
@@ -84,5 +83,40 @@ namespace RepoLayer
             _ctx.Brands.Update(brand);
             return await _ctx.SaveChangesAsync();
         }
+
+        public async Task<int> CreateBrandAsync(Brand brand) 
+        {
+            await _ctx.Brands.AddAsync(brand);
+            return await _ctx.SaveChangesAsync();
+        }
+
+
+        /// <summary>
+        /// Add a new brand with the associated products and their categories
+        /// </summary>
+        /// <param name="brandWithProducts">Models that contains all the information to add to the db</param>
+        /// <returns>number of rows affected</returns>
+        public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
+        {
+            await _ctx.Brands.AddAsync(brandWithProducts.Brand);
+            foreach (ProductAndCategoryModel p in brandWithProducts.ProductsCategs)
+            {
+
+                if(String.IsNullOrWhiteSpace(p.Product.Name))
+                    throw new Exception("invalid product " + p.Product.Name);
+                foreach (int c in p.Categories)
+                {
+                    if (c < 1)
+                        throw new Exception("invalid category");
+                }
+
+                await _ctx.Products.AddAsync(p.Product);
+                foreach (int c in p.Categories)
+                    await _ctx.ProductCategories.AddAsync(new ProductCategory { IdProduct = p.Product.Id, IdCategory = c });
+            }
+            return await _ctx.SaveChangesAsync();
+        }
+        
+
     }
 }

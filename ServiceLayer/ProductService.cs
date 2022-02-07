@@ -12,9 +12,11 @@ namespace ServiceLayer
     public class ProductService 
     {
         private ProductRepo _productRepo;
-        public ProductService(ProductRepo productRepo) 
+        private ProductCategoryRepo _pcRepo;
+        public ProductService(ProductRepo productRepo, ProductCategoryRepo pcRepo) 
         {
             _productRepo = productRepo;
+            _pcRepo = pcRepo;
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace ServiceLayer
                 throw new ArgumentNullException(nameof(product));
             if (product.BrandId < 1)
                 throw new ArgumentException("product must have a brand");
-            if (String.IsNullOrEmpty(product.Name))
+            if (String.IsNullOrWhiteSpace(product.Name))
                 throw new ArgumentException("product must have a valid name");
             if (product.Price < 0)
                 throw new ArgumentException("product price must be positive");
@@ -164,6 +166,28 @@ namespace ServiceLayer
 
             return product;
         }
+
+
+        /* 
+        public async Task<int> CreateProductsWithCategories(List<ProductAndCategoryModel> models)
+        {
+            int numRows = 0;
+            foreach (var model in models)
+            {
+                //creation product
+                numRows += await _productRepo.CreateOrUpdateAsync(model.Product);
+
+                //creation productcategories aka Association categories with Product
+                List<ProductCategory> productCategories = new List<ProductCategory>();
+                foreach (var category in model.Categories)
+                {
+                    productCategories.Add(new ProductCategory { IdProduct = model.Product.Id, IdCategory = category });
+                }
+                numRows +=  await _pcRepo.CreateMultipleAsync(productCategories);
+
+            }
+            return numRows;
+        }*/
 
 
     }

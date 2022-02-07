@@ -88,6 +88,8 @@ namespace EFWebSiteTest.Controllers
         [HttpPut("BrandUpdate")]
         public async Task<IActionResult> BrandUpdate (Brand brand)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             if (brand.Id < 0 || brand is null|| String.IsNullOrEmpty(brand.BrandName))
                 return BadRequest("invalid brand selected");
             int numChangedRows = await _brandService.BrandUpdateAsync(brand);
@@ -116,6 +118,46 @@ namespace EFWebSiteTest.Controllers
         }
 
 
+        /// <summary>
+        /// Api method to insert a new brand without specifing its products
+        /// </summary>
+        /// <param name="brand">brand to add</param>
+        /// <returns>
+        /// Bad request if the brand inserted is not valid
+        /// Forbid if the brand has not been inserted for any reason
+        /// Ok with the brand inserted otherwise
+        /// </returns>
+        [HttpPost("BrandCreate")]
+        public async Task<IActionResult> CreateBrandAsync(Brand brand)
+        {
+            if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brand.BrandName))
+                return BadRequest(ModelState);
+            if(await _brandService.CreateBrandAsync(brand) < 1)
+                return Forbid("brand has not been inserted");
+            return Ok(brand);
+        }
+
+
+        /// <summary>
+        /// Api method to insert a new brand with its products and associated categories
+        /// </summary>
+        /// <param name="brandWithProducts">model passed to the api</param>
+        /// <returns>
+        /// Bad request if the brand inserted is not valid
+        /// Forbid if the brand has not been inserted for any reason
+        /// Ok with the model inserted otherwise
+        /// </returns>
+        public async Task<IActionResult> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
+        {
+            if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brandWithProducts.Brand.BrandName))
+                return BadRequest(ModelState);
+            if (await _brandService.CreateBrandWithProductsAsync(brandWithProducts) < 1)
+                return Forbid("brand has not been inserted");
+            return Ok(brandWithProducts);
+        }
+
     }
+
+
 
 }

@@ -8,6 +8,13 @@ namespace Domain
     {
 
     }
+    public class BrandWithProducts
+    {
+        public Brand Brand { get; set; }
+        public List<ProductAndCategoryModel> ProductsCategs { get; set; }
+        
+    }
+
     #region ProjectionModels
 
     /// <summary>
