@@ -6,23 +6,26 @@
     </nav>
 
     <div class="row" >
-    <div class="col-3 bg-light text-dark h-100 position-fixed">
-
-        <div class="row m-2 mt-4"> <div class="col" v-on:click="activateTabColor(0)" >
-           <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
-            <span  > Product </span> </router-link>
-        </div></div>
-        <div class="row m-2"  v-on:click="activateTabColor(1)"><div class="col "> 
-          <router-link to="/brands" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[1].state }"> 
-           <span  > Brand </span> </router-link>
-        </div></div>
-        <div class="row m-2"><div class="col " v-on:click="activateTabColor(2)" > 
-          <router-link to="/leads" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[2].state }">  
-          <span  > Requests </span> </router-link> 
-        </div></div>
+      <div class="col-2 bg-light text-dark h-100 position-fixed">
+        <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
+          <div class="row mt-2 mx-2"  v-on:click="activateTabColor(0)" > 
+              <span> Product </span> 
+          </div>
+        </router-link>
+        
+        <router-link to="/brands" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[1].state }"> 
+          <div class="row mx-2"  v-on:click="activateTabColor(1)">
+            <span > Brand </span> 
+          </div>
+        </router-link>
+        <router-link to="/leads" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[2].state }">  
+          <div class="row mx-2" v-on:click="activateTabColor(2)"> 
+            <span > Requests </span> 
+          </div>
+          </router-link> 
       </div>
-      <div class="col mt-4 offset-3">
-        ROBA DA AGGIUNGERE
+      <div class="col mt-4 offset-2">
+          ROBA DA AGGIUNGERE
         <router-view
         />
       </div>
