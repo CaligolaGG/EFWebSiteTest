@@ -48,6 +48,7 @@ namespace Domain
         public string ProductName { get; set; }
         public string Description { get; set; }
         public string BrandName { get; set; }
+        public string Price { get; set; }
         public IEnumerable<string> Categories { get; set; }
     }
     #endregion

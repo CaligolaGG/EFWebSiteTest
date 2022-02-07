@@ -28,11 +28,11 @@ namespace EFWebSiteTest.Controllers
             _brandService = brandService;
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllBrands()
+        
+        [HttpGet("GetNames")]
+        public async Task<IActionResult> GetAllBrandsNames()
         {
-            var result = await _brandService.GetAllAsync();
+            var result = await _brandService.GetAllNamesAsync();
             if(result is null)
                 return NotFound("not found");
             return Ok(result);

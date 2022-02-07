@@ -20,7 +20,7 @@ namespace ServiceLayer
             _brandRepo = brandRepo;
         }
 
-        public async Task<IEnumerable<Brand>> GetAllAsync() => await _brandRepo.GetAll().ToListAsync();
+        public async Task<IEnumerable<string>> GetAllNamesAsync() => await _brandRepo.GetAll().Select(b=>b.BrandName).ToListAsync();
 
 
         /// <summary>

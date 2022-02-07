@@ -3,7 +3,7 @@ import Base from "../Base";
 const resource = '/Product';
 
 export default {
-    get(page,orderBy="0",isAsc=true,brandName="",pagesize=10,) {
+    get(page,orderBy="0",isAsc=true,brandName="",pagesize=10) {
         return Base.get(`${resource}`+"/ProductPage/"+page+"/"+ pagesize +"/"+orderBy+"/"+isAsc+"/"+brandName);
     },
     getPost(id) {

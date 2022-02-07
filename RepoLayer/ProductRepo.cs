@@ -18,7 +18,6 @@ namespace RepoLayer
             _ctx = ctx;
         }
 
-        public async Task<int> GetProductsNumber() => await _ctx.Products.CountAsync();
         public IQueryable<Product> GetAll() => _ctx.Products;
 
 
@@ -54,22 +53,24 @@ namespace RepoLayer
         public async Task<int> DeleteLogicalAsync(int productId)
         {
             Product product =_ctx.Products.Where(x=>x.Id == productId).FirstOrDefault();
-            if (product != null)
+            if (!(product is null))
             {
-                product.IsDeleted = true;
-                _ctx.Products.Update(product);
+                int x= await _ctx.Database.ExecuteSqlRawAsync(@"UPDATE InfoRequestReply
+                    SET InfoRequestReply.IsDeleted=1
+                    FROM InfoRequestReply as reply
+                    join InfoRequest as request On reply.InfoRequestId=request.Id
+                    join Product as p On request.ProductId=p.Id
+                    WHERE p.Id=" + productId);
 
-                List <InfoRequest> requests = await _ctx.InfoRequests.Where(x => x.ProductId == productId).ToListAsync();
-                foreach (InfoRequest request in requests)
-                {
-                    request.IsDeleted = true;
-                }
-                _ctx.InfoRequests.UpdateRange(requests);
+                int y= await _ctx.Database.ExecuteSqlRawAsync(@"UPDATE InfoRequest
+                    SET InfoRequest.IsDeleted=1
+                    FROM InfoRequest as request join Product as p On request.ProductId=p.Id
+                    WHERE p.Id=" + productId);
 
-                //TODO inforeply
+                return x+y;
             }
+            return 0;
 
-            return await _ctx.SaveChangesAsync();
         }
     }
 

@@ -6,7 +6,7 @@ export default {
         return Base.get(`${resource}`+"/GetNames")
     },
     get(page) {
-        return Base.get(`${resource}`+"/ProductPage/"+page);
+        return Base.get(`${resource}`+"/BrandPage/"+page);
     },
     getPost(id) {
         return Base.get(`${resource}/${id}`);

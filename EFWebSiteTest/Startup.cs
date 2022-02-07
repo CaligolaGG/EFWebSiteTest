@@ -59,8 +59,7 @@ namespace EFWebSiteTest
                     builder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials()
-                    .WithOrigins("http://localhost:8080"); 
+                    .AllowAnyOrigin();
                 });
             });
         }

@@ -26,7 +26,7 @@ namespace ServiceLayer
         /// <param name="pageSize">size of the page. must be greater than 0</param>
         /// <returns>An EntityPage object with the info relative to the paging and the list of products</returns>
         /// <exception cref="ArgumentOutOfRangeException"> if pagenum and pagesize less than 1 throw exception</exception>
-        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, int orderBy, bool isAsc, int? brandId)
+        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, int orderBy, bool isAsc, string brandName)
         {
             if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException("pageSize must be > 0");
@@ -36,14 +36,14 @@ namespace ServiceLayer
             EntityPage<ProductSelect> page = new EntityPage<ProductSelect>();
 
             page.PageSize = pageSize;
-            page.TotalEntitiesNumber = await _productRepo.GetProductsNumber();
             page.CurrentPageNumber = pageNum;
-            page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
+
 
             var products = _productRepo.GetAll();
-            if(! (brandId is null))
-                products = products.Where(x=> x.BrandId == brandId);
-
+            if(! (brandName is null))
+                products = products.Where(x=> x.Brand.BrandName == brandName);
+            page.TotalEntitiesNumber = await products.CountAsync();
+            page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
             switch (orderBy)
             {
                 case 1:
@@ -72,6 +72,7 @@ namespace ServiceLayer
                     Description = p.ShortDescription,
                     Categories = p.ProductCategory.Select(x => x.Category.Name),
                     BrandName = p.Brand.BrandName,
+                    Price = p.Price.ToString(), 
                 })
                 .ToListAsync();
             page.ListEntities = x;

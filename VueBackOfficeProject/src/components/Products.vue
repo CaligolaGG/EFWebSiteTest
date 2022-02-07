@@ -32,6 +32,7 @@
         </tbody>
       </table>
       <button @click="previousPage()" class="btn btn-primary mx-1">Previous</button>
+      <button v-for="(item,index) in closePages" :key="index" @click="changePage(item)">{{item}}</button>
       <button @click="nextPage()" class="btn btn-primary">Next</button>
     </div>
 
@@ -123,16 +124,30 @@ export default {
         -- this.currentpage;
        this.fetchPage()      
     },
+    changePage(pageNum){
+      this.currentpage =pageNum;
+      this.fetchPage();
+    },
     async selectOrderBy(n){
       this.orderBy==n? this.isAsc = !this.isAsc : this.orderBy= n;
-       this.updateData();
+      this.updateData();
     },
     
   },
   computed:{
     getProducts(){
       return this.info.data.listEntities
+    },
+    closePages(){
+      let x=[]
+      let p= this.currentpage
+      p-2<2? p:x.push(p-2)
+      p-1<1? p:x.push(p-1)
+      p+1>this.info.data.totalPagesNumber? p:x.push(p+1)
+      p+2>this.info.data.totalPagesNumber? p:x.push(p+2)
+      return x
     }
+
   },
 
   async created(){
@@ -149,7 +164,7 @@ export default {
   padding-bottom: 5px;
 }
 .hover:hover{
-  transform: scale(1.01);
+  transform: scale(1.001);
   box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }
 </style>
