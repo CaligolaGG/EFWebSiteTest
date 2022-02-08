@@ -3,6 +3,8 @@ using System;
 using RepoLayer;
 using ServiceLayer;
 using System.Threading.Tasks;
+using Domain;
+using System.Collections.Generic;
 
 namespace EFWebSiteTest.Controllers
 {
@@ -24,7 +26,7 @@ namespace EFWebSiteTest.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
-            var result = await _categoryService.GetAllAsync();
+            List<Category> result = await _categoryService.GetAllAsync();
             if (result is null)
                 return NotFound("not found");
             return Ok(result);

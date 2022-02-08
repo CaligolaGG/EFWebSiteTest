@@ -12,7 +12,12 @@ namespace Domain
     {
         public Brand Brand { get; set; }
         public List<ProductAndCategoryModel> ProductsCategs { get; set; }
-        
+    }
+
+    public class BrandProjectionBasic 
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 
     #region ProjectionModels

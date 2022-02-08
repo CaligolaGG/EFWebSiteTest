@@ -44,6 +44,8 @@ export default {
     }
   },
   methods:{
+    
+    //Used to change the color of the tabs in the sidebar.
     activateTabColor(n){
       for (let x in this.tabs)
         this.tabs[x].state = true

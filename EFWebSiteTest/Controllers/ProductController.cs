@@ -66,7 +66,7 @@ namespace EFWebSiteTest.Controllers
         /// <param name="model">List of the of ProductAndCategoryModel which holds both 
         /// the product to create and the list of categories associated </param>
         [HttpPost("InsertProductCat")]
-        public async Task<IActionResult> InsertProductWithCategories(ProductAndCategoryModel model)
+        public async Task<IActionResult> InsertProductWithCategories (ProductAndCategoryModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

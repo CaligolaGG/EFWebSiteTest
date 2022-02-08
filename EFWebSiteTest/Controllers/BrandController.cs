@@ -17,22 +17,18 @@ namespace EFWebSiteTest.Controllers
     {
         private readonly BrandService _brandService;
 
-
-        /// <summary>
-        /// Method to get all the brands from the db
-        /// </summary>
-        /// <returns>Not Found if no brands are found. Ok() with the list of brands otherwise</returns>
-
         public BrandController( BrandService brandService)
         {
             _brandService = brandService;
         }
 
-        
-        [HttpGet("GetNames")]
+        /// <summary>
+        /// Method to get all the brands from the db
+        /// </summary>
+        /// <returns>Not Found if no brands are found. Ok() with the list of brands otherwise</returns>
         public async Task<IActionResult> GetAllBrandsNames()
         {
-            var result = await _brandService.GetAllNamesAsync();
+            var result = await _brandService.GetAllAsync();
             if(result is null)
                 return NotFound("not found");
             return Ok(result);
@@ -147,6 +143,7 @@ namespace EFWebSiteTest.Controllers
         /// Forbid if the brand has not been inserted for any reason
         /// Ok with the model inserted otherwise
         /// </returns>
+        [HttpPost("CreateWithProds")]
         public async Task<IActionResult> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
             if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brandWithProducts.Brand.BrandName))

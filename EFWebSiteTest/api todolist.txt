@@ -38,6 +38,35 @@ Per ogni punto svolto: Valida,Testa, Commenta, Nomi, togli codice residuo e part
 -------------------------------------------------------------------
 ...Roba in Vue
 
+•Products
+-Read 
+Page													 X
+Detail
+-Create													 X
+-Update
+Delete
+
+aggiusta i pulsanti di pagina (paging)
+cambia api prodCat (update)
+
+
+•Brands
+-Read
+Page
+Detail
+-Create
+-Update
+-Delete
+
+•Requests
+-Read
+Page
+Detail
+-Create
+Update
+Delete
+
+
 
 
 

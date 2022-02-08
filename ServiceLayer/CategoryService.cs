@@ -18,7 +18,5 @@ namespace ServiceLayer
 
         public async Task<List<Category>> GetAllAsync() => await _categoryRepo.GetAllAsync();
         
-
-
     }
 }
