@@ -43,6 +43,24 @@ namespace EFWebSiteTest.Controllers
         }
 
         /// <summary>
+        /// api get method to get a product with its categories
+        /// </summary>
+        /// <param name="productId">id of the product. Should always be > 0</param>
+        /// <returns> BadRequest when id is less than 1.
+        /// Not found when the object with the specific id has not been found
+        /// Ok result with a ProductDetail model in any other case</returns>
+        [HttpGet("{productId:int}")]
+        public async Task<IActionResult> GetProductAndCategories(int productId)
+        {
+            if (productId < 1)
+                return BadRequest("invalid id");
+            var result = await _productService.GetProductAsync(productId);
+            if (result is null)
+                return NotFound();
+            return Ok(result);
+        }
+
+        /// <summary>
         /// api get method to get a product with some details
         /// </summary>
         /// <param name="productId">id of the product. Should always be > 0</param>
@@ -75,6 +93,29 @@ namespace EFWebSiteTest.Controllers
             foreach (int category in model.Categories)
                 productCategories.Add(new ProductCategory { IdCategory = category, IdProduct = model.Product.Id });
             await _productcategoryService.InsertMultiple(productCategories);
+            return result;
+        }
+
+
+        /// <summary>
+        /// Api put method to create a Product with the categories.
+        /// </summary>
+        /// <param name="model">List of the of ProductAndCategoryModel which holds both 
+        /// the product to create and the list of categories associated </param>
+        [HttpPut("UpdateProductCat")]
+        public async Task<IActionResult> UpdateProductWithCategories(ProductAndCategoryModel model)
+        {
+            if(model.Product.Name.Length > 50 || model.Product.Description.Length > 50 || model.Product.ShortDescription.Length > 20)
+                return BadRequest("inputs too longs");
+            if (!ModelState.IsValid || model.Product.Id < 1)
+                return BadRequest(ModelState);
+
+            var result = await InsertOrUpdateProduct(model.Product);
+            List<ProductCategory> productCategories = new List<ProductCategory>();
+            foreach (int category in model.Categories)
+                productCategories.Add(new ProductCategory { IdCategory = category, IdProduct = model.Product.Id });
+            
+            await _productcategoryService.UpdateMultiple(productCategories);
             return result;
         }
 
@@ -136,7 +177,7 @@ namespace EFWebSiteTest.Controllers
         /// NotFound if the call to the repo returns 0, therefore the product was either not found or not deleted
         /// Ok otherwise
         /// </returns>
-        [HttpDelete("DeleteProduct/{productId:min(0)}")]
+        [HttpDelete("DeleteProduct/{productId:min(1)}")]
         public async Task<IActionResult> DeleteProduct(int productId) 
         {
             if (productId < 1)
@@ -149,7 +190,7 @@ namespace EFWebSiteTest.Controllers
             return Ok();
         }
 
-        [HttpDelete("DeleteProductL/{productId:min(0)}")]
+        [HttpDelete("DeleteProductL/{productId:min(1)}")]
         public async Task<IActionResult> DeleteProductLogical(int productId)
         {
             if (productId < 1)

@@ -17,7 +17,7 @@ Paginazione nuovi order e filtri:
 -> Filtro brand. Aggiungi brand e categorie alla pagina.
 
 
-•aggiungi api extra
+•aggiungi api extra											X
 Leads/Requests:
 - paginazione leads 
 -> filtrabile per Nome Brand (select), Nome Prodotto (input text)
@@ -25,13 +25,13 @@ Leads/Requests:
 
 Products:
 -inserimento Prodotto -> getall( Brand, Categories ), InsertNew(ProductCategory) per la <select> front end. 
--edit Prodotto  
--remove Prodotto ?(incompleta)
+-edit Prodotto   
+-remove Prodotto 
 
 Brands:
 -edit brand		 ?(incompleta)											
--remove brand												
--inserimento nuovo brand con relativi prodotti				<-<-<-(Here)
+-remove brand	 ?(incompleta)											
+-inserimento nuovo brand con relativi prodotti				
 
 
 Per ogni punto svolto: Valida,Testa, Commenta, Nomi, togli codice residuo e parti commentate inutili, Testa
@@ -41,16 +41,16 @@ Per ogni punto svolto: Valida,Testa, Commenta, Nomi, togli codice residuo e part
 •Products
 -Read 
 Page													 X
-Detail
+Detail													 X (todo styling)
 -Create													 X
--Update
-Delete
+-Update													 X							
+-Delete													 X
 
-aggiusta i pulsanti di pagina (paging)
-cambia api prodCat (update)
+aggiusta i pulsanti di pagina (paging)					 X
+valore vuoto per paginazione brand filter				 X
 
 
-•Brands
+•Brands														<-<-<-(Here)
 -Read
 Page
 Detail
@@ -63,8 +63,8 @@ Detail
 Page
 Detail
 -Create
-Update
-Delete
+-Update
+-Delete
 
 
 

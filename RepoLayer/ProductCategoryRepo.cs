@@ -26,5 +26,18 @@ namespace RepoLayer
             await _ctx.ProductCategories.AddRangeAsync (productCategories);
             return await _ctx.SaveChangesAsync();
         }
+
+
+        /// <summary>
+        /// Remobe from the table multiple ProductCategory records
+        /// </summary>
+        /// <param name="productId">id of the product which categories have to be removed</param>
+        /// <returns>Number of rows that have been affected</returns>
+        public async Task<int> DeleteMultipleAsync(int productId)
+        {
+            List<ProductCategory> pc = await _ctx.ProductCategories.Where(x=>x.IdProduct == productId).ToListAsync();
+            _ctx.ProductCategories.RemoveRange(pc);
+            return await _ctx.SaveChangesAsync();
+        }
     }
 }

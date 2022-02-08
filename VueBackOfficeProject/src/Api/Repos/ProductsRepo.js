@@ -12,16 +12,17 @@ export default {
     createWithCats(payload){
         return Base.post(`${resource}`+"/"+"InsertProductCat", payload);
     },
-    getProduct(id) {
+    getProductDetail(id) {
         return Base.get(`${resource}/ProductDetail/${id}`);
     },
-
-
-    update(payload, id) {
-        return Base.put(`${resource}/${id}`, payload);
+    getProduct(id) {
+        return Base.get(`${resource}/${id}`);
+    },
+    update(payload) {
+        return Base.put(`${resource}/UpdateProductCat`, payload);
     },
     delete(id) {
-        return Base.delete(`${resource}/${id}`)
+        return Base.delete(`${resource}/DeleteProductL/${id}`)
     },
 
 };

@@ -163,9 +163,44 @@ namespace ServiceLayer
                         RepliesCount = ir.InfoRequestReplies.Count,
                         LastReply = ir.InfoRequestReplies.OrderByDescending(r => r.InsertDate).Select(reply => reply.InsertDate).FirstOrDefault()
                     })
-                }).OrderBy(x => x.ProductName).FirstOrDefaultAsync();
+                }).FirstOrDefaultAsync();
 
             return product;
+        }
+
+        /// <summary>
+        /// Fetch a product with its categories.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns>object, that hold the requested infos</returns>
+        public async Task<ProductAndCategories> GetProductAsync(int productId)
+        {
+            if (productId < 1)
+                throw new ArgumentOutOfRangeException("product id must be > 0");
+
+             var product = await _productRepo.GetAll().Where(p => p.Id == productId)
+                .Select(p => new ProductAndCategories
+                {
+                    Product = new Product
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        ShortDescription = p.ShortDescription,
+                        Price = p.Price,
+                        BrandId = p.BrandId,
+                    },
+                    
+                    BrandName = p.Brand.BrandName,
+                    Categories = p.ProductCategory.Select(pc => new Category
+                    {
+                        Id = pc.IdCategory,
+                        Name = pc.Category.Name
+                    }),
+
+                }).FirstOrDefaultAsync();
+
+           return product;
         }
 
 

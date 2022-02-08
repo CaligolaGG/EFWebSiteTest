@@ -1,6 +1,6 @@
 <template>
   <div class="mx-2">
-
+    <button @click="$router.push({path:'/products/new'})" class="btn btn-primary"> AddProduct</button> <br>
 
     Products
     <div v-if="!this.loading" >
@@ -19,65 +19,35 @@
         <tr class="bg-light">
           <td> 
             <select name="" id="" class="form-select m-1 "  v-model="brandName" @change="updateData()">
-              <option disabled value="">Select a brand</option>
+              <option value="">Select a brand</option>
               <option v-for="brand in this.brands" :key="brand.Id"  > {{brand.name}} </option>  
             </select>  
           </td>
           <td></td><td></td><td></td><td></td>
         </tr>
         <tbody >
-          <tr v-for="item in this.getProducts" :key="item.Id" class="hover"  @click="$router.replace({path:'/products/'+item.id})">
-            <td class="col">{{item.brandName}}</td>
-            <td class="col"> <b> {{item.productName}} </b> |  {{item.description}}</td>
-            <td class="col-4"><span v-for="(cat, index) in item.categories" :key="index" class="rounded-pill bg-primary text-light ">  <small class="p-1"> {{cat}} </small> </span> </td>
-            <td class="col">{{item.price}}</td>
+          <tr v-for="item in this.getProducts" :key="item.Id" class="hover" >
+            <td class="col" @click="$router.push({path:'/products/'+item.id})">{{item.brandName}}</td>
+            <td class="col" @click="$router.push({path:'/products/'+item.id})"> <b> {{item.productName}} </b> |  {{item.description}}</td>
+            <td class="col-4" @click="$router.push({path:'/products/'+item.id})"><span v-for="(cat, index) in item.categories" :key="index" class="rounded-pill bg-primary text-light ">  <small class="p-1"> {{cat}} </small> </span> </td>
+            <td class="col" @click="$router.push({path:'/products/'+item.id})">{{item.price}}</td>
             <td class="col-2">
               <div class="mx-3 d-flex justify-content-end">
-              <button class="col-3 offset-1 btn btn-outline-secondary bi bi-pencil-square"></button>
-              <button class="col-3 btn btn-outline-secondary text-danger"><i class="bi bi-trash-fill text"></i></button>
+              <button class="col-3 offset-1 btn btn-outline-secondary bi bi-pencil-square" @click="$router.push({path:'/products/'+item.id+'/edit'})"></button>
+              <button class="col-3 btn btn-outline-secondary text-danger" @click="deleteProduct(item.id)"><i class="bi bi-trash-fill text"></i></button>
               </div>
             </td>
           </tr>
         </tbody>
-      </table>
-      <button @click="previousPage()" class="btn btn-primary mx-1">Previous</button>
-      <button v-for="(item,index) in closePages" :key="index" @click="changePage(item)">{{item}}</button>
-      <button @click="nextPage()" class="btn btn-primary">Next</button>
+      </table>      
+      <ul class="pagination justify-content-center">
+        <button @click="previousPage()" class="btn btn-primary mx-1">Previous</button>
+        <button v-for="(item,index) in closePages" :key="index" @click="changePage(item)" class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item),'text-white':isCurrent(item) }">{{item}}</button>
+        <button @click="nextPage()" class="btn btn-primary">Next</button>
+      </ul>
     </div>
 
-    <br><br><br>
-    <form  id="insert" v-if="insert" v-on:submit.prevent="submitForm()">
-      insert new product
-      <div class="form-group mb-2">
-        <label for="pname">Name</label>
-        <input type="text" name="pname" id="" class="form-control" v-model="form.Name">
-      </div>
-      <div class="form-group mb-2">
-        <label for="desc">Description</label>
-        <input type="textarea" class="form-control" name="desc" v-model="form.Description">
-      </div>
-      <div class="form-group mb-2">
-        <label for="sdesc">ShortDescription</label>
-        <input type="textarea" class="form-control" name="sdesc" v-model="form.ShortDescription">
-      </div>
-      <div class="form-group mb-2">
-        <label for="price">Price</label>
-        <input type="number" class="form-control" name="price" v-model="form.Price">
-      </div>
-      <div>
-        BrandId 
-        <select name="" id="" class="form-select m-1 "  v-model="form.BrandId">
-          <option disabled value="">Please select one</option>
-          <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
-        </select>  
-        Categories 
-        <select name="categories" id="" class="form-select m-1" v-model="catsSelect" multiple>
-          <option disabled value="">Please select one</option>
-          <option v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary mt-2">Submit</button>
-    </form>
+    
   </div>
 </template>
 
@@ -93,29 +63,17 @@ const CategoriesRepository = Repository.get("categories");
 export default {
   data(){
    return {
-     loading: true,
+     loading: true, //id of the product (from routing)
      insert:true,
 
      currentpage:1,
-     orderBy:0,
+     orderBy:0,    //integer to choose the criteria of ordering
      isAsc:true,
      brandName:"",
      brandSelect:"",
 
-     info:{},
-     brands:{},
-     categories: {},
-
-     form:
-     {
-       Name:"",
-       Description:"",
-       ShortDescription:"",
-       Price:0,
-       BrandId:null,
-     },
-    catsSelect:[]
-
+     info:{}, //object to contain the list of products fetched from the db
+     
 
    }
   },
@@ -135,8 +93,6 @@ export default {
       await this.fetchPage();
       let temp = await BrandRepository.getAll();
       this.brands = temp.data
-      let cats = await CategoriesRepository.get();
-      this.categories = cats.data;
       this.loading = false;
     },
     //increase the current page by one and refresh the data
@@ -153,7 +109,7 @@ export default {
     },
     //change the current page to a specific one and refresh the data
     changePage(pageNum){
-      this.currentpage =pageNum;
+      this.currentpage = pageNum;
       this.fetchPage();
     },
     //changes the ordering of the data
@@ -161,19 +117,18 @@ export default {
       this.orderBy==n? this.isAsc = !this.isAsc : this.orderBy= n;
       this.updateData();
     },
-    //insert a new product in the db by calling the specific repository function
-    submitForm(){
-      if(this.catsSelect.length == 0)
-        ProductsRepository.create(this.form)
-      else
+    //delete a product and refreshes the page
+    async deleteProduct(id){
+      if(confirm("are you sure you want to delete this product?"))
       {
-        let productWithCats = {Product : this.form, Categories: this.catsSelect}
-        ProductsRepository.createWithCats(productWithCats)
+        await ProductsRepository.delete(id);
+        this.changePage(this.currentpage);
       }
-      console.log(this.form)
-      console.log(this.catsSelect)
+    },
+    isCurrent(x){
+      return this.currentpage == x 
     }
-    
+
   },
   computed:{
     //returns the list of products from the info fetched.
@@ -186,10 +141,12 @@ export default {
       let p= this.currentpage
       p-2<2? p:x.push(p-2)
       p-1<1? p:x.push(p-1)
+      x.push(p);
       p+1>this.info.data.totalPagesNumber? p:x.push(p+1)
       p+2>this.info.data.totalPagesNumber? p:x.push(p+2)
       return x
-    }
+    },
+
 
   },
 

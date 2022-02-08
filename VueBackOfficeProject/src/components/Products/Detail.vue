@@ -24,16 +24,17 @@ const CategoriesRepository = Repository.get("categories");
 export default {
     data() {
         return {
-            productId:0,
-            loading:true,
+            productId:0,  //id of the product (from routing)
+            loading:true, //boolean to know if the data has been fetched yet
             
-            info:{},
+            info:{},      //object that contains the info of the product fetched
 
         }    
     },
     methods:{
+        //get the product detail data by calling the specific api
         async getData(){ 
-            let temp= await ProductsRepository.getProduct(this.productId);
+            let temp= await ProductsRepository.getProductDetail(this.productId);
             this.info = temp.data;
             this.loading = false;
         },

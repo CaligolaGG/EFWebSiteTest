@@ -29,5 +29,16 @@ namespace ServiceLayer
 
             return await _productCategoryRepo.CreateMultipleAsync(productCategories);
         }
+
+
+
+        public async Task<int> UpdateMultiple(List<ProductCategory> productCategories)
+        {
+            if (productCategories is null || productCategories.Count < 1)
+                throw new ArgumentException(nameof(productCategories));
+
+            await _productCategoryRepo.DeleteMultipleAsync(productCategories.First().IdProduct);
+            return await _productCategoryRepo.CreateMultipleAsync(productCategories);
+        }
     }
 }

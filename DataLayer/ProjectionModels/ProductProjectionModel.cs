@@ -8,6 +8,15 @@ namespace Domain
     {
     }
     #region ProjectionModels
+
+    public class ProductAndCategories
+    {
+        public Product Product { get; set; }
+        public string BrandName { get; set; }
+        public IEnumerable<Category> Categories { get; set;}
+
+    }
+
     /// <summary>
     /// projection class that hold details of a product
     /// </summary>
