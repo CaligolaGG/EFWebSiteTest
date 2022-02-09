@@ -11,6 +11,7 @@ namespace Domain
     public class BrandWithProducts
     {
         public Brand Brand { get; set; }
+        public Account Account { get; set; }
         public List<ProductAndCategoryModel> ProductsCategs { get; set; }
     }
 

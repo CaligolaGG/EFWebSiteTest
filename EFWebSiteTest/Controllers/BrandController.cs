@@ -116,7 +116,7 @@ namespace EFWebSiteTest.Controllers
         /// NotFound if the brand doesnt get updated for any reason
         /// Ok() otherwise
         /// </returns>
-        [HttpDelete("/{brandId:int}")]
+        [HttpDelete("Delete/{brandId:int}")]
         public async Task<IActionResult> DeleteLogicalAsync(int brandId) 
         {
             if (brandId < 1)

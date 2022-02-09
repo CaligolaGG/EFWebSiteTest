@@ -77,7 +77,7 @@ namespace RepoLayer
 
         public async Task<int> LogicalBrandDeleteAsync(int brandId)
         {
-            Brand brand = _ctx.Brands.Where(x => x.Id == brandId).FirstOrDefault();
+            Brand brand = _ctx.Brands.FirstOrDefault(x => x.Id == brandId);
             brand.IsDeleted = true;
             //TODO
             _ctx.Brands.Update(brand);
@@ -98,12 +98,19 @@ namespace RepoLayer
         /// <returns>number of rows affected</returns>
         public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
+            await _ctx.Accounts.AddAsync(brandWithProducts.Account);
+            await _ctx.SaveChangesAsync();
+            brandWithProducts.Brand.AccountId = brandWithProducts.Account.Id;
             await _ctx.Brands.AddAsync(brandWithProducts.Brand);
+            await _ctx.SaveChangesAsync();
+
+
             foreach (ProductAndCategoryModel p in brandWithProducts.ProductsCategs)
             {
-
                 if(String.IsNullOrWhiteSpace(p.Product.Name))
                     throw new Exception("invalid product " + p.Product.Name);
+                p.Product.BrandId = brandWithProducts.Brand.Id;
+
                 foreach (int c in p.Categories)
                 {
                     if (c < 1)
@@ -111,6 +118,8 @@ namespace RepoLayer
                 }
 
                 await _ctx.Products.AddAsync(p.Product);
+                await _ctx.SaveChangesAsync();
+
                 foreach (int c in p.Categories)
                     await _ctx.ProductCategories.AddAsync(new ProductCategory { IdProduct = p.Product.Id, IdCategory = c });
             }

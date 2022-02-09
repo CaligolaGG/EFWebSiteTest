@@ -21,9 +21,8 @@ export default {
     delete(id) {
         return Base.delete(`${resource}/${id}`)
     },
-    
     create(payload) {
-        return Base.post(`${resource}`, payload);
+        return Base.post(`${resource}/CreateWithProds`, payload);
     },
     update(payload, id) {
         return Base.put(`${resource}/${id}`, payload);
