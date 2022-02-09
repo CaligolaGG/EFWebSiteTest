@@ -148,6 +148,14 @@ namespace ServiceLayer
             return await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts);
         }
 
+        
+        public async Task<Brand> GetBrandAsync(int brandId)
+        {
+            if (brandId < 1)
+                throw new ArgumentException("brand id must be > 0");
+            return await _brandRepo.GetById(brandId).FirstOrDefaultAsync();
+        }
+
 
 
     }

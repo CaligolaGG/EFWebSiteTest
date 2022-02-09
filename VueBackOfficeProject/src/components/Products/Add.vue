@@ -68,7 +68,7 @@ export default{
     },
     methods:{
         async getData(){
-            let temp = await BrandRepository.getAll();
+            let temp = await BrandRepository.get();
             this.brands = temp.data
             let cats = await CategoriesRepository.get();
             this.categories = cats.data;

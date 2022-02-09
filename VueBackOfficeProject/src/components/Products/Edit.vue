@@ -65,7 +65,7 @@ export default {
                 this.info.categories.push(i.id);
 
             let cats = await CategoriesRepository.get();
-            let temp3 = await BrandRepository.getAll();
+            let temp3 = await BrandRepository.get();
             this.brands = temp3.data
             this.categories = cats.data;
             this.loading = false;

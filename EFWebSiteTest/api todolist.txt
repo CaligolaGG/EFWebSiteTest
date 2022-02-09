@@ -69,7 +69,7 @@ Detail
 
 
 
-
+tempi di caricamento delle pagine
 -------------------------------------------------------------------
 •Api
 Unit Testing?

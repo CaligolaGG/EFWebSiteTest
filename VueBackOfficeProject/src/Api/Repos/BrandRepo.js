@@ -2,25 +2,32 @@ import Base from "../Base";
 const resource = '/Brand';
 
 export default {
-    getAll(){
+    //get an entire brand object by its id
+    getById(id){
+        return Base.get(`${resource}/GetBrand/${id}`)
+    },
+    //get a page of brands
+    getAll(pageNum,searchByName,pagesize) {
+        return Base.get(`${resource}/BrandPage/${pageNum}/${pagesize}/${searchByName}`);
+    },
+    //get brand details with its products
+    getBrand(id) {
+        return Base.get(`${resource}/BrandDetail/${id}`);
+    },
+    //get a list of all brands names and ids
+    get(){
         return Base.get(`${resource}`)
     },
-    get(page) {
-        return Base.get(`${resource}`+"/BrandPage/"+page);
+    delete(id) {
+        return Base.delete(`${resource}/${id}`)
     },
-
-
-    getPost(id) {
-        return Base.get(`${resource}/${id}`);
-    },
+    
     create(payload) {
         return Base.post(`${resource}`, payload);
     },
     update(payload, id) {
         return Base.put(`${resource}/${id}`, payload);
     },
-    delete(id) {
-        return Base.delete(`${resource}/${id}`)
-    },
+
 
 };

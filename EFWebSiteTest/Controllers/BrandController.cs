@@ -26,10 +26,23 @@ namespace EFWebSiteTest.Controllers
         /// Method to get all the brands from the db
         /// </summary>
         /// <returns>Not Found if no brands are found. Ok() with the list of brands otherwise</returns>
-        public async Task<IActionResult> GetAllBrandsNames()
+        public async Task<IActionResult> GetAllBrands()
         {
             var result = await _brandService.GetAllAsync();
             if(result is null)
+                return NotFound("not found");
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Method to get a BrandObject from the db
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetBrand/{id:int}")]
+        public async Task<IActionResult> GetBrand(int id) 
+        {
+            var result = await _brandService.GetBrandAsync(id);
+            if (result is null)
                 return NotFound("not found");
             return Ok(result);
         }
@@ -103,7 +116,7 @@ namespace EFWebSiteTest.Controllers
         /// NotFound if the brand doesnt get updated for any reason
         /// Ok() otherwise
         /// </returns>
-        [HttpDelete("BrandDelete")]
+        [HttpDelete("/{brandId:int}")]
         public async Task<IActionResult> DeleteLogicalAsync(int brandId) 
         {
             if (brandId < 1)
