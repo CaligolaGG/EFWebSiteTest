@@ -1,6 +1,6 @@
 <template>
 <div v-if="!this.loading" class="container">
-    <span> Requests </span>
+    <h2> Requests </h2>
     <table class="table table-striped table-light ">
         <thead >
           <tr>
@@ -10,17 +10,17 @@
             <th class="position-relative" >Email </th>
             <th class="position-relative" >RequestText </th>
             <th class="position-relative" @click="ordering" >Date 
-              <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow" > </i> <!--v-bind:class="{'text-primary':selectArrow(1,false)}"-->
-              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow"  ></i>
+              <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':!isAsc}"> </i> 
+              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':isAsc}" ></i>
 
             </th>
           </tr>
           <tr>
              <th colspan="2">
-                  <input type="text" name="" id="" v-model="this.productName"> <button class="btn btn-primary" >SearchProduct</button>
+                  <input type="text" name="" id="" v-model="searchByProduct"> <button class="btn btn-primary" @click="updatePage()" >SearchProduct</button>
               </th>
               <th colspan="2">
-                    <select name="" id="" class="form-select m-1 "  v-model="searchByBrand" @change="updateData()">
+                    <select name="Select a brand" id="" class="form-select m-1 "  v-model="searchByBrand" @change="updateData()">
                         <option value="">Select a brand</option>
                         <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
                   </select>
@@ -72,7 +72,7 @@ const LeadsRepository = Repository.get("leads");
                 orderBy:0,    //integer to choose the criteria of ordering
                 isAsc:false,
                 searchByBrand:0,
-                searchByProduct:0,
+                searchByProduct:null,
                 brandName:"",
                 productName:null
 
@@ -82,7 +82,10 @@ const LeadsRepository = Repository.get("leads");
         methods: {
             //fetch a page of products through the repository get method
             async fetchPage(){
-                this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,this.searchByProduct,this.isAsc,10);
+                if (this.searchByProduct== null ||this.searchByProduct== "")
+                    this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,undefined, this.isAsc, 10);
+                else
+                    this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,this.searchByProduct, this.isAsc,10);
             },
             async updatePage(){
                 this.currentpage = 1;
@@ -145,6 +148,8 @@ const LeadsRepository = Repository.get("leads");
             },
         },
         async created() {
+            this.searchByProduct = this.$route.params.productName
+            this.searchByBrand = this.$route.params.brandId
             await this.getData();
         },
     };

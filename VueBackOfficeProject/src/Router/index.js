@@ -43,12 +43,12 @@ export default new Router({
 
     {
       path: '/leads',
-      name : 'requests',
+      name : 'leads',
       component: Requests
     },
     {
       path: '/leads/:id',
-      name : 'requestsDetail',
+      name : 'leadsDetail',
       component: RequestsDetail
     },
 

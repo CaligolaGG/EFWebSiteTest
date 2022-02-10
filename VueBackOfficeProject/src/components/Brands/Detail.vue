@@ -1,17 +1,35 @@
 <template>
-    <div class="container" v-if="!this.loading">{{ $route.params.id }}
+    <div class="container" v-if="!this.loading"> 
         <h1> {{info.brandName}} </h1>
         <h2>{{info.description}} </h2>
-        <li v-for="cat in info.listCategories" :key="cat.categoryId">{{cat.categoryName}}</li>
 
-<hr>
-            Requests {{info.numberRequests}}
-        <li v-for="prod in productPage" :key="prod.productId">{{prod.productId}}  ---  {{prod.productName}}  --- {{prod.productRequestNumber}}</li>
+        <p>Categories associated to this Brand's Products</p>
+        <ul class="list-group">
+            <li  class="list-group-item" v-for="cat in info.listCategories" :key="cat.categoryId">{{cat.categoryName}} ({{cat.categoryId}})</li>
+        </ul>
+    <hr>
+    Requests {{info.numberRequests}}
+    <table class="table table-striped  ">
+        <thead class="bg-mygreen">
+            <tr>
+                <th>Id</th>
+                <th>Product Name</th>
+                <th>Request Number</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr v-for="prod in productPage" :key="prod.productId">
+            <td>{{prod.productId}} </td>
+            <td>{{prod.productName}}</td>
+            <td>{{prod.productRequestNumber}}</td>
+        </tr>
+        </tbody>
+
+    </table>
     <ul class="pagination justify-content-center">
         <button @click="previousPage()" class="btn btn-primary mx-1">Previous</button>
         <button @click="nextPage()" class="btn btn-primary">Next</button>
     </ul>
-
     </div>
 </template>
 
@@ -56,3 +74,14 @@ export default {
     
 }
 </script>
+
+<style scoped> 
+.bg-mygreen{
+    background-color: #79ff2b;
+ }
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+   background-color: #c2ff1c; 
+ };
+
+</style>

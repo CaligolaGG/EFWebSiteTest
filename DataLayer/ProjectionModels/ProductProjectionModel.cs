@@ -24,6 +24,7 @@ namespace Domain
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; }
+        public int BrandId { get; set; }
         public string BrandName { get; set; }
         public int GuestUsersRequestsNumber { get; set; }
         public int LoggedUsersRequestsNumber { get; set; }

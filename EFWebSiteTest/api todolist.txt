@@ -47,7 +47,7 @@ Detail													 X (todo styling)
 -Delete													 X
 
 aggiusta i pulsanti di pagina (paging)					 X
-valore vuoto per paginazione brand filter				 X
+
 
 
 •Brands														
@@ -60,16 +60,43 @@ Detail
 
 •Requests
 -Page
--Detail													<-<-<-(Here)
+-Detail													
 
 
+----------------------------------------------------------------------------------
+
+LeftOvers frontend														<-<-<-(Here)
+•tempi di caricamento delle pagine. Mostra la tab vuota
+
+valore vuoto per paginazione filter select				 
+
+•Products:
+detail products list request. 
+X editing unisci con insert su product 
+X dopo add -> vai al detail	 
+
+inserts: transactions
+sidebar evidenzia fixa
+
+•Requests:
+search by.
+X detail				  
 
 
-tempi di caricamento delle pagine. Mostra la tab vuota
+•Brand
+edit aggiungi altri campi?
+
+•styling
+detail pages
+X bottoni add
+X brand bottoni edit e cancella metti le icone 
+cambia select into checkboxes
+
+
 -------------------------------------------------------------------
-•Api
+•LeftOvers Api
 Unit Testing?
 iCrud interface?
 Ricontrolla routing, optional routers.
 -------------------------------------------------------------------
-...Styling (NEVER!!!)
+...Styling

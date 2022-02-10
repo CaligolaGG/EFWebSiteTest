@@ -26,27 +26,26 @@
             </th>
             <th scope="col">  </th>
           </tr>
-        </thead>
-        <tr class="bg-light">
-          <td> 
-            <select name="" id="" class="form-select m-1 "  v-model="brandName" @change="updateData()">
-              <option value="">Select a brand</option>
-              <option v-for="brand in this.brands" :key="brand.Id"  > {{brand.name}} </option>  
-            </select>  
-          </td>
-          <td></td><td></td><td></td><td></td>
+          <tr class="bg-light">
+            <td> 
+              <select name="" id="" class="form-select m-1 "  v-model="brandName" @change="updateData()">
+                <option value="">Select a brand</option>
+                <option v-for="brand in this.brands" :key="brand.Id"  > {{brand.name}} </option>  
+              </select>  
+            </td>
+            <td></td><td></td><td></td><td></td>
         </tr>
+        </thead>
+        
         <tbody >
           <tr v-for="item in this.getProducts" :key="item.Id" class="hover" @click="$router.push({path:'/products/'+item.id})">
-            <td class="col" >{{item.brandName}}</td>
-            <td class="col" > <b> {{item.productName}} </b> |  {{item.description}}</td>
-            <td class="col-4" ><span v-for="(cat, index) in item.categories" :key="index" class="rounded-pill bg-primary text-light ">  <small class="p-1"> {{cat}} </small> </span> </td>
-            <td class="col" >{{item.price}}</td>
-            <td class="col-2">
-              <div class="mx-3 d-flex justify-content-end">
-              <button class="col-3 offset-1 btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/products/'+item.id+'/edit'})"></button>
-              <button class="col-3 btn btn-outline-secondary text-danger" @click.stop="deleteProduct(item.id)"><i class="bi bi-trash-fill text"></i></button>
-              </div>
+            <td class="col-2" >{{item.brandName}}</td>
+            <td class="col-3" > <b> {{item.productName}} </b> |  {{item.description}}</td>
+            <td class="col-3" ><span v-for="(cat, index) in item.categories" :key="index" class="rounded-pill bg-primary text-light ">  <small class="p-1"> {{cat}} </small> </span> </td>
+            <td class="col-1" >{{item.price}}</td>
+            <td class="col-1">
+              <button class="col offset-1 btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/products/'+item.id+'/edit'})"></button>
+              <button class="col btn btn-outline-secondary text-danger bi bi-trash-fill text" @click.stop="deleteProduct(item.id)"></button>
             </td>
           </tr>
         </tbody>

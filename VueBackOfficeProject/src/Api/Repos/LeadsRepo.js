@@ -2,8 +2,11 @@ import Base from "../Base";
 const resource = '/Request';
 
 export default {
-    getPage(pageNum=1,brandId=0,productId=0,isAsc=false,pageSize=10) {
-        return Base.get(`${resource}/LeadsPage/${pageNum}/${pageSize}/${brandId}/${productId}/${isAsc}`);
+    getPage(pageNum=1,brandId=0,productName=null,isAsc=false,pageSize=10) {
+        if(productName === null)
+            return Base.get(`${resource}/LeadsPage/${pageNum}/${pageSize}/${brandId}/${isAsc}`);
+        else
+            return Base.get(`${resource}/LeadsPage/${pageNum}/${pageSize}/${brandId}/${isAsc}/${productName}`);
     },
     getById (id) {
         return Base.get(`${resource}/RequestDetail/${id}`);

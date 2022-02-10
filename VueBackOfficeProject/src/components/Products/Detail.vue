@@ -4,24 +4,26 @@
             {{info.brandName}} </h3>
 
         <p class="mt-4 "> <b> Categories associated to the product: </b></p>
-        <div class="row border bg-light">
-            <li v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</li>
+        <div class="row mx-1">
+            <ul class=" list-group">
+                <li class="list-group-item" v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</li>
+            </ul>
         </div>
 
         <p class="mt-5"> <b> Leads for this product: </b></p>
         <div class="row"> 
             <div class="col-12">
-            {{info.guestUsersRequestsNumber + info.loggedUsersRequestsNumber }} InfoRequest for this product
-            {{info.guestUsersRequestsNumber}}  of which from Guest Users
-            {{info.loggedUsersRequestsNumber}} from Logged Users
+                <b> {{info.guestUsersRequestsNumber + info.loggedUsersRequestsNumber }} InfoRequest </b> for this product
+                <b> {{info.guestUsersRequestsNumber}}</b> from <b> Guest Users </b>|
+                <b>{{info.loggedUsersRequestsNumber}}</b> from <b> Logged Users </b> 
             </div>
         </div>
+        <button class="btn btn-primary my-2" @click="$router.push({name: 'leads', params: { productName: info.productName, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
 
-        <div class="row border bg-light">
-            <li v-for="req in info.requests" :key="req.Id">User {{req.fullName}} --- {{req.repliesCount}} replies</li>
-        </div>
-
-        <button class="btn btn-primary mt-2" > Vedi tutte le richieste per questo prodotto </button>
+        <!--
+        <div class="row">
+            <li class="list-group-item" v-for="req in info.requests" :key="req.Id">User {{req.fullName}} --- {{req.repliesCount}} replies</li>
+        </div>-->
 
     </div>
 </template>

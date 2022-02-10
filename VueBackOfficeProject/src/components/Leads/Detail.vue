@@ -22,7 +22,7 @@
                 </div>
 
         </div>
-                    <button class="btn btn-primary  m-2">Previous</button>
+            <button class="btn btn-primary  m-2">Previous</button>
             <button class="btn btn-primary">Next</button>
     </div>
 </template>

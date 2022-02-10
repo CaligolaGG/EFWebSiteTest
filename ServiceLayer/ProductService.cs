@@ -148,6 +148,7 @@ namespace ServiceLayer
                 {
                     ProductId = p.Id,
                     ProductName = p.Name,
+                    BrandId = p.BrandId,
                     BrandName = p.Brand.BrandName,
                     GuestUsersRequestsNumber = p.InfoRequests.Where(u => u.UserId == null).Count(),
                     LoggedUsersRequestsNumber = p.InfoRequests.Where(u => u.UserId != null).Count(),
