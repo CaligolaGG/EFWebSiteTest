@@ -66,20 +66,22 @@ Detail
 ----------------------------------------------------------------------------------
 
 LeftOvers frontend														<-<-<-(Here)
-•tempi di caricamento delle pagine. Mostra la tab vuota
-
-valore vuoto per paginazione filter select				 
-
 •Products:
-detail products list request. 
+X detail products list request. 
 X editing unisci con insert su product 
 X dopo add -> vai al detail	 
 
-inserts: transactions
+
 sidebar evidenzia fixa
+valore vuoto per paginazione select-filter		 
+X paginazione su brand e request dopo un filtro
+
+
+paginazione su requestdetail commenti?
+inserts: transactions?
 
 •Requests:
-search by.
+X search by.
 X detail				  
 
 
@@ -87,10 +89,12 @@ X detail
 edit aggiungi altri campi?
 
 •styling
-detail pages
+X detail pages
 X bottoni add
 X brand bottoni edit e cancella metti le icone 
 cambia select into checkboxes
+
+cambia upsert in api?
 
 
 -------------------------------------------------------------------

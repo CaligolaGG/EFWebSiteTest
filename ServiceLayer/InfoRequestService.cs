@@ -41,8 +41,7 @@ namespace ServiceLayer
             EntityPage<RequestSelect> page = new EntityPage<RequestSelect>();
             page.CurrentPageNumber = pageNum;
             page.PageSize = pageSize;
-            page.TotalEntitiesNumber = _requestRepo.GetNumber();
-            page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
+
 
 
             var requests = _requestRepo.GetAll();
@@ -54,6 +53,11 @@ namespace ServiceLayer
                 requests = requests.Where(x => x.Product.Name == searchByProductName);
 
             requests = Asc? requests.OrderBy(x => x.InsertDate): requests.OrderByDescending(x=>x.InsertDate);
+
+
+            page.TotalEntitiesNumber = requests.Count();
+            page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
+
             page.ListEntities = await requests
                .Skip((pageNum - 1) * pageSize).Take(pageSize)
                .Select(r => new RequestSelect

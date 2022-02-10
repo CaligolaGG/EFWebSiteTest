@@ -74,12 +74,16 @@ namespace ServiceLayer
             EntityPage<BrandSelect> page = new EntityPage<BrandSelect>();
             page.CurrentPageNumber = pageNum;
             page.PageSize = pageSize;
-            page.TotalEntitiesNumber = _brandRepo.GetBrandNumber();
-            page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
+
+
 
             var brands = _brandRepo.GetAll();
             if (!(searchByName is null || searchByName == ""))
                 brands = brands.Where(brand => brand.BrandName == searchByName);
+
+            page.TotalEntitiesNumber = brands.Count();
+            page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
+
             IQueryable<BrandSelect> result = brands.OrderBy(x => x.BrandName)
                 .Skip((pageNum - 1) * pageSize).Take(pageSize)
                 .Select(brand => new BrandSelect
