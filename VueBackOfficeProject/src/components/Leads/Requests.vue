@@ -20,7 +20,10 @@
                   <input type="text" name="" id="" v-model="this.productName"> <button class="btn btn-primary" >SearchProduct</button>
               </th>
               <th colspan="2">
-                  <input type="text" name="" id="" v-model="this.brandName"> <button class="btn btn-primary">SearchBrand</button>
+                    <select name="" id="" class="form-select m-1 "  v-model="searchByBrand" @change="updateData()">
+                        <option value="">Select a brand</option>
+                        <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
+                  </select>
               </th>
               <th></th>
               <th></th>
@@ -53,7 +56,7 @@
 
 import Repository from "../../Api/RepoFactory";
 //const ProductsRepository = Repository.get("products");
-//const BrandRepository = Repository.get("brands");
+const BrandRepository = Repository.get("brands");
 const LeadsRepository = Repository.get("leads");
 
 
@@ -63,6 +66,7 @@ const LeadsRepository = Repository.get("leads");
                 loading: true, //id of the product (from routing)
                 insert:true,
                 info:{},
+                brands:{},
 
                 currentpage:1,
                 orderBy:0,    //integer to choose the criteria of ordering
@@ -70,7 +74,7 @@ const LeadsRepository = Repository.get("leads");
                 searchByBrand:0,
                 searchByProduct:0,
                 brandName:"",
-                productName:""
+                productName:null
 
             };
         },
@@ -86,11 +90,17 @@ const LeadsRepository = Repository.get("leads");
             },
             async getData(){
                 await this.fetchPage();
+                let temp= await BrandRepository.get();
+                this.brands = temp.data;
                 this.loading = false;
             },
             async ordering(){
                 this.isAsc = !this.isAsc;
                 await this.updatePage();
+            },
+            updateData(){
+                this.currentpage=1;
+                this.fetchPage();
             },
 
 

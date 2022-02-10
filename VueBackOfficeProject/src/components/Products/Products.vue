@@ -1,8 +1,13 @@
 <template>
   <div class="container">
-    <button @click="$router.push({path:'/products/new'})" class="btn btn-primary"> AddProduct</button> <br>
-
-    Products
+    <div class="row">
+      <div class="col-10">
+        <h2 class="bold">Products</h2></div>
+      <div class="col ">
+        <button class="btn btn-outline-primary   " @click="$router.push({path:'/products/new'})" > AddProduct</button> <br>
+      </div> <hr>
+    </div>
+    
     <div v-if="!this.loading" >
       <table class="table table-striped table-light ">
         <thead >
@@ -136,7 +141,6 @@ export default {
 
     selectArrow(orderBy, isAsc ){
       return this.orderBy == orderBy && this.isAsc == isAsc
-      
     }
 
   },

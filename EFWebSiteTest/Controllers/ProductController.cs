@@ -162,7 +162,7 @@ namespace EFWebSiteTest.Controllers
 
             if (await _productService.InsertOrUpdateAsync(product) < 1)
                 return Forbid("product has not been inserted");
-            return Created("Product/InsertProduct", product);
+            return Ok(product);
         }
 
 
@@ -200,7 +200,7 @@ namespace EFWebSiteTest.Controllers
             if (result < 1)
                 return NotFound("product has not been found or not been deleted");
 
-            return Ok();
+            return Ok(result);
         }
 
     }

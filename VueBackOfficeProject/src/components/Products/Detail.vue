@@ -1,15 +1,28 @@
 <template>
-    <div class="container" v-if="!this.loading" >{{ $route.params.id }}
-        <h1> {{info.productName}} </h1>
-        <h2>{{info.brandName}} </h2>
-        <li v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</li>
+    <div class="container" v-if="!this.loading" >
+        <h3> {{info.productName}} by
+            {{info.brandName}} </h3>
 
-        <div> Requests
-            {{info.guestUsersRequestsNumber}}
-            {{info.loggedUsersRequestsNumber}}
-            <button class="btn btn-primary"> Vedi tutte le richieste per questo prodotto </button>
-            cambia routing con filtro prodotto
+        <p class="mt-4 "> <b> Categories associated to the product: </b></p>
+        <div class="row border bg-light">
+            <li v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</li>
         </div>
+
+        <p class="mt-5"> <b> Leads for this product: </b></p>
+        <div class="row"> 
+            <div class="col-12">
+            {{info.guestUsersRequestsNumber + info.loggedUsersRequestsNumber }} InfoRequest for this product
+            {{info.guestUsersRequestsNumber}}  of which from Guest Users
+            {{info.loggedUsersRequestsNumber}} from Logged Users
+            </div>
+        </div>
+
+        <div class="row border bg-light">
+            <li v-for="req in info.requests" :key="req.Id">User {{req.fullName}} --- {{req.repliesCount}} replies</li>
+        </div>
+
+        <button class="btn btn-primary mt-2" > Vedi tutte le richieste per questo prodotto </button>
+
     </div>
 </template>
 

@@ -26,8 +26,8 @@
                 </select>  
                 Categories {{info.categories}}
                 <select name="categories" id="" class="form-select m-1" v-model="info.categories" multiple>
-                <option  value="">Please select one</option>
-                <option v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
+                    <option  value="">Please select one</option>
+                    <option v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
@@ -72,7 +72,6 @@ export default {
         },
         submitForm(){
             let newProduct = { Product : this.info.product, Categories : this.info.categories }
-            console.log(newProduct);
             ProductsRepository.update(newProduct);
         }
 

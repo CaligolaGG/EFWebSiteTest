@@ -3,8 +3,8 @@ import Router from 'vue-router'
 
 import Products from '@/components/Products/Products.vue'
 import ProductDetail from '@/components/Products/Detail.vue'
-import ProductEdit from '@/components/Products/Edit.vue'
-import ProductAdd from '@/components/Products/Add.vue'
+import ProductEdit from '@/components/Products/UpSert.vue'
+import ProductAdd from '@/components/Products/UpSert.vue'
 
 import Brands from '@/components/Brands/Brands.vue'
 import BrandsDetail from '@/components/Brands/Detail.vue'

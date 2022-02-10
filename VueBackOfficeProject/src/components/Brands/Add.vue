@@ -110,7 +110,6 @@ export default {
         addProduct(){
             this.numProducts++;
             this.bundles.push(new bundle())
-            console.log(this.bundles)
         },
 
 

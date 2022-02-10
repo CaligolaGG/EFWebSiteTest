@@ -56,20 +56,16 @@ Page
 Detail
 -Create
 -Update
--Delete													<-<-<-(Here)
+-Delete													
 
 •Requests
--Read
-Page
-Detail
--Create
--Update
--Delete
+-Page
+-Detail													<-<-<-(Here)
 
 
 
 
-tempi di caricamento delle pagine
+tempi di caricamento delle pagine. Mostra la tab vuota
 -------------------------------------------------------------------
 •Api
 Unit Testing?

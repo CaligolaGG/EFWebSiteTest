@@ -1,7 +1,13 @@
 <template>
 <div class="container" v-if="!this.loading">
-    <button class="btn btn-primary" @click="$router.push({path:'/brands/new'})">AddBrand</button>
-    <span> Brands </span>
+  <div class="row">
+    <div class="col-10">
+      <h2> Brands </h2>
+    </div> 
+    <div class="col">
+      <button class="btn btn-outline-primary mx-2" @click="$router.push({path:'/brands/new'})">AddBrand</button>
+    </div>
+  </div><hr>
     <div >
         <table class="table table-striped table-light  ">
             <thead >
@@ -12,21 +18,22 @@
                 <th scope="col">  </th>
             </tr>
             <tr class="bg-light">
-                <td>
-                    <input type="text" name="" id="" v-model="search" placeholder="BrandName">
-                    <button class="btn btn-primary" @click="updateData()">Search</button>
-                </td><td></td><td></td><td></td>
+                <td colspan="2">
+                    <input class="form-control" type="text" name="" id="" v-model="search" placeholder="BrandName">
+                </td><td>
+                    <button class="btn btn-primary mx-2" @click="updateData()">Search</button>
+                  </td><td></td>
             </tr>
             </thead>
 
             <tbody >
                 <tr class="bg-light hover" v-for="brand in this.getBrands" :key="brand.brandId" @click.stop="$router.push({path:'/brands/'+brand.brandId})">
-                    <td >{{brand.brandId}}</td>
-                    <td >{{brand.brandName}}</td>
-                    <td >{{brand.description}}</td>
-                    <td >
-                        <button class="btn btn-info" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})"> Edit </button>
-                        <button class="btn btn-danger" @click.stop="Remove(brand.brandId)"> Delete </button>
+                    <td class="col-2" >{{brand.brandId}}</td>
+                    <td class="col-4">{{brand.brandName}}</td>
+                    <td class="col-4">{{brand.description}}</td>
+                    <td class="col-1">
+                        <button class="col offset-1 btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})">  </button>
+                        <button class="col btn btn-outline-secondary text-danger bi bi-trash-fill text" @click.stop="Remove(brand.brandId)">  </button>
                     </td>
                 </tr>
             </tbody>

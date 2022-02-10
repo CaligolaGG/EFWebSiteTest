@@ -77,14 +77,17 @@ export default{
 
         //insert a new product in the db by calling the specific repository function.
         // A different api gets called if no categories are selected for the product to insert
-        submitForm(){
+        async submitForm(){
+          var id = 0;
           if(this.catsSelect.length == 0)
-              ProductsRepository.create(this.form)
+              id = await ProductsRepository.create(this.form)
           else
           {
               let productWithCats = {Product : this.form, Categories: this.catsSelect}
-              ProductsRepository.createWithCats(productWithCats)
+              id = await ProductsRepository.createWithCats(productWithCats)
           }
+          this.$router.push({path:'/products/'+id.data.id})
+
         }
     },
     async created(){

@@ -34,7 +34,8 @@ namespace RepoLayer
                 _ctx.Products.Update(product);
             else
                 await _ctx.Products.AddAsync(product);
-            return await _ctx.SaveChangesAsync();
+             await _ctx.SaveChangesAsync();
+            return product.Id;
         }
 
      
