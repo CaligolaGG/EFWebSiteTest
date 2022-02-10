@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             add Brand
             <div class="form-group mb-2">
@@ -23,40 +23,40 @@
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
             <add-product v-for="n in 0" :key="n"  @update="onChildUpdate()"></add-product>
         </form>
+
+
+        <div v-for="n in this.numProducts" :key="n" class="my-3">
+            <form  id="insert" v-on:submit.prevent="submitForm()" class="bg-light my-2 border" >
+                {{n}}
+            insert new product
+            <div class="form-group mb-2">
+                <label for="pname">Name</label>
+                <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
+            </div>
+            <div class="form-group mb-2">
+                <label for="desc">Description</label>
+                <input type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description">
+            </div>
+            <div class="form-group mb-2">
+                <label for="sdesc">ShortDescription</label>
+                <input type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
+            </div>
+            <div class="form-group mb-2">
+                <label for="price">Price</label>
+                <input type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
+            </div>
+            <div class="form-group mb-2">
+
+                Categories 
+                <select name="categories" id="" class="form-select m-1" v-model="bundles[n-1].Categories" multiple>
+                <option  value="">Please select one</option>
+                <option v-for="cat in categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
+                </select>
+            </div>
+            </form>
+        </div>
         <button @click="addProduct()" class="btn btn-primary mt-2">Add Product</button>
 
-
-<div v-for="n in this.numProducts" :key="n">
-    <form  id="insert" v-on:submit.prevent="submitForm()" class="bg-light my-2 border" >
-        {{n}}
-      insert new product
-      <div class="form-group mb-2">
-        <label for="pname">Name</label>
-        <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
-      </div>
-      <div class="form-group mb-2">
-        <label for="desc">Description</label>
-        <input type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description">
-      </div>
-      <div class="form-group mb-2">
-        <label for="sdesc">ShortDescription</label>
-        <input type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
-      </div>
-      <div class="form-group mb-2">
-        <label for="price">Price</label>
-        <input type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
-      </div>
-      <div class="form-group mb-2">
-
-        Categories 
-        <select name="categories" id="" class="form-select m-1" v-model="bundles[n-1].Categories" multiple>
-          <option  value="">Please select one</option>
-          <option v-for="cat in categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
-        </select>
-      </div>
-    </form>
-
-    </div>
 </div>
 </template>
 
@@ -103,8 +103,9 @@ export default {
             this.categories = cats.data;
             this.loading=false;
         },
-        submitForm(){
-            BrandRepository.create( {Brand : this.brand , ProductsCategs: this.bundles, Account:this.account});
+        async submitForm(){
+            var id = await BrandRepository.create( {Brand : this.brand , ProductsCategs: this.bundles, Account:this.account});
+            this.$router.push({path:'/brands/'+id.data})
         },
         addProduct(){
             this.numProducts++;

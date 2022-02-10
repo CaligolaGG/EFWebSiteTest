@@ -1,5 +1,5 @@
 <template>
-<div v-if="!this.loading">
+<div class="container" v-if="!this.loading">
 
     <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             update Brand

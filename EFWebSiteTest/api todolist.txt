@@ -29,7 +29,7 @@ Products:
 -remove Prodotto 
 
 Brands:
--edit brand		 ?(incompleta)											
+-edit brand		 											
 -remove brand	 ?(incompleta)											
 -inserimento nuovo brand con relativi prodotti				
 
@@ -50,13 +50,13 @@ aggiusta i pulsanti di pagina (paging)					 X
 valore vuoto per paginazione brand filter				 X
 
 
-•Brands														<-<-<-(Here)
+•Brands														
 -Read
 Page
 Detail
 -Create
 -Update
--Delete
+-Delete													<-<-<-(Here)
 
 •Requests
 -Read

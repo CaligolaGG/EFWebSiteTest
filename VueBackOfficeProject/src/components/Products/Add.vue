@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="container">
     <form  id="insert" v-if="insert" v-on:submit.prevent="submitForm()">
       insert new product
       <div class="form-group mb-2">

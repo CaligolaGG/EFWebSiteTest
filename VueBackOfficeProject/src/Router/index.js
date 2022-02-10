@@ -14,6 +14,7 @@ import BrandsAdd from '@/components/Brands/Add.vue'
 
 
 import Requests from '@/components/Leads/Requests.vue'
+import RequestsDetail from '@/components/Leads/Detail.vue'
 
 Vue.use(Router)
 
@@ -40,14 +41,17 @@ export default new Router({
       component: ProductEdit
     },
 
-
-
-
     {
       path: '/leads',
       name : 'requests',
       component: Requests
     },
+    {
+      path: '/leads/:id',
+      name : 'requestsDetail',
+      component: RequestsDetail
+    },
+
     {
       path: '/brands',
       name : 'brands',

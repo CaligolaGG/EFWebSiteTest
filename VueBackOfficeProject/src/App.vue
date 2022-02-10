@@ -25,7 +25,6 @@
           </router-link> 
       </div>
       <div class="col mt-4 offset-2">
-          ROBA DA AGGIUNGERE
         <router-view
         />
       </div>

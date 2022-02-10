@@ -100,11 +100,13 @@ namespace RepoLayer
         {
             await _ctx.Accounts.AddAsync(brandWithProducts.Account);
             await _ctx.SaveChangesAsync();
+
             brandWithProducts.Brand.AccountId = brandWithProducts.Account.Id;
             await _ctx.Brands.AddAsync(brandWithProducts.Brand);
             await _ctx.SaveChangesAsync();
 
 
+            if(brandWithProducts.ProductsCategs.Count !=0)
             foreach (ProductAndCategoryModel p in brandWithProducts.ProductsCategs)
             {
                 if(String.IsNullOrWhiteSpace(p.Product.Name))
@@ -123,7 +125,8 @@ namespace RepoLayer
                 foreach (int c in p.Categories)
                     await _ctx.ProductCategories.AddAsync(new ProductCategory { IdProduct = p.Product.Id, IdCategory = c });
             }
-            return await _ctx.SaveChangesAsync();
+             await _ctx.SaveChangesAsync();
+            return brandWithProducts.Brand.Id;
         }
         
 

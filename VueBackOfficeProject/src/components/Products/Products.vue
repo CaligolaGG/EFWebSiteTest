@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-2">
+  <div class="container">
     <button @click="$router.push({path:'/products/new'})" class="btn btn-primary"> AddProduct</button> <br>
 
     Products

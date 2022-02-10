@@ -1,5 +1,5 @@
 <template> 
-    <div v-if="!this.loading">{{ $route.params.id }}
+    <div class="container" v-if="!this.loading">{{ $route.params.id }}
         <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             update product
             <div class="form-group mb-2">

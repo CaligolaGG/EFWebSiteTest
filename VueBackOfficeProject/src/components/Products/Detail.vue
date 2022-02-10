@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!this.loading">{{ $route.params.id }}
+    <div class="container" v-if="!this.loading" >{{ $route.params.id }}
         <h1> {{info.productName}} </h1>
         <h2>{{info.brandName}} </h2>
         <li v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</li>
@@ -15,11 +15,8 @@
 
 <script>
 import Repository from "../../Api/RepoFactory";
-import axios from "axios"
 const ProductsRepository = Repository.get("products");
 
-const BrandRepository = Repository.get("brands");
-const CategoriesRepository = Repository.get("categories");
 
 export default {
     data() {

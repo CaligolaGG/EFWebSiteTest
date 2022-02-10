@@ -15,6 +15,7 @@ namespace Domain
     {
         public int RequestId { get; set; }
         public int ProductId { get; set; }
+        public string RequestText { get; set; }
         public string ProductName { get; set; }
         public string BrandName { get; set; }
         public string UserFullName { get; set; }
@@ -30,6 +31,7 @@ namespace Domain
     public class RepliesTemp
     {
         public int ReplyId { get; set; }
+        public DateTime Date { get; set; }
         public string AccountName { get; set; }
         public string ReplyText { get; set; }
 

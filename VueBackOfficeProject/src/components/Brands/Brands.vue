@@ -1,6 +1,6 @@
 <template>
-<div v-if="!this.loading">
-    <button @click="$router.push({path:'/brands/new'})">AddBrand</button>
+<div class="container" v-if="!this.loading">
+    <button class="btn btn-primary" @click="$router.push({path:'/brands/new'})">AddBrand</button>
     <span> Brands </span>
     <div >
         <table class="table table-striped table-light  ">

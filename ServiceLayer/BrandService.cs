@@ -143,8 +143,8 @@ namespace ServiceLayer
         {
             if (String.IsNullOrWhiteSpace(brandWithProducts.Brand.BrandName) || brandWithProducts.Brand.BrandName is null)
                 throw new ArgumentException("invalid brand ");
-            if (brandWithProducts.ProductsCategs.Count == 0)
-                throw new ArgumentException("invalid products");
+            //if (brandWithProducts.ProductsCategs.Count == 0)
+                //throw new ArgumentException("invalid products");
             return await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts);
         }
 

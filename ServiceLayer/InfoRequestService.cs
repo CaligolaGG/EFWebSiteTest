@@ -33,7 +33,7 @@ namespace ServiceLayer
         /// <param name="pageSize">size of the page. must be greater than 0</param>
         /// <returns>An EntityPage object with the info relative to the paging and the list of Requests</returns>
         /// <exception cref="ArgumentOutOfRangeException"> if pagenum and pagesize less than 1 throw exception</exception>
-        public async Task<EntityPage<RequestSelect>> GetPageAsync(int pageNum, int pageSize, string searchByProductName, string searchByBrandName,bool Asc)
+        public async Task<EntityPage<RequestSelect>> GetPageAsync(int pageNum, int pageSize, int searchByProductId, int searchByBrandId,bool Asc)
         {
             if (pageNum < 1 || pageSize < 1)
                 throw new ArgumentOutOfRangeException("pagenumber and pagesize must be greater than 0");
@@ -46,10 +46,10 @@ namespace ServiceLayer
 
 
             var requests = _requestRepo.GetAll();
-            if (!String.IsNullOrEmpty(searchByBrandName))
-                requests = requests.Where(x => x.Product.Brand.BrandName == searchByBrandName);
-            if (!String.IsNullOrEmpty(searchByProductName))
-                requests = requests.Where(x => x.Product.Name == searchByProductName);
+            if (searchByBrandId !=0)
+                requests = requests.Where(x => x.Product.BrandId == searchByBrandId);
+            if (searchByProductId !=0)
+                requests = requests.Where(x => x.Product.Id == searchByProductId);
 
 
             requests = Asc? requests.OrderBy(x => x.InsertDate): requests.OrderByDescending(x=>x.InsertDate);
@@ -57,6 +57,7 @@ namespace ServiceLayer
                .Skip((pageNum - 1) * pageSize).Take(pageSize)
                .Select(r => new RequestSelect
                {
+                   Id = r.Id,
                    UserName = r.Name + " " + r.LastName,
                    ProductName = r.Product.Name,
                    PhoneNumber = r.PhoneNumber,
@@ -84,6 +85,7 @@ namespace ServiceLayer
                 .Select(r => new RequestDetail
                 {
                     RequestId = r.Id,
+                    RequestText = r.RequestText,
                     ProductId = r.ProductId,
                     ProductName = r.Product.Name,
                     BrandName = r.Product.Brand.BrandName,
@@ -94,7 +96,8 @@ namespace ServiceLayer
                     Replies = r.InfoRequestReplies.Select(ir => new RepliesTemp
                     {
                         ReplyId = ir.Id,
-                        AccountName = ir.Account.AccountType == 1 ? ir.Account.User.Name : ir.Account.Brand.BrandName + " Brand",
+                        Date = ir.InsertDate,
+                        AccountName = ir.Account.AccountType == 1 ? "User" + ir.Account.User.Name : " Brand"+ ir.Account.Brand.BrandName,
                         ReplyText = ir.ReplyText
                     })
                 }).FirstOrDefaultAsync();
@@ -110,6 +113,7 @@ namespace ServiceLayer
 
     public class RequestSelect
     {
+        public int Id { get; set; }
         public string UserName { get; set; }
         public string ProductName { get; set; }
         public string PhoneNumber { get; set; }

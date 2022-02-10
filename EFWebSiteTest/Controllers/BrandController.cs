@@ -161,9 +161,10 @@ namespace EFWebSiteTest.Controllers
         {
             if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brandWithProducts.Brand.BrandName))
                 return BadRequest(ModelState);
-            if (await _brandService.CreateBrandWithProductsAsync(brandWithProducts) < 1)
+            var result = await _brandService.CreateBrandWithProductsAsync(brandWithProducts);
+            if (result < 1)
                 return Forbid("brand has not been inserted");
-            return Ok(brandWithProducts);
+            return Ok(result);
         }
 
     }
