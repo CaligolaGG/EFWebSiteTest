@@ -15,10 +15,22 @@ namespace Domain
         public List<ProductAndCategoryModel> ProductsCategs { get; set; }
     }
 
+    /// <summary>
+    /// basic projection of the class Brand. hold name and id
+    /// </summary>
     public class BrandProjectionBasic 
     {
         public int Id { get; set; }
         public string Name { get; set; }
+    }
+
+    /// <summary>
+    /// projection of the class brand and account. holds name of brand and account email.Usefull for validation purposes
+    /// </summary>
+    public class BrandAccountProjection
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
     }
 
     #region ProjectionModels

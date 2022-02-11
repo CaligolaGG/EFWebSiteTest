@@ -49,12 +49,13 @@
             </td>
           </tr>
         </tbody>
-      </table>      
+      </table>     
       <ul class="pagination justify-content-center">
-        <button @click="previousPage()" class="btn btn-primary mx-1">Previous</button>
+        <button @click="previousPage()" class="btn btn-primary ">Previous</button>
         <button v-for="(item,index) in closePages" :key="index" @click="changePage(item)" class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item),'text-white':isCurrent(item) }">{{item}}</button>
         <button @click="nextPage()" class="btn btn-primary">Next</button>
       </ul>
+      <Paging @changePage="fetchPage()" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
     </div>
 
     
@@ -65,9 +66,9 @@
 
 <script>
 import Repository from "../../Api/RepoFactory";
+import Paging from "../Pagination.vue";
 const ProductsRepository = Repository.get("products");
 const BrandRepository = Repository.get("brands");
-//const CategoriesRepository = Repository.get("categories");
 
 export default {
   data(){
@@ -86,11 +87,20 @@ export default {
 
    }
   }, 
+  components:{
+     Paging
+  },
 
   methods:{
     //fetch a page of products through the repository get method
-    async fetchPage(){
-      this.info = await ProductsRepository.get(this.currentpage, this.orderBy,this.isAsc,this.brandName);
+    async fetchPage(pageNum=0){
+      if(pageNum !=0)
+        this.currentpage = pageNum
+      var error = false
+      let temp=await ProductsRepository.get(this.currentpage, this.orderBy,this.isAsc,this.brandName)
+                                          .catch(()=>{alert("no products found"); error=true});
+      if(!error)
+        this.info = temp
     },
     //used to update the product page when a filter is applied
     updateData(){

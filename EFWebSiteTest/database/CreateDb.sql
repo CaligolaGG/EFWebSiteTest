@@ -29,7 +29,7 @@ Create table Brand
 (
 	Id int primary key identity,
 	AccountId int not null,
-	BrandName nvarchar(50) not null,
+	BrandName nvarchar(50) unique not null,
 	Description nvarchar(50),
 )
 go

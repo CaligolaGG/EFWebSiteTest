@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RepoLayer;
+﻿using RepoLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
+using Z.EntityFramework.Plus;
+using Microsoft.EntityFrameworkCore;
+
+
 
 namespace RepoLayer
 {
@@ -20,16 +23,28 @@ namespace RepoLayer
             _ctx = ctx;
         }
 
-        public int GetBrandNumber() => _ctx.Brands.Count();
+        /// <summary>
+        /// </summary>
+        /// <returns> An IQueryable to interrogate the db on all the brands </returns>
         public IQueryable<Brand> GetAll() =>  _ctx.Brands;
         public IQueryable<Brand> GetById(int Id) => _ctx.Brands.Where(brand=> brand.Id == Id);
 
+        /// <summary>
+        /// Update the fields of a brand 
+        /// </summary>
+        /// <param name="brand">new brand updated</param>
+        /// <returns>number of rows affected</returns>
         public async Task<int> UpdateBrandAsync(Brand brand)
         {
             _ctx.Brands.Update(brand);
             return await _ctx.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Fetch the categories relative to the brand with id equal to the brandid passed to the method
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <returns>list of Categories with the number of products in that brand associated</returns>
         public List<CategoryTemp> GetRelativeCategories(int brandId)
         {
             #region other methods
@@ -75,23 +90,14 @@ namespace RepoLayer
             return categories1;
         }
 
-        public async Task<int> LogicalBrandDeleteAsync(int brandId)
-        {
-            Brand brand = _ctx.Brands.FirstOrDefault(x => x.Id == brandId);
-            brand.IsDeleted = true;
-            //TODO
-            _ctx.Brands.Update(brand);
-            return await _ctx.SaveChangesAsync();
-        }
-
+        /// <summary>
+        /// creates a new brand not yet associated to an account
+        /// </summary>
         public async Task<int> CreateBrandAsync(Brand brand) 
         {
             await _ctx.Brands.AddAsync(brand);
             return await _ctx.SaveChangesAsync();
         }
-
-
-
 
         /// <summary>
         /// Add a new brand with the associated products and their categories
@@ -130,7 +136,29 @@ namespace RepoLayer
              await _ctx.SaveChangesAsync();
             return brandWithProducts.Brand.Id;
         }
-        
+
+        /// <summary>
+        /// logically deletes a brand by updating the isDelete value
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <returns>number of rows changed</returns>
+        public async Task<int> LogicalBrandDeleteAsync(int brandId)
+        {
+            Brand brand = _ctx.Brands.FirstOrDefault(x => x.Id == brandId);
+            brand.IsDeleted = true;
+            _ctx.Brands.Update(brand);
+
+            _ctx.Products.Where(x => x.BrandId == brandId)
+                .Update(x => new Product() { IsDeleted = true });
+
+            /* not working
+            var temp = await _ctx.Products.Where(x => x.BrandId == brandId).ToListAsync();
+            _ctx.InfoRequests.Where(x => temp.Select(s => s.Id).Contains(x.ProductId))
+                .Update(x => new InfoRequest() { IsDeleted = true });
+            */
+            return await _ctx.SaveChangesAsync();
+        }
+
 
     }
 }

@@ -18,11 +18,16 @@
                 <th scope="col">  </th>
             </tr>
             <tr class="bg-light">
-                <td >
+              <td></td>
+                <td>
+                  <div class="row">
+                  <div class="col">
                     <input class="form-control" type="text" name="" id="" v-model="search" placeholder="BrandName">
-                </td><td>
-                    <button class="btn btn-primary mx-2" @click="updateData()">Search</button>
-                  </td><td></td> <td></td>
+                  </div>
+                  <div class="col">
+                    <button class="btn btn-primary" @click="updateData()">Search</button>
+                  </div></div>
+                </td><td></td> <td></td>
             </tr>
             </thead>
 
@@ -42,7 +47,7 @@
     </div>
 
     <ul class="pagination justify-content-center">
-        <button @click="previousPage()" class="btn btn-primary mx-1">Previous</button>
+        <button @click="previousPage()" class="btn btn-primary ">Previous</button>
         <button v-for="(item,index) in closePages" :key="index" @click="changePage(item)" class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item),'text-white':isCurrent(item) }">{{item}}</button>
         <button @click="nextPage()" class="btn btn-primary">Next</button>
     </ul>
@@ -60,7 +65,7 @@ export default {
    return {
     loading: true, //id of the product (from routing)
     insert:true,
-    search:"",
+    search:"",  //variable that holds the  string searched by the user
 
     currentpage:1,
 
@@ -73,7 +78,12 @@ export default {
   methods:{
     //fetch a page of products through the repository get method
     async fetchPage(){
-        this.info = await BrandRepository.getAll(this.currentpage,this.search.trim(),10);
+        var error = false
+
+        let temp =  await BrandRepository.getAll(this.currentpage,this.search.trim(),10)
+                                        .catch(()=>{alert("no brands found"); error=true});
+        if(!error)
+          this.info = temp
     },
     //used to update the product page when a filter is applied
     async updateData(){
@@ -102,14 +112,14 @@ export default {
       this.currentpage = pageNum;
       this.fetchPage();
     },
+    //check if the index passed to the function is the same as the current page
     isCurrent(x){
       return this.currentpage == x 
     },
-
+    //remove the brand selected
     async Remove(id) {
         if(confirm("are you sure you want to delete this brand?"))
         {
-            alert(id)
             await BrandRepository.delete(id);
             this.changePage(this.currentpage);
         }

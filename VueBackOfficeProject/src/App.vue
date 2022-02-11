@@ -7,22 +7,27 @@
 
     <div class="row" >
       <div class="col-2 bg-light text-dark h-100 position-fixed">
-        <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
-          <div class="row mt-2 mx-2"  v-on:click="activateTabColor(0)" > 
-              <span> Product </span> 
+        <div class="row">
+          <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
+            <div class="row mt-2 mx-2"  > 
+                <span> Product </span> 
+            </div>
+          </router-link>
+        </div>
+        <div class="row">
+          <router-link to="/brands" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[1].state }"> 
+            <div class="row mx-2"  >
+              <span > Brand </span> 
+            </div>
+          </router-link>
+        </div>
+        <div class="row">
+          <router-link to="/leads" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[2].state }">  
+            <div class="row mx-2" > 
+              <span > Requests </span> 
+            </div>
+            </router-link> 
           </div>
-        </router-link>
-        
-        <router-link to="/brands" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[1].state }"> 
-          <div class="row mx-2"  v-on:click="activateTabColor(1)">
-            <span > Brand </span> 
-          </div>
-        </router-link>
-        <router-link to="/leads" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[2].state }">  
-          <div class="row mx-2" v-on:click="activateTabColor(2)"> 
-            <span > Requests </span> 
-          </div>
-          </router-link> 
       </div>
       <div class="col mt-4 offset-2">
         <router-view
@@ -50,20 +55,30 @@ export default {
         this.tabs[x].state = true
       this.tabs[n].state = false
     },
+    //changes the color of the tabs in the sidebar by checking the route name
+    selectTab(){
+      var check =this.$route.name
+      this.activateTabColor(3)
+      if (check.includes("product"))
+        this.activateTabColor(0)
+      if(check.includes("brand"))
+        this.activateTabColor(1)
+      if(check.includes("lead"))
+        this.activateTabColor(2)
+    },
 
   },
   components: {
   },
   created(){
-            var check =this.$route.name
-            this.activateTabColor(3)
-            if (check.includes("product"))
-              this.activateTabColor(0)
-            if(check.includes("brand"))
-              this.activateTabColor(1)
-            if(check.includes("lead"))
-              this.activateTabColor(2)
+    this.selectTab()
   },
+  watch:{
+    $route: function(){
+    this.selectTab()}
+  },
+
+  
 
 
 }

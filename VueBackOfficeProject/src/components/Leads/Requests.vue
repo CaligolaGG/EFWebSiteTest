@@ -1,6 +1,20 @@
 <template>
 <div v-if="!this.loading" class="container">
     <h2> Requests </h2>
+    <hr>
+    
+                  <div class="row">
+                      <div class="col-2">
+                        Select a Brand
+                      </div>
+                        <div class="col-5">
+                        <select  name="" id="" class="form-select m-1"  v-model="searchByBrand" @change="updateData()"  >
+                            <option default value=0>No Brand</option>
+                            <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
+                        </select>
+                        </div>
+                  </div>
+
     <table class="table table-striped table-light ">
         <thead >
           <tr>
@@ -15,21 +29,10 @@
             </th>
           </tr>
           <tr>
+            <th></th>
              <th colspan="2">
-                  <input type="text" name="" id="" v-model="searchByProduct"> <button class="btn btn-primary" @click="updatePage()" >SearchProduct</button>
-              </th>
-              <th colspan="3">
-                  <div class="row">
-                      <div class="col-3">Select a Brand</div>
-                      <div class="col-7">                    
-                        <select  name="" id="" class="form-select m-1 "  v-model="searchByBrand" @change="updateData()"  >
-                            <option default value=0></option>
-                            <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
-                        </select>
-                       </div>
-                  </div>
-              </th>
-              <th></th>
+                  <input type="text"  placeholder="Product Name" name="" id="" v-model="searchByProduct"> <button class="btn btn-primary" @click="updatePage()" >SearchProduct</button>
+              </th> <th></th> <th></th><th></th>
           </tr>
         </thead>
         <tbody>
@@ -46,7 +49,7 @@
 
 
     <ul class="pagination justify-content-center">
-        <button @click="previousPage()" class="btn btn-primary mx-1">Previous</button>
+        <button @click="previousPage()" class="btn btn-primary">Previous</button>
         <button v-for="(item,index) in closePages" :key="index" @click="changePage(item)" class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item),'text-white':isCurrent(item) }">{{item}}</button>
         <button @click="nextPage()" class="btn btn-primary">Next</button>
     </ul>
@@ -58,7 +61,6 @@
 <script >
 
 import Repository from "../../Api/RepoFactory";
-//const ProductsRepository = Repository.get("products");
 const BrandRepository = Repository.get("brands");
 const LeadsRepository = Repository.get("leads");
 
@@ -68,15 +70,14 @@ const LeadsRepository = Repository.get("leads");
             return {
                 loading: true, //id of the product (from routing)
                 insert:true,
-                info:{},
-                brands:{},
+                info:{},        //info fetched from the api
+                brands:{},      //list of all brand (id + name)
 
                 currentpage:1,
                 orderBy:0,    //integer to choose the criteria of ordering
                 isAsc:false,
                 searchByBrand:0,
                 searchByProduct:null,
-                brandName:"",
                 productName:null
 
             };
@@ -85,10 +86,21 @@ const LeadsRepository = Repository.get("leads");
         methods: {
             //fetch a page of products through the repository get method
             async fetchPage(){
+                var error = false
                 if (this.searchByProduct== null ||this.searchByProduct== "")
-                    this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,undefined, this.isAsc, 10);
+                {
+                    let temp = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,undefined, this.isAsc, 10)
+                    .catch(()=>{alert("no requests found");error=true; })
+                    if(!error) 
+                        this.info = temp;
+                }
                 else
-                    this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,this.searchByProduct.trim(), this.isAsc,10);
+                {
+                    let temp = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,this.searchByProduct.trim(), this.isAsc,10)
+                    .catch(()=>{alert("no requests found"); error=true})
+                    if(!error)
+                        this.info = temp
+                }
             },
             async updatePage(){
                 this.currentpage = 1;

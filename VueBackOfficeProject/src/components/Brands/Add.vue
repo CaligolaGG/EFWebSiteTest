@@ -13,7 +13,7 @@
 
             <div class="form-group mb-2">
                 <label for="desc">Email</label>
-                <input required type="textarea" class="form-control" name="desc"  maxlength="50" v-model="account.Email">
+                <input required  type="email" class="form-control" name="desc"  maxlength="50" v-model="account.Email">
             </div>
             <div class="form-group mb-2">
                 <label for="desc">Password</label>
@@ -21,7 +21,6 @@
             </div>
 
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
-            <add-product v-for="n in 0" :key="n"  @update="onChildUpdate()"></add-product>
         </form>
 
         
@@ -53,13 +52,6 @@
                                 <input type="checkbox"  v-model="bundles[n-1].Categories" v-bind:value="cat.id"  class="form-check-input">
                                 <label> {{cat.name}} </label> 
                             </li></div>
-            <!--
-                            Categories 
-                            <select name="categories" id="" class="form-select m-1" v-model="bundles[n-1].Categories" multiple>
-                                <option  value="">Please select one</option>
-                                <option v-for="cat in categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
-                            </select>
-            -->
 
                     </div>
                 </div>
@@ -76,8 +68,6 @@
 <script>
 
 import Repository from "../../Api/RepoFactory";
-import addProduct from "../Products/ProductForm.vue"
-//const ProductsRepository = Repository.get("products");
 const BrandRepository = Repository.get("brands");
 const CategoriesRepository = Repository.get("categories");
 
@@ -88,14 +78,15 @@ export default {
             id:0,       //id of the product (from routing)
             loading:true, //boolean to know if the data has been fetched yet
             info:{},      //object that contains the info of the brand fetched
-            numProducts: 0,
+            numProducts: 0, //number of Product forms
             
-
+            //object to contains the brand account infos from the form
             account:{
                 Email:"",
                 Password:"",
                 AccountType:2
             },
+            //object to contains the brand info from the form
             brand:{
                 BrandName:"",
                 Description:"",
@@ -103,7 +94,8 @@ export default {
             },
             categories: {}, //object to contains a list of cateories 
 
-            bundles:[],
+            bundles:[], //list of Bundle objects
+            error:"", 
 
         }    
     },
@@ -114,29 +106,64 @@ export default {
             this.categories = cats.data;
             this.loading=false;
         },
+        //method to submit the form
+        //checks if there are duplicated names in products.
+        //redirect to the created brand if this has been created correctly
         async submitForm(){
-            var id = await BrandRepository.create( {Brand : this.brand , ProductsCategs: this.bundles, Account:this.account});
-            this.$router.push({path:'/brands/'+id.data})
+            var names = []
+            if(this.bundles.length!=0 )
+                for (var p of this.bundles)
+                    names.push(p.Product.Name)
+
+            if (this.checkProducts(names))
+                alert("some Products have the same name")
+            else
+            {
+                var id = await BrandRepository.create( {Brand : this.brand , ProductsCategs: this.bundles, Account:this.account})
+                                                .catch( (response)=> this.error = response);
+
+                if(id.status!=200)
+                {
+                    console.log(id)
+                    alert("brand name or email already taken. Brand NOT inserted")
+                }
+                else
+                    this.$router.push({path:'/brands/'+id.data})
+            }
         },
+        //adds a new Product form, insert a new Bundle object into bundles.
         addProduct(){
             this.numProducts++;
             this.bundles.push(new bundle())
         },
+        //checks for any duplicated elements in an array. returns true if any is found
+        checkProducts(strArray){
+            const alreadySeen = [];
+            var isDuplicates = false
+            for (var str of strArray )
+            {
+                if (alreadySeen[str])
+                {
+                    isDuplicates=true
+                    break
+                }
+                alreadySeen[str] = true
+            }
+            //strArray.forEach(str => alreadySeen[str] ? isDuplicates=true : alreadySeen[str] = true)
+            return isDuplicates
+        },
 
 
-    },
-    components:{
-        addProduct
+
     },
     async created(){
         this.id = this.$route.params.id;
-
         await this.getData();
     }
     
 }
 
-
+//class that holds a product with its categories
 var bundle = function(){
             this.Product=//object to hold the data inserted in the form that has to be passed to the api
             {

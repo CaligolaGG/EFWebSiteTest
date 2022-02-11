@@ -34,6 +34,8 @@ namespace EFWebSiteTest.Controllers
             return Ok(result);
         }
 
+
+
         /// <summary>
         /// Method to get a BrandObject from the db
         /// </summary>
@@ -166,6 +168,7 @@ namespace EFWebSiteTest.Controllers
                 return Forbid("brand has not been inserted");
             return Ok(result);
         }
+
 
     }
 

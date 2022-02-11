@@ -1,6 +1,6 @@
 <template>
 <div class="container" v-if="!loading">
-    <form  id="insert" v-if="insert" v-on:submit.prevent="submitForm()">
+    <form  id="insert" v-on:submit.prevent="submitForm()">
       <h3 >  {{whatPage}}  Product </h3>
       <div class="form-group mb-2">
         <label for="pname">Name</label>
@@ -57,7 +57,6 @@ export default{
     data(){
         return {
             loading: true, //id of the product (from routing)
-            insert:true,
             brandSelect:"",
             productId:0,
 
@@ -100,14 +99,15 @@ export default{
             this.categories = cats.data;
             this.loading = false;
         },
-        //insert a new product in the db by calling the specific repository function.
-        // A different api gets called if no categories are selected for the product to insert
+        //update a  product in the db by calling the specific repository function
         async updateProduct (){
             let newProduct = { Product : this.form.product, Categories : this.form.categories }
             console.log(newProduct);
             this.productId=await ProductsRepository.update(newProduct);
             
         },
+        //insert a new product in the db by calling the specific repository function.
+        // A different api gets called if no categories are selected for the product to insert
         async insertProduct(){
           if(this.form.categories.length == 0)
               this.productId = await ProductsRepository.create(this.form.product)
@@ -117,7 +117,7 @@ export default{
               this.productId  = await ProductsRepository.createWithCats(productWithCats)
           }
         },
-
+        //submit the form info. calls the specific method (update or insert) based on the id frome the route
         async submitForm(){
             if(this.productId != 0)
                 await this.updateProduct()
@@ -135,6 +135,7 @@ export default{
       await this.getData();
     },
     computed:{
+      //tells if the form is for an update or an insert
       whatPage(){
         return this.productId ==0? "Insert New": "Update"
       }

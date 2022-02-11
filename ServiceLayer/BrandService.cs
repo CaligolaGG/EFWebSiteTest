@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Domain;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,20 @@ namespace ServiceLayer
             _brandRepo = brandRepo;
         }
 
+        /// <summary>
+        /// fetch a BrandProjectionBasic object.
+        /// </summary>
+        /// <returns> a list with id and name of all the brands </returns>
         public async Task<List<BrandProjectionBasic>> GetAllAsync() => await _brandRepo.GetAll().Select(b=>new BrandProjectionBasic{Id=b.Id, Name=b.BrandName }).ToListAsync();
+
+        /// <summary>
+        /// fetch a BrandAccountProjection object.
+        /// </summary>
+        /// <returns>a list with  name and account mail of all the brands</returns>
+        public async Task<List<BrandAccountProjection>> GetAllBrandAccountAsync() => 
+            await _brandRepo.GetAll()
+                .Select(b => new BrandAccountProjection { Name = b.BrandName, Email = b.Account.Email })
+                .ToListAsync();
 
 
         /// <summary>
@@ -146,13 +158,20 @@ namespace ServiceLayer
         public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
             if (String.IsNullOrWhiteSpace(brandWithProducts.Brand.BrandName) || brandWithProducts.Brand.BrandName is null)
-                throw new ArgumentException("invalid brand ");
-            //if (brandWithProducts.ProductsCategs.Count == 0)
-                //throw new ArgumentException("invalid products");
+                throw new ArgumentException("invalid brand");
+            foreach (var p in brandWithProducts.ProductsCategs)
+                if(String.IsNullOrWhiteSpace(p.Product.Name))
+                    throw new ArgumentException("found invalid product name");
+
             return await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts);
         }
 
-        
+
+        /// <summary>
+        /// Fetch a specific Brand object given its Id
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <exception cref="ArgumentException">Raised if brandId is less than 1</exception>
         public async Task<Brand> GetBrandAsync(int brandId)
         {
             if (brandId < 1)

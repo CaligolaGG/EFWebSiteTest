@@ -18,14 +18,17 @@ export default {
     get(){
         return Base.get(`${resource}`)
     },
+    //delete of a brand and its products
     delete(id) {
-        return Base.delete(`${resource}/${id}`)
+        return Base.delete(`${resource}/Delete/${id}`)
     },
+    //create a new brand with its products
     create(payload) {
         return Base.post(`${resource}/CreateWithProds`, payload);
     },
-    update(payload, id) {
-        return Base.put(`${resource}/${id}`, payload);
+    //update a brand info
+    update(payload) {
+        return Base.put(`${resource}/BrandUpdate`, payload);
     },
 
 

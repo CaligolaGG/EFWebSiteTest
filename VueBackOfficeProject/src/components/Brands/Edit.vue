@@ -4,12 +4,13 @@
     <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             update Brand
             <div class="form-group mb-2">
+                
                 <label for="pname">Name</label>
-                <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="this.info.data.brandName" >
+                <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="info.data.brandName" >
             </div>
             <div class="form-group mb-2">
                 <label for="desc">Description</label>
-                <input type="textarea" class="form-control" name="desc"  maxlength="50" v-model="this.info.data.description">
+                <input type="textarea" class="form-control" name="desc"  maxlength="50" v-model="info.data.description">
             </div>
 
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
@@ -38,8 +39,10 @@ export default {
             this.info = await BrandRepository.getById(this.id);
             this.loading=false;
         },
+        //submit the updated info from the form
         submitForm(){
-            BrandRepository.update(this.info.data);
+            BrandRepository.update(this.info.data)
+            .catch(alert("brandName already taken"))
         }
 
     },
