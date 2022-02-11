@@ -18,12 +18,27 @@
                 <b>{{info.loggedUsersRequestsNumber}}</b> from <b> Logged Users </b> 
             </div>
         </div>
-        <button class="btn btn-primary my-2" @click="$router.push({name: 'leads', params: { productName: info.productName, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
 
-        <!--
+        <button class="btn btn-primary my-4" @click="$router.push({name: 'leads', params: { productName: info.productName, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
+
         <div class="row">
-            <li class="list-group-item" v-for="req in info.requests" :key="req.Id">User {{req.fullName}} --- {{req.repliesCount}} replies</li>
-        </div>-->
+            <table class="table table-striped table-light">
+                <thead>
+                    <tr>
+                        <th>UserName</th>
+                        <th>Number replies</th>
+                        <th>Last Reply Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   <tr  v-for="req in info.requests" :key="req.Id">
+                       <td>  {{req.fullName}}</td>
+                       <td>{{req.repliesCount}} </td> 
+                       <td> {{req.lastReply}} </td> 
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 </template>

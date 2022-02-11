@@ -12,20 +12,23 @@
             <th class="position-relative" @click="ordering" >Date 
               <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':!isAsc}"> </i> 
               <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':isAsc}" ></i>
-
             </th>
           </tr>
           <tr>
              <th colspan="2">
                   <input type="text" name="" id="" v-model="searchByProduct"> <button class="btn btn-primary" @click="updatePage()" >SearchProduct</button>
               </th>
-              <th colspan="2">
-                    <select name="Select a brand" id="" class="form-select m-1 "  v-model="searchByBrand" @change="updateData()">
-                        <option value="">Select a brand</option>
-                        <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
-                  </select>
+              <th colspan="3">
+                  <div class="row">
+                      <div class="col-3">Select a Brand</div>
+                      <div class="col-7">                    
+                        <select  name="" id="" class="form-select m-1 "  v-model="searchByBrand" @change="updateData()"  >
+                            <option default value=0></option>
+                            <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
+                        </select>
+                       </div>
+                  </div>
               </th>
-              <th></th>
               <th></th>
           </tr>
         </thead>
@@ -85,7 +88,7 @@ const LeadsRepository = Repository.get("leads");
                 if (this.searchByProduct== null ||this.searchByProduct== "")
                     this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,undefined, this.isAsc, 10);
                 else
-                    this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,this.searchByProduct, this.isAsc,10);
+                    this.info = await LeadsRepository.getPage(this.currentpage,this.searchByBrand,this.searchByProduct.trim(), this.isAsc,10);
             },
             async updatePage(){
                 this.currentpage = 1;

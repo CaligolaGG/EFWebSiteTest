@@ -1,10 +1,10 @@
 <template>
     <div class="container">
         <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
-            add Brand
+            <h2> Add New Brand </h2>
             <div class="form-group mb-2">
                 <label for="pname">Name</label>
-                <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="brand.BrandName">
+                <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="brand.BrandName">
             </div>
             <div class="form-group mb-2">
                 <label for="desc">Description</label>
@@ -13,47 +13,58 @@
 
             <div class="form-group mb-2">
                 <label for="desc">Email</label>
-                <input type="textarea" class="form-control" name="desc"  maxlength="50" v-model="account.Email">
+                <input required type="textarea" class="form-control" name="desc"  maxlength="50" v-model="account.Email">
             </div>
             <div class="form-group mb-2">
                 <label for="desc">Password</label>
-                <input type="password" class="form-control" name="desc"  maxlength="50" v-model="account.Password">
+                <input  required minlength="5" type="password" class="form-control" name="desc"  maxlength="50" v-model="account.Password">
             </div>
 
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
             <add-product v-for="n in 0" :key="n"  @update="onChildUpdate()"></add-product>
         </form>
 
+        
+            <div v-for="n in this.numProducts" :key="n" class="my-3">
+                <form  id="insert" v-on:submit.prevent="submitForm()" class="bg-light my-2 border " >
+                    <div class="mx-2">
+                        <b> Insert new product</b>
+                        <div class="form-group mb-2">
+                            <label for="pname">Name</label>
+                            <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="desc">Description</label>
+                            <input type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="sdesc">ShortDescription</label>
+                            <input type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="price">Price</label>
+                            <input min="1" type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
+                        </div>
+                        <div class="form-group mb-2 row my-4">
+                            <b> Categories </b>
+                            <div class="col">
+                                
+                            <li  v-for="cat in categories" :key="cat.Id" class="form-check">
+                                <input type="checkbox"  v-model="bundles[n-1].Categories" v-bind:value="cat.id"  class="form-check-input">
+                                <label> {{cat.name}} </label> 
+                            </li></div>
+            <!--
+                            Categories 
+                            <select name="categories" id="" class="form-select m-1" v-model="bundles[n-1].Categories" multiple>
+                                <option  value="">Please select one</option>
+                                <option v-for="cat in categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
+                            </select>
+            -->
 
-        <div v-for="n in this.numProducts" :key="n" class="my-3">
-            <form  id="insert" v-on:submit.prevent="submitForm()" class="bg-light my-2 border" >
-                {{n}}
-            insert new product
-            <div class="form-group mb-2">
-                <label for="pname">Name</label>
-                <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
-            </div>
-            <div class="form-group mb-2">
-                <label for="desc">Description</label>
-                <input type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description">
-            </div>
-            <div class="form-group mb-2">
-                <label for="sdesc">ShortDescription</label>
-                <input type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
-            </div>
-            <div class="form-group mb-2">
-                <label for="price">Price</label>
-                <input type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
-            </div>
-            <div class="form-group mb-2">
-
-                Categories 
-                <select name="categories" id="" class="form-select m-1" v-model="bundles[n-1].Categories" multiple>
-                <option  value="">Please select one</option>
-                <option v-for="cat in categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
-                </select>
-            </div>
-            </form>
+                    </div>
+                </div>
+                </form>
+            
         </div>
         <button @click="addProduct()" class="btn btn-primary mt-2">Add Product</button>
 
@@ -132,7 +143,7 @@ var bundle = function(){
                 Name:"",
                 Description:"",
                 ShortDescription:"",
-                Price:0
+                Price:1
             },
             this.Categories=[] //array to hold the list of classes selected for the product to insert 
 }

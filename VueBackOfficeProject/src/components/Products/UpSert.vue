@@ -1,11 +1,10 @@
 <template>
 <div class="container" v-if="!loading">
-    We are in upsert
     <form  id="insert" v-if="insert" v-on:submit.prevent="submitForm()">
-      insert new product
+      <h3 >  {{whatPage}}  Product </h3>
       <div class="form-group mb-2">
         <label for="pname">Name</label>
-        <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="form.product.name">
+        <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="form.product.name">
       </div>
       <div class="form-group mb-2">
         <label for="desc">Description</label>
@@ -17,19 +16,27 @@
       </div>
       <div class="form-group mb-2">
         <label for="price">Price</label>
-        <input type="number" class="form-control" name="price" v-model="form.product.price">
+        <input type="number"  min="1" class="form-control" name="price" v-model="form.product.price">
       </div>
       <div>
         BrandId 
-        <select name="" id="" class="form-select m-1 "  v-model="form.product.brandId">
+        <select required name="" id="" class="form-select m-1 "  v-model="form.product.brandId">
           <option  value="">Please select one</option>
           <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
         </select>  
-        Categories 
-        <select name="categories" id="" class="form-select m-1" v-model="form.categories" multiple>
-          <option  value="">Please select one</option>
-          <option v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
-        </select>
+        <div class="row my-4"> <b> Categories </b>
+          <div class="mx-2">
+          <li  v-for="cat in this.categories" :key="cat.Id"  class="form-check">
+            <input type="checkbox"  v-model="form.categories" v-bind:value="cat.id"  class="form-check-input">
+            <label> {{cat.name}} </label> 
+          </li>
+          </div>
+          <!--
+          <select name="categories" id="" class="form-select m-1" v-model="form.categories" multiple>
+            <option  value="">Please select one</option>
+            <option v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
+          </select>-->
+        </div>
       </div>
       <button type="submit" class="btn btn-primary mt-2">Submit</button>
     </form>
@@ -64,7 +71,7 @@ export default{
                         id:0,
                         description:"",
                         shortDescription:"",
-                        price:0,
+                        price:1,
                         brandId:null,
                         name:"",
                     },
@@ -126,7 +133,13 @@ export default{
         this.productId = this.$route.params.id;
       
       await this.getData();
+    },
+    computed:{
+      whatPage(){
+        return this.productId ==0? "Insert New": "Update"
+      }
     }
+    
 }
 
 </script>

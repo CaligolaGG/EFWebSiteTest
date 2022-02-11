@@ -10,20 +10,21 @@
         <span>UserInfo: {{info.infoUser}}</span> <br>
         <span>UserMail: {{info.email}}</span>
 
-        <p class="mt-4"><b>Request sent by the user </b></p>
+        <p class="mt-4"><b>Request sent by the user: </b></p>
         <p>{{info.requestText}}</p>
+        <h4><b>Replies:</b></h4>
 
-            <div class="border border-success rounded my-3" v-for="reply in info.replies" :key="reply.Id">
+            <div class="border border-success rounded my-3" v-for="reply in productPage" :key="reply.Id">
                 <div class="  bg-light p-4 rounded ">
-                {{reply.date}} - {{reply.accountName}} 
+                From: {{reply.accountName}} | in Date {{reply.date}}
                 </div> 
                 <div class=" p-4 border-top border-success  ">
                     {{reply.replyText}}
                 </div>
 
         </div>
-            <button class="btn btn-primary  m-2">Previous</button>
-            <button class="btn btn-primary">Next</button>
+            <button class="btn btn-primary m-2" @click="previousPage()">Previous</button>
+            <button class="btn btn-primary" @click="nextPage()">Next</button>
     </div>
 </template>
 
@@ -39,6 +40,7 @@ export default {
             loading:true, //boolean to know if the data has been fetched yet
             
             info:{},      //object that contains the info of the product fetched
+            currentPage:1,
 
         }    
     },
@@ -49,7 +51,20 @@ export default {
             this.info = temp.data;
             this.loading = false;
         },
+        previousPage(){
+            if(this.currentPage > 1)
+                this.currentPage--;
+        },
+        nextPage(){
+            if(this.currentPage + 1 <= this.info.replies.length /1)
+                this.currentPage ++;
+        },
 
+    },
+    computed:{
+        productPage(){
+            return this.info.replies.slice(this.currentPage * 2 - 2 ,2 * this.currentPage)
+        }
     },
     async created(){
         this.id = this.$route.params.id;

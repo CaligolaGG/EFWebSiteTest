@@ -2,7 +2,7 @@
   <div id="app" >
     
     <nav class="sticky-top navbar navbar-expand-lg navbar-dark bg-dark ">
-        <a class="navbar-brand ms-3" @click="activateTabColor(3)"> <router-link to="/" class="navbar-brand" > Navbar </router-link></a>
+        <a class="navbar-brand ms-3" > <router-link to="/" class="navbar-brand" > Navbar </router-link></a>
     </nav>
 
     <div class="row" >
@@ -53,8 +53,21 @@ export default {
 
   },
   components: {
-  }
+  },
+  created(){
+            var check =this.$route.name
+            this.activateTabColor(3)
+            if (check.includes("product"))
+              this.activateTabColor(0)
+            if(check.includes("brand"))
+              this.activateTabColor(1)
+            if(check.includes("lead"))
+              this.activateTabColor(2)
+  },
+
+
 }
+
 </script>
 
 <style>

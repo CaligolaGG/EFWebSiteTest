@@ -18,11 +18,11 @@
                 <th scope="col">  </th>
             </tr>
             <tr class="bg-light">
-                <td colspan="2">
+                <td >
                     <input class="form-control" type="text" name="" id="" v-model="search" placeholder="BrandName">
                 </td><td>
                     <button class="btn btn-primary mx-2" @click="updateData()">Search</button>
-                  </td><td></td>
+                  </td><td></td> <td></td>
             </tr>
             </thead>
 
@@ -73,7 +73,7 @@ export default {
   methods:{
     //fetch a page of products through the repository get method
     async fetchPage(){
-        this.info = await BrandRepository.getAll(this.currentpage,this.search,10);
+        this.info = await BrandRepository.getAll(this.currentpage,this.search.trim(),10);
     },
     //used to update the product page when a filter is applied
     async updateData(){

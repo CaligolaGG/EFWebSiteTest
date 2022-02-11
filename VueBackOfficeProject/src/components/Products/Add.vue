@@ -25,10 +25,15 @@
           <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
         </select>  
         Categories 
+        <li >
+          <input type="checkbox"  v-model="catsSelect" v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} 
+        </li>
+
+<!--
         <select name="categories" id="" class="form-select m-1" v-model="catsSelect" multiple>
           <option  value="">Please select one</option>
           <option v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
-        </select>
+        </select>-->
       </div>
       <button type="submit" class="btn btn-primary mt-2">Submit</button>
     </form>

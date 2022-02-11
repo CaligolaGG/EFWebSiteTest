@@ -41,16 +41,14 @@ Per ogni punto svolto: Valida,Testa, Commenta, Nomi, togli codice residuo e part
 •Products
 -Read 
 Page													 X
-Detail													 X (todo styling)
+Detail													 X 
 -Create													 X
 -Update													 X							
 -Delete													 X
 
 aggiusta i pulsanti di pagina (paging)					 X
 
-
-
-•Brands														
+•Brands													 X										
 -Read
 Page
 Detail
@@ -58,49 +56,55 @@ Detail
 -Update
 -Delete													
 
-•Requests
+•Requests												 X
 -Page
 -Detail													
 
 
 ----------------------------------------------------------------------------------
 
-LeftOvers frontend														<-<-<-(Here)
-•Products:
+LeftOvers fixes frontend													
+
+•X? Validazioni
+X input
+X api (da ricontrollare)
+-campi duplicati?
+
+•X Products:
 X detail products list request. 
 X editing unisci con insert su product 
 X dopo add -> vai al detail	 
 
 
-sidebar evidenzia fixa
-valore vuoto per paginazione select-filter		 
+X sidebar evidenzia fixa
+X valore vuoto per paginazione select-filter		 
 X paginazione su brand e request dopo un filtro
 
 
-paginazione su requestdetail commenti?
-inserts: transactions?
+X paginazione su requestdetail commenti
 
 •Requests:
 X search by.
 X detail				  
 
 
-•Brand
-edit aggiungi altri campi?
-
 •styling
 X detail pages
 X bottoni add
 X brand bottoni edit e cancella metti le icone 
-cambia select into checkboxes
+X cambia select into checkboxes
 
-cambia upsert in api?
+•tempi di caricamento delle pagine. Mostra la tabella vuota					<-<-<-(Here)
+•component button paging
+
+
 
 
 -------------------------------------------------------------------
 •LeftOvers Api
+cambia upsert in api?
+inserts: transactions?
 Unit Testing?
 iCrud interface?
-Ricontrolla routing, optional routers.
+Ricontrolla routing, optional routers.		X
 -------------------------------------------------------------------
-...Styling
