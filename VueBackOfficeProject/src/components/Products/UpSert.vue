@@ -31,11 +31,6 @@
             <label> {{cat.name}} </label> 
           </li>
           </div>
-          <!--
-          <select name="categories" id="" class="form-select m-1" v-model="form.categories" multiple>
-            <option  value="">Please select one</option>
-            <option v-for="cat in this.categories" :key="cat.Id" v-bind:value="cat.id"> {{cat.name}} </option>
-          </select>-->
         </div>
       </div>
       <button type="submit" class="btn btn-primary mt-2">Submit</button>
@@ -45,6 +40,7 @@
 
 
 <script>
+
 
 import Repository from "../../Api/RepoFactory";
 const ProductsRepository = Repository.get("products");
@@ -92,7 +88,7 @@ export default{
                     this.form.categories.push(i.id);
             }
             console.log(this.form);
-
+          
             let cats = await CategoriesRepository.get();
             let temp3 = await BrandRepository.get();
             this.brands = temp3.data

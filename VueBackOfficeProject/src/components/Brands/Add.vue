@@ -2,6 +2,9 @@
     <div class="container">
         <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             <h2> Add New Brand </h2>
+            <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" fade>
+                Two product have the same name. Brand has not been created
+            </div>
             <div class="form-group mb-2">
                 <label for="pname">Name</label>
                 <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="brand.BrandName">
@@ -12,8 +15,11 @@
             </div>
 
             <div class="form-group mb-2">
+                <div v-bind:class="{'invalid-feedback':validMail,'text-danger':true}">
+                   Please choose a valid mail.
+                </div>
                 <label for="desc">Email</label>
-                <input required  type="email" class="form-control" name="desc"  maxlength="50" v-model="account.Email">
+                <input required  type="text" class="form-control" name="desc"  maxlength="50" v-model="account.Email">
             </div>
             <div class="form-group mb-2">
                 <label for="desc">Password</label>
@@ -60,6 +66,10 @@
         </div>
         <button @click="addProduct()" class="btn btn-primary mt-2">Add Product</button>
 
+
+
+
+
 </div>
 </template>
 
@@ -97,6 +107,9 @@ export default {
             bundles:[], //list of Bundle objects
             error:"", 
 
+            validMail:true,
+            alertActive: false,
+
         }    
     },
     methods:{
@@ -115,10 +128,13 @@ export default {
                 for (var p of this.bundles)
                     names.push(p.Product.Name)
 
+            
             if (this.checkProducts(names))
-                alert("some Products have the same name")
-            else
+                this.alertActive=true
+            else 
+            if(this.validateEmail(this.account.Email))
             {
+                this.alertActive=false
                 var id = await BrandRepository.create( {Brand : this.brand , ProductsCategs: this.bundles, Account:this.account})
                                                 .catch( (response)=> this.error = response);
 
@@ -130,6 +146,7 @@ export default {
                 else
                     this.$router.push({path:'/brands/'+id.data})
             }
+            else this.validMail = false
         },
         //adds a new Product form, insert a new Bundle object into bundles.
         addProduct(){
@@ -152,6 +169,17 @@ export default {
             //strArray.forEach(str => alreadySeen[str] ? isDuplicates=true : alreadySeen[str] = true)
             return isDuplicates
         },
+        validateEmail (email)
+        {
+            return String(email)
+            .toLowerCase()
+            .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+        },
+        showToast(){
+
+        }
 
 
 

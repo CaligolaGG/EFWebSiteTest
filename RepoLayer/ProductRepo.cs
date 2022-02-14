@@ -41,16 +41,7 @@ namespace RepoLayer
 
      
 
-        /// <summary>
-        /// delete an item from the table given its id.
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns>number of records affected</returns>
-        public async Task<int> DeleteAsync(int productId) 
-        {
-            _ctx.Products.Remove(new Product { Id = productId });
-            return await _ctx.SaveChangesAsync();
-        }
+
 
         /// <summary>
         /// logically deletes a product with all the request associated with that product and all the replies to that request
@@ -71,7 +62,7 @@ namespace RepoLayer
                 
                 var temp = await _ctx.InfoRequests.Where(x => x.ProductId == productId).ToListAsync();
 
-                /* not working
+                /* TODO info request replies
                 var temp =await  _ctx.InfoRequests.Where(x => x.ProductId == productId).ToListAsync();
 
                 _ctx.InfoRequestReplies.
@@ -86,6 +77,41 @@ namespace RepoLayer
 
         }
 
+
+        public async Task<int> CreateProductWithCategories(List<ProductAndCategoryModel> ProductsCategs, int brandId)
+        {
+            foreach (ProductAndCategoryModel p in ProductsCategs)
+            {
+                if (String.IsNullOrWhiteSpace(p.Product.Name))
+                    throw new Exception("invalid product " + p.Product.Name);
+                p.Product.BrandId = brandId;
+
+                foreach (int c in p.Categories)
+                {
+                    if (c < 1)
+                        throw new Exception("invalid category");
+                }
+
+                await _ctx.Products.AddAsync(p.Product);
+                await _ctx.SaveChangesAsync();
+
+                foreach (int c in p.Categories)
+                    await _ctx.ProductCategories.AddAsync(new ProductCategory { IdProduct = p.Product.Id, IdCategory = c });
+            }
+           return await _ctx.SaveChangesAsync();
+        }
+
+
+        /// <summary>
+        /// #NOTUSED Phisically delete an item from the table given its id.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns>number of records affected</returns>
+        public async Task<int> DeleteAsync(int productId)
+        {
+            _ctx.Products.Remove(new Product { Id = productId });
+            return await _ctx.SaveChangesAsync();
+        }
 
         /*
         public async Task<int> DeleteLogicalAsync2(int productId)

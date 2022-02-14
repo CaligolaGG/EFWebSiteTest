@@ -44,12 +44,12 @@ namespace EFWebSiteTest.Controllers
         /// <returns>BadRequest when pagenum and pagesize are less than 1.
         /// Not found when the List of Request is null or empty.
         /// Ok result with a page of Requests in any other case.</returns>
-        [HttpGet("LeadsPage/{pageNum:int=1}/{pagesize:int:max(50)=5}/{brandId:int=0}/{Asc=false}/{productName?}")]
-        public async Task<IActionResult> RequestPage(int pageNum, int pagesize, string productName, int brandId, bool Asc)
+        [HttpGet("LeadsPage/{pageNum:int=1}/{pagesize:int:max(50)=5}/{brandId:int=0}/{Asc=false}/{productId=0}/{productName?}")]
+        public async Task<IActionResult> RequestPage(int pageNum, int pagesize, string productName, int brandId, bool Asc,int productId)
         {
             if (pageNum < 1 || pagesize < 1)
                 return BadRequest("page num and pagesize must be greater than 0");
-            EntityPage<RequestSelect> result = await _requestService.GetPageAsync(pageNum, pagesize, productName, brandId, Asc);
+            EntityPage<RequestSelect> result = await _requestService.GetPageAsync(pageNum, pagesize, productName, brandId, Asc, productId);
             if (result.ListEntities is null || !result.ListEntities.Any())
                 return NotFound("page not found ");
             return Ok(result);

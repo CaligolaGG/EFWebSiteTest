@@ -1,40 +1,43 @@
 <template>
-  <div id="app" >
-    
-    <nav class="sticky-top navbar navbar-expand-lg navbar-dark bg-dark ">
+  <div>
+    <nav class="container-fluid sticky-top navbar navbar-expand-lg navbar-dark bg-dark ">
         <a class="navbar-brand ms-3" > <router-link to="/" class="navbar-brand" > Navbar </router-link></a>
     </nav>
+    <div class="container-fluid" id="app" >
+      
 
-    <div class="row" >
-      <div class="col-2 bg-light text-dark h-100 position-fixed">
-        <div class="row">
-          <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
-            <div class="row mt-2 mx-2"  > 
-                <span> Product </span> 
-            </div>
-          </router-link>
-        </div>
-        <div class="row">
-          <router-link to="/brands" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[1].state }"> 
-            <div class="row mx-2"  >
-              <span > Brand </span> 
-            </div>
-          </router-link>
-        </div>
-        <div class="row">
-          <router-link to="/leads" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[2].state }">  
-            <div class="row mx-2" > 
-              <span > Requests </span> 
-            </div>
-            </router-link> 
+
+      <div class="row" >
+        <div class="col-2 bg-light text-dark h-100 position-fixed">
+          <div class="row">
+            <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
+              <div class="row mt-2 mx-2"  > 
+                  <span> Product </span> 
+              </div>
+            </router-link>
           </div>
+          <div class="row">
+            <router-link to="/brands" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[1].state }"> 
+              <div class="row mx-2"  >
+                <span > Brand </span> 
+              </div>
+            </router-link>
+          </div>
+          <div class="row">
+            <router-link to="/leads" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[2].state }">  
+              <div class="row mx-2" > 
+                <span > Requests </span> 
+              </div>
+              </router-link> 
+            </div>
+        </div>
+        <div class="col mt-4 offset-2">
+          <router-view
+          />
+        </div>
       </div>
-      <div class="col mt-4 offset-2">
-        <router-view
-        />
-      </div>
-    </div>
 
+    </div>
   </div>
 </template>
 
@@ -100,5 +103,10 @@ export default {
 .hover:hover{
   transform: scale(1.001);
   box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+  cursor: pointer;
+}
+.hoverV2:hover{
+  background-color: #505050a4;
+  cursor: pointer;
 }
 </style>

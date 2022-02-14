@@ -3,11 +3,11 @@ const resource = '/Request';
 
 export default {
     //get a page of leads
-    getPage(pageNum=1,brandId=0,productName=null,isAsc=false,pageSize=10) {
+    getPage(pageNum=1,brandId=0,productName=null,isAsc=false,pageSize=10, productId=0) {
         if(productName === null)
-            return Base.get(`${resource}/LeadsPage/${pageNum}/${pageSize}/${brandId}/${isAsc}`);
+            return Base.get(`${resource}/LeadsPage/${pageNum}/${pageSize}/${brandId}/${isAsc}/${productId}`);
         else
-            return Base.get(`${resource}/LeadsPage/${pageNum}/${pageSize}/${brandId}/${isAsc}/${productName}`);
+            return Base.get(`${resource}/LeadsPage/${pageNum}/${pageSize}/${brandId}/${isAsc}/${productId}/${productName}`);
     },
     //get a specific lead by its id
     getById (id) {

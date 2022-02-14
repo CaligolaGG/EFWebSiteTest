@@ -1,4 +1,4 @@
-<template>
+<template> 
   <div class="container">
     <div class="row">
       <div class="col-10">
@@ -7,20 +7,22 @@
         <button class="btn btn-outline-primary   " @click="$router.push({path:'/products/new'})" > AddProduct</button> <br>
       </div> <hr>
     </div>
-    
+      <div class="alert alert-danger  " role="alert" v-bind:class="{'d-none':!alertActive}"  >
+        No Products Found
+      </div>
     <div v-if="!this.loading" >
       <table class="table table-striped table-light ">
-        <thead >
+        <thead > 
           <tr>
-            <th scope="col" class="position-relative" @click="selectOrderBy(1)">Brand  
-              <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(1,false)}"> </i>
+            <th scope="col" class="position-relative hoverV2"  @click="selectOrderBy(1)">Brand  
+              <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(1,false)}"> </i>
               <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(1,true)}" ></i></th>
-            <th scope="col" class="position-relative" @click="selectOrderBy(2)">Product 
-              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,false)}"></i>
-              <i class="bi bi-caret-up-fill  position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,true)}" ></i>
+            <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(2)">Product 
+              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(2,false)}"></i>
+              <i class="bi bi-caret-up-fill  position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':defaultArrowState,'text-primary':selectArrow(2,true)}" ></i>
             </th>
             <th scope="col" class="position-relative" >Categories </th>
-            <th scope="col" class="position-relative" @click="selectOrderBy(3)">Price
+            <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(3)">Price
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(3,false)}"></i> 
               <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(3,true)}"></i>
             </th>
@@ -28,9 +30,9 @@
           </tr>
           <tr class="bg-light">
             <td> 
-              <select name="" id="" class="form-select m-1 "  v-model="brandName" @change="updateData()">
-                <option value="">Select a brand</option>
-                <option v-for="brand in this.brands" :key="brand.Id"  > {{brand.name}} </option>  
+              <select name="" id="" class="form-select m-1 "  v-model="brandChosen" @change="fetchPage()">
+                <option value="">  No Brand </option>
+                <option v-for="brand in this.brands" :key="brand.Id" v-bind:value="brand.id" > {{brand.name}} </option>  
               </select>  
             </td>
             <td></td><td></td><td></td><td></td>
@@ -50,18 +52,12 @@
           </tr>
         </tbody>
       </table>     
-      <ul class="pagination justify-content-center">
-        <button @click="previousPage()" class="btn btn-primary ">Previous</button>
-        <button v-for="(item,index) in closePages" :key="index" @click="changePage(item)" class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item),'text-white':isCurrent(item) }">{{item}}</button>
-        <button @click="nextPage()" class="btn btn-primary">Next</button>
-      </ul>
-      <Paging @changePage="fetchPage()" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+      <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
     </div>
 
     
   </div>
 </template>
-
 
 
 <script>
@@ -76,14 +72,14 @@ export default {
      loading: true, //id of the product (from routing)
      insert:true,
 
-     currentpage:1,
      orderBy:0,    //integer to choose the criteria of ordering
      isAsc:true,
-     brandName:"",
-     brandSelect:"",
+     brandChosen:0,
+     defaultArrowState:true,
 
      info:{}, //object to contain the list of products fetched from the db
      
+     alertActive:false
 
    }
   }, 
@@ -93,19 +89,15 @@ export default {
 
   methods:{
     //fetch a page of products through the repository get method
-    async fetchPage(pageNum=0){
-      if(pageNum !=0)
-        this.currentpage = pageNum
+    async fetchPage(pageNum=1){
       var error = false
-      let temp=await ProductsRepository.get(this.currentpage, this.orderBy,this.isAsc,this.brandName)
-                                          .catch(()=>{alert("no products found"); error=true});
+      let temp=await ProductsRepository.get(pageNum, this.orderBy,this.isAsc,this.brandChosen)
+                                          .catch(()=>{this.alertActive = true; error=true});
       if(!error)
+      {
         this.info = temp
-    },
-    //used to update the product page when a filter is applied
-    updateData(){
-      this.currentpage=1;
-      this.fetchPage();
+        this.alertActive = false
+      }
     },
     //used to load all initial needed data. In particular the first page of products, all brands and all categories
     async getData(){ 
@@ -114,40 +106,19 @@ export default {
       this.brands = temp.data
       this.loading = false;
     },
-    //increase the current page by one and refresh the data
-    nextPage(){
-      if(this.currentpage < this.info.data.totalPagesNumber)
-        ++ this.currentpage;
-       this.fetchPage();
-    },
-    //decrease the current page by one and refresh the data
-    previousPage(){
-      if(this.currentpage > 1)
-        -- this.currentpage;
-       this.fetchPage();    
-    },
-    //change the current page to a specific one and refresh the data
-    changePage(pageNum){
-      this.currentpage = pageNum;
-      this.fetchPage();
-    },
     //changes the ordering of the data
     async selectOrderBy(n){
       this.orderBy==n? this.isAsc = !this.isAsc : this.orderBy= n;
-      this.updateData();
+      this.fetchPage();
     },
     //delete a product and refreshes the page
     async deleteProduct(id){
       if(confirm("are you sure you want to delete this product?"))
       {
         await ProductsRepository.delete(id);
-        this.changePage(this.currentpage);
+        this.fetchPage();
       }
     },
-    isCurrent(x){
-      return this.currentpage == x 
-    },
-
     selectArrow(orderBy, isAsc ){
       return this.orderBy == orderBy && this.isAsc == isAsc
     }
@@ -158,21 +129,7 @@ export default {
     getProducts(){
       return this.info.data.listEntities
     },
-    //returns an array with the closest pages to the current one
-    closePages(){
-      let x=[]
-      let p= this.currentpage
-      p-2<2? p:x.push(p-2)
-      p-1<1? p:x.push(p-1)
-      x.push(p);
-      p+1>this.info.data.totalPagesNumber? p:x.push(p+1)
-      p+2>this.info.data.totalPagesNumber? p:x.push(p+2)
-      return x
-    },
-
-
   },
-
   async created(){
     await this.getData();
   }

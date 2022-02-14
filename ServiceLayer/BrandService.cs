@@ -14,9 +14,12 @@ namespace ServiceLayer
     public class BrandService
     {
         private readonly BrandRepo _brandRepo;
-        public BrandService(BrandRepo brandRepo)
+        private readonly ProductRepo _productRepo;
+
+        public BrandService(BrandRepo brandRepo, ProductRepo productRepo )
         {
             _brandRepo = brandRepo;
+            _productRepo = productRepo;
         }
 
         /// <summary>
@@ -87,11 +90,9 @@ namespace ServiceLayer
             page.CurrentPageNumber = pageNum;
             page.PageSize = pageSize;
 
-
-
             var brands = _brandRepo.GetAll();
             if (!(searchByName is null || searchByName == ""))
-                brands = brands.Where(brand => brand.BrandName == searchByName);
+                brands = brands.Where(brand => brand.BrandName.Contains(searchByName));
 
             page.TotalEntitiesNumber = brands.Count();
             page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
@@ -110,18 +111,7 @@ namespace ServiceLayer
             return page;
         }
 
-        /// <summary>
-        /// Update a brand informations
-        /// </summary>
-        /// <param name="brand">brand to update</param>
-        /// <returns>Number of records affected</returns>
-        /// <exception cref="ArgumentException">Raise an exception if the inserted brand is null or his id is less than 1</exception>
-        public async Task<int> BrandUpdateAsync(Brand brand)
-        {
-            if (brand.Id < 1 || brand is null || String.IsNullOrWhiteSpace(brand.BrandName))
-                throw new ArgumentException("invalid brand");
-            return await _brandRepo.UpdateBrandAsync(brand);
-        }
+
 
         /// <summary>
         /// Logically delete a brand.
@@ -136,20 +126,6 @@ namespace ServiceLayer
             return await _brandRepo.LogicalBrandDeleteAsync(brandId);
         }
 
-
-        /// <summary>
-        /// Create a new brand.
-        /// </summary>
-        /// <param name="brand">brand to insert</param>
-        /// <returns>Number of db rows affected</returns>
-        /// <exception cref="ArgumentException"> Raised if the name of the brand is null, empty, or consist of whitespaces</exception>
-        public async Task<int> CreateBrandAsync (Brand brand)
-        {
-            if (String.IsNullOrWhiteSpace(brand.BrandName) || brand is null)
-                throw new ArgumentException("invalid brand name");
-            return await _brandRepo.CreateBrandAsync(brand);
-        }
-
         /// <summary>
         /// Add a new brand with the associated products and their categories
         /// </summary>
@@ -162,8 +138,24 @@ namespace ServiceLayer
             foreach (var p in brandWithProducts.ProductsCategs)
                 if(String.IsNullOrWhiteSpace(p.Product.Name))
                     throw new ArgumentException("found invalid product name");
+            
+            int brandId = await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts.Account, brandWithProducts.Brand);
+            await _productRepo.CreateProductWithCategories(brandWithProducts.ProductsCategs, brandId);
+            return brandId;
 
-            return await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts);
+        }
+
+        /// <summary>
+        /// Update a brand informations
+        /// </summary>
+        /// <param name="brand">brand to update</param>
+        /// <returns>Number of records affected</returns>
+        /// <exception cref="ArgumentException">Raise an exception if the inserted brand is null or his id is less than 1</exception>
+        public async Task<int> BrandUpdateAsync(Brand brand)
+        {
+            if (brand.Id < 1 || brand is null || String.IsNullOrWhiteSpace(brand.BrandName))
+                throw new ArgumentException("invalid brand");
+            return await _brandRepo.UpdateBrandAsync(brand);
         }
 
 
@@ -178,6 +170,25 @@ namespace ServiceLayer
                 throw new ArgumentException("brand id must be > 0");
             return await _brandRepo.GetById(brandId).FirstOrDefaultAsync();
         }
+
+
+
+
+
+
+        /// <summary>
+        /// #NOTUSED Create a new brand.
+        /// </summary>
+        /// <param name="brand">brand to insert</param>
+        /// <returns>Number of db rows affected</returns>
+        /// <exception cref="ArgumentException"> Raised if the name of the brand is null, empty, or consist of whitespaces</exception>
+        public async Task<int> CreateBrandAsync(Brand brand)
+        {
+            if (String.IsNullOrWhiteSpace(brand.BrandName) || brand is null)
+                throw new ArgumentException("invalid brand name");
+            return await _brandRepo.CreateBrandAsync(brand);
+        }
+
 
 
 

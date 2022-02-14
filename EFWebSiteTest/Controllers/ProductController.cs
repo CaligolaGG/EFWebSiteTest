@@ -16,7 +16,6 @@ namespace EFWebSiteTest.Controllers
         private readonly ProductService _productService;
         private readonly ProductCategoryService _productcategoryService;
 
-
         public ProductController(ProductService productService, ProductCategoryService productcategoryService) 
         {
             _productService = productService;
@@ -31,12 +30,12 @@ namespace EFWebSiteTest.Controllers
         /// <returns>BadRequest when pagenum and pagesize are less than 1.
         /// Not found when the List of product is null or empty.
         /// Ok result with a page of products in any other case.</returns>
-        [HttpGet("ProductPage/{pageNum:int=1}/{pagesize:int:max(10)=5}/{orderBy=0}/{isAsc=true}/{brandName=}")]
-        public async Task<IActionResult> ProductPage(int pageNum, int pagesize, int orderBy, bool isAsc, string brandName)
+        [HttpGet("ProductPage/{pageNum:int=1}/{pagesize:int:max(20)=10}/{orderBy:int:max(3)=0}/{isAsc:bool=true}/{brandId:int?}")]
+        public async Task<IActionResult> ProductPage(int pageNum, int pagesize, int orderBy, bool isAsc, int brandId)
         {
             if (pageNum < 1 || pagesize < 1)
                 return BadRequest("page num and pagesize must be greater than 0");
-            EntityPage<ProductSelect> result = await _productService.GetProductPageAsync(pageNum, pagesize,orderBy,isAsc,brandName);
+            EntityPage<ProductSelect> result = await _productService.GetProductPageAsync(pageNum, pagesize,orderBy,isAsc, brandId);
             if (result.ListEntities is null || !result.ListEntities.Any())
                 return NotFound("page not found");
             return Ok(result);
@@ -54,7 +53,7 @@ namespace EFWebSiteTest.Controllers
         {
             if (productId < 1)
                 return BadRequest("invalid id");
-            var result = await _productService.GetProductAsync(productId);
+            var result = await _productService.GetProductWithCategoriesAsync(productId);
             if (result is null)
                 return NotFound();
             return Ok(result);
@@ -86,7 +85,7 @@ namespace EFWebSiteTest.Controllers
         [HttpPost("InsertProductCat")]
         public async Task<IActionResult> InsertProductWithCategories (ProductAndCategoryModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !IsProductValid(model.Product))
                 return BadRequest(ModelState);
             var result = await InsertOrUpdateProduct(model.Product);
             List<ProductCategory> productCategories = new List<ProductCategory>();
@@ -105,9 +104,8 @@ namespace EFWebSiteTest.Controllers
         [HttpPut("UpdateProductCat")]
         public async Task<IActionResult> UpdateProductWithCategories(ProductAndCategoryModel model)
         {
-            if(model.Product.Name.Length > 50 || model.Product.Description.Length > 50 || model.Product.ShortDescription.Length > 20)
-                return BadRequest("inputs too longs");
-            if (!ModelState.IsValid || model.Product.Id < 1)
+
+            if (!ModelState.IsValid || model.Product.Id < 1 || !IsProductValid(model.Product))
                 return BadRequest(ModelState);
 
             var result = await InsertOrUpdateProduct(model.Product);
@@ -155,7 +153,7 @@ namespace EFWebSiteTest.Controllers
         /// </returns>
         public async Task<IActionResult> InsertOrUpdateProduct(Product product) 
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !IsProductValid(product))
                 return BadRequest(ModelState);
             if (product is null || product.BrandId < 1 || String.IsNullOrEmpty(product.Name) || product.Price < 0)
                 return BadRequest("product not valid");
@@ -165,11 +163,33 @@ namespace EFWebSiteTest.Controllers
             return Ok(product);
         }
 
+        /// <summary>
+        /// Api post method to logically Remove a  Product given its id.
+        /// </summary>
+        /// <param name="productId">the product id</param>
+        /// <returns>
+        /// BadRequest if the id provided is less then 1
+        /// NotFound if the call to the repo returns 0, therefore the product was either not found or not deleted
+        /// Ok otherwise
+        /// </returns>
+        [HttpDelete("DeleteProductL/{productId:min(1)}")]
+        public async Task<IActionResult> DeleteProductLogical(int productId)
+        {
+            if (productId < 1)
+                return BadRequest("product must be > 0");
+
+            var result = await _productService.DeleteLogicalAsync(productId);
+            if (result < 1)
+                return NotFound("product has not been found or not been deleted");
+
+            return Ok(result);
+        }
+
 
 
 
         /// <summary>
-        /// Api post method to Remove a  Product given its id.
+        /// #NOTUSED Api post method to Remove a  Product given its id.
         /// </summary>
         /// <param name="productId">the product id</param>
         /// <returns>
@@ -190,18 +210,12 @@ namespace EFWebSiteTest.Controllers
             return Ok();
         }
 
-        [HttpDelete("DeleteProductL/{productId:min(1)}")]
-        public async Task<IActionResult> DeleteProductLogical(int productId)
-        {
-            if (productId < 1)
-                return BadRequest("product must be > 0");
 
-            var result = await _productService.DeleteLogicalAsync(productId);
-            if (result < 1)
-                return NotFound("product has not been found or not been deleted");
-
-            return Ok(result);
-        }
+        public bool IsProductValid(Product product) =>
+        product.Name.Length>0 && product.Name.Length<=50
+        && product.Description.Length<=50 && product.ShortDescription.Length<=20
+        && product.Price>0;
+            
 
     }
 }

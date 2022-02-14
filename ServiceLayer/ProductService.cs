@@ -26,7 +26,7 @@ namespace ServiceLayer
         /// <param name="pageSize">size of the page. must be greater than 0</param>
         /// <returns>An EntityPage object with the info relative to the paging and the list of products</returns>
         /// <exception cref="ArgumentOutOfRangeException"> if pagenum and pagesize less than 1 throw exception</exception>
-        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, int orderBy, bool isAsc, string brandName)
+        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, int orderBy, bool isAsc, int brandId =0)
         {
             if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException("pageSize must be > 0");
@@ -40,8 +40,8 @@ namespace ServiceLayer
 
 
             var products = _productRepo.GetAll();
-            if(! (brandName is null))
-                products = products.Where(x=> x.Brand.BrandName == brandName);
+            if(brandId > 0)
+                products = products.Where(x=> x.BrandId == brandId);
             page.TotalEntitiesNumber = await products.CountAsync();
             page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
             switch (orderBy)
@@ -82,8 +82,8 @@ namespace ServiceLayer
 
 
         /// <summary>
-        /// Insert or update a new product. 
-        /// Insert if the product id is 0 (not set). Update if the id is != 0
+        /// Update or Insert a new product. 
+        /// Insert if the product id is 0 (not set). Update if the id is > 0
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
@@ -103,19 +103,7 @@ namespace ServiceLayer
             return await _productRepo.CreateOrUpdateAsync(product);
         }
 
-        /// <summary>
-        /// Remove a product given an id
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns>number of records affected</returns>
-        /// <exception cref="ArgumentException"> raised if the id is less then 1 </exception>
-        public async Task<int> DeleteAsync(int productId)
-        {
-            if (productId < 1)
-                throw new ArgumentException("product id must be > 0");
 
-            return await _productRepo.DeleteAsync(productId);
-        }
 
         /// <summary>
         /// Remove logically a product given an id
@@ -174,7 +162,7 @@ namespace ServiceLayer
         /// </summary>
         /// <param name="productId"></param>
         /// <returns>object, that hold the requested infos</returns>
-        public async Task<ProductAndCategories> GetProductAsync(int productId)
+        public async Task<ProductAndCategories> GetProductWithCategoriesAsync(int productId)
         {
             if (productId < 1)
                 throw new ArgumentOutOfRangeException("product id must be > 0");
@@ -202,6 +190,21 @@ namespace ServiceLayer
                 }).FirstOrDefaultAsync();
 
            return product;
+        }
+
+
+        /// <summary>
+        /// #NOTUSED Phisically Remove a product given an id
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns>number of records affected</returns>
+        /// <exception cref="ArgumentException"> raised if the id is less then 1 </exception>
+        public async Task<int> DeleteAsync(int productId)
+        {
+            if (productId < 1)
+                throw new ArgumentException("product id must be > 0");
+
+            return await _productRepo.DeleteAsync(productId);
         }
 
 

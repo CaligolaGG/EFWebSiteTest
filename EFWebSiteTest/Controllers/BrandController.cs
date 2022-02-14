@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc; //!= API Web ASP.NET
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +23,7 @@ namespace EFWebSiteTest.Controllers
         }
 
         /// <summary>
-        /// Method to get all the brands from the db
+        /// Method to get all the brands (only name and id) from the db
         /// </summary>
         /// <returns>Not Found if no brands are found. Ok() with the list of brands otherwise</returns>
         public async Task<IActionResult> GetAllBrands()
@@ -34,10 +34,8 @@ namespace EFWebSiteTest.Controllers
             return Ok(result);
         }
 
-
-
         /// <summary>
-        /// Method to get a BrandObject from the db
+        /// Method to get an entire BrandObject from the db
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetBrand/{id:int}")]
@@ -48,7 +46,6 @@ namespace EFWebSiteTest.Controllers
                 return NotFound("not found");
             return Ok(result);
         }
-
 
         /// <summary>
         /// api get method for the paging of Brand
@@ -128,27 +125,6 @@ namespace EFWebSiteTest.Controllers
             return Ok();
         }
 
-
-        /// <summary>
-        /// Api method to insert a new brand without specifing its products
-        /// </summary>
-        /// <param name="brand">brand to add</param>
-        /// <returns>
-        /// Bad request if the brand inserted is not valid
-        /// Forbid if the brand has not been inserted for any reason
-        /// Ok with the brand inserted otherwise
-        /// </returns>
-        [HttpPost("BrandCreate")]
-        public async Task<IActionResult> CreateBrandAsync(Brand brand)
-        {
-            if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brand.BrandName))
-                return BadRequest(ModelState);
-            if(await _brandService.CreateBrandAsync(brand) < 1)
-                return Forbid("brand has not been inserted");
-            return Ok(brand);
-        }
-
-
         /// <summary>
         /// Api method to insert a new brand with its products and associated categories
         /// </summary>
@@ -169,6 +145,26 @@ namespace EFWebSiteTest.Controllers
             return Ok(result);
         }
 
+
+
+        /// <summary>
+        /// #NOTUSED Api method to insert a new brand without specifing its products
+        /// </summary>
+        /// <param name="brand">brand to add</param>
+        /// <returns>
+        /// Bad request if the brand inserted is not valid
+        /// Forbid if the brand has not been inserted for any reason
+        /// Ok with the brand inserted otherwise
+        /// </returns>
+        [HttpPost("BrandCreate")]
+        public async Task<IActionResult> CreateBrandAsync(Brand brand)
+        {
+            if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brand.BrandName))
+                return BadRequest(ModelState);
+            if (await _brandService.CreateBrandAsync(brand) < 1)
+                return Forbid("brand has not been inserted");
+            return Ok(brand);
+        }
 
     }
 

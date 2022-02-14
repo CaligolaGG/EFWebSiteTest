@@ -18,14 +18,6 @@ namespace ServiceLayer
             _requestRepo = requestRepo;
         }
 
-        public Task<IEnumerable<InfoRequest>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-
         /// <summary>
         /// get a page of Requests
         /// </summary>
@@ -33,7 +25,7 @@ namespace ServiceLayer
         /// <param name="pageSize">size of the page. must be greater than 0</param>
         /// <returns>An EntityPage object with the info relative to the paging and the list of Requests</returns>
         /// <exception cref="ArgumentOutOfRangeException"> if pagenum and pagesize less than 1 throw exception</exception>
-        public async Task<EntityPage<RequestSelect>> GetPageAsync(int pageNum, int pageSize, string searchByProductName, int searchByBrandId,bool Asc)
+        public async Task<EntityPage<RequestSelect>> GetPageAsync(int pageNum, int pageSize, string searchByProductName, int searchByBrandId,bool Asc,int searchByProductId)
         {
             if (pageNum < 1 || pageSize < 1)
                 throw new ArgumentOutOfRangeException("pagenumber and pagesize must be greater than 0");
@@ -43,14 +35,13 @@ namespace ServiceLayer
             page.PageSize = pageSize;
 
 
-
             var requests = _requestRepo.GetAll();
             if (searchByBrandId !=0)
                 requests = requests.Where(x => x.Product.BrandId == searchByBrandId);
-            //if (searchByProductId !=0)
-                //requests = requests.Where(x => x.Product.Id == searchByProductId);
+            if (searchByProductId !=0)
+                requests = requests.Where(x => x.Product.Id == searchByProductId);
             if ( !String.IsNullOrWhiteSpace(searchByProductName))
-                requests = requests.Where(x => x.Product.Name == searchByProductName);
+                requests = requests.Where(x => x.Product.Name.Contains(searchByProductName));
 
             requests = Asc? requests.OrderBy(x => x.InsertDate): requests.OrderByDescending(x=>x.InsertDate);
 
@@ -116,14 +107,5 @@ namespace ServiceLayer
 
     }
 
-    public class RequestSelect
-    {
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public string ProductName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
-        public string RequestText { get; set; }
-        public DateTime Date { get; set; }
-    }
+
 }

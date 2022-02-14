@@ -36,5 +36,19 @@ namespace Domain
         public string ReplyText { get; set; }
 
     }
+
+    /// <summary>
+    /// projection  class of InfoRequestReply that holds some detail of a single request
+    /// </summary>
+    public class RequestSelect
+    {
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string ProductName { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string RequestText { get; set; }
+        public DateTime Date { get; set; }
+    }
     #endregion
 }

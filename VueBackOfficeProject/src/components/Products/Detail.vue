@@ -19,8 +19,9 @@
             </div>
         </div>
 
-        <button class="btn btn-primary my-4" @click="$router.push({name: 'leads', params: { productName: info.productName, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
+        <button class="btn btn-primary my-4" @click="$router.push({name: 'leads', params: { productId: info.productId, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
 
+<!--
         <div class="row">
             <table class="table table-striped table-light">
                 <thead>
@@ -39,7 +40,7 @@
                 </tbody>
             </table>
         </div>
-
+-->
     </div>
 </template>
 
@@ -68,7 +69,7 @@ export default {
 
     },
     async created(){
-        this.productId = this.$route.params.id;
+        this.productId = this.$route.params.id; //id of the current product from routing
         await this.getData();
     }
     
