@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!this.loading" class="container">
+    <div  class="container">
         <h2> Requests </h2>
         <hr>
         <div class="row my-1">
@@ -10,45 +10,47 @@
                 Select a Brand
             </div>
             <div class="col-5">
-            <select  name="" id="" class="form-select m-1"  v-model="searchByBrand" @change="fetchPage()"  >
-                <option default value=0>No Brand</option>
-                <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
-            </select>
+                <select  name="" id="" class="form-select m-1"  v-model="searchByBrand" @change="fetchPage()"  >
+                    <option default value="0">  No Brand </option>
+                    <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
+                </select>
             </div>
         </div>
 
-        <table class="table table-striped table-light ">
-            <thead >
-            <tr>
-                <th class="position-relative">UserName  </th>
-                <th class="position-relative" >Product </th>
-                <th class="position-relative" >PhoneNumber </th>
-                <th class="position-relative" >Email </th>
-                <th class="position-relative" >RequestText </th>
-                <th class="position-relative hoverV2" @click="ordering" >Date 
-                <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':!isAsc}"> </i> 
-                <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':isAsc}" ></i>
-                </th>
-            </tr>
-            <tr>
-                <th></th>
-                <th >
-                    <input v-debounce:1000ms="searchDebounced" class="form-control" type="text"  placeholder="Product Name" name="" id="" v-model="searchByProduct">
-                </th><th colspan="4"></th> 
-            </tr>
-            </thead>
-            <tbody>
-                <tr v-for="lead in this.getLeads" :key="lead.id" class="hover" @click.stop="$router.push({path:'/leads/'+lead.id})">
-                    <td>{{lead.userName}}</td>
-                    <td>{{lead.productName}}</td>
-                    <td>{{lead.phoneNumber}}</td>
-                    <td>{{lead.email}}</td>
-                    <td>{{lead.requestText}}</td>
-                    <td> {{convertToDate(lead.date)}}</td>
-                </tr>    
-            </tbody>    
-        </table>
-        <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+        <div v-if="!this.loading">
+            <table class="table table-striped table-light ">
+                <thead >
+                <tr>
+                    <th class="position-relative">UserName  </th>
+                    <th class="position-relative" >Product </th>
+                    <th class="position-relative" >PhoneNumber </th>
+                    <th class="position-relative" >Email </th>
+                    <th class="position-relative" >RequestText </th>
+                    <th class="position-relative hoverV2" @click="ordering" >Date 
+                    <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':!isAsc}"> </i> 
+                    <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':isAsc}" ></i>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th >
+                        <input v-debounce:1000ms="searchDebounced" class="form-control" type="text"  placeholder="Product Name" name="" id="" v-model="searchByProduct">
+                    </th><th colspan="4"></th> 
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="lead in this.getLeads" :key="lead.id" class="hover" @click.stop="$router.push({path:'/leads/'+lead.id})">
+                        <td>{{lead.userName}}</td>
+                        <td>{{lead.productName}}</td>
+                        <td>{{lead.phoneNumber}}</td>
+                        <td>{{lead.email}}</td>
+                        <td>{{lead.requestText}}</td>
+                        <td> {{convertToDate(lead.date)}}</td>
+                    </tr>    
+                </tbody>    
+            </table>
+            <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+        </div>
     </div>
 </template>
 
@@ -135,8 +137,6 @@ Vue.use(vueDebounce)
                 return new Date(date).toLocaleDateString("it")
             },
 
-
-
         },
         computed:{
             //returns the list of products from the info fetched.
@@ -146,7 +146,8 @@ Vue.use(vueDebounce)
         },
         async created() {
             this.searchByProductId = this.$route.params.productId
-            this.searchByBrand = this.$route.params.brandId
+            if(this.$route.params.brandId)
+                this.searchByBrand = this.$route.params.brandId
             await this.getData();
         },
 

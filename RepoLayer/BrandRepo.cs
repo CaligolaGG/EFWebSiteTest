@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using Domain;
 using Z.EntityFramework.Plus;
 using Microsoft.EntityFrameworkCore;
-
-
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace RepoLayer
 {
@@ -97,16 +96,47 @@ namespace RepoLayer
         /// </summary>
         /// <param name="brandWithProducts">Models that contains all the information to add to the db</param>
         /// <returns>number of rows affected</returns>
-        public async Task<int> CreateBrandWithProductsAsync(Account account, Brand brand)
+        public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
-            await _ctx.Accounts.AddAsync(account);
-            await _ctx.SaveChangesAsync();
+            IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
 
-            brand.AccountId = account.Id;
-            await _ctx.Brands.AddAsync(brand);
-            await _ctx.SaveChangesAsync();
+            try
+            {
+                await _ctx.Accounts.AddAsync(brandWithProducts.Account);
+                await _ctx.SaveChangesAsync();
 
-            return brand.Id;
+                brandWithProducts.Brand.AccountId = brandWithProducts.Account.Id;
+                await _ctx.Brands.AddAsync(brandWithProducts.Brand);
+                await _ctx.SaveChangesAsync();
+
+
+                foreach (ProductAndCategoryModel p in brandWithProducts.ProductsCategs)
+                {
+                    if (String.IsNullOrWhiteSpace(p.Product.Name))
+                        throw new Exception("invalid product " + p.Product.Name);
+                    p.Product.BrandId = brandWithProducts.Brand.Id;
+
+                    foreach (int c in p.Categories)
+                    {
+                        if (c < 1)
+                            throw new Exception("invalid category");
+                    }
+
+                    await _ctx.Products.AddAsync(p.Product);
+                    await _ctx.SaveChangesAsync();
+
+                    foreach (int c in p.Categories)
+                        await _ctx.ProductCategories.AddAsync(new ProductCategory { IdProduct = p.Product.Id, IdCategory = c });
+                }
+                await _ctx.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (Exception ex) 
+            {
+                transaction.Rollback();
+            }
+
+            return brandWithProducts.Brand.Id;
         }
 
 
@@ -117,19 +147,31 @@ namespace RepoLayer
         /// <returns>number of rows changed</returns>
         public async Task<int> LogicalBrandDeleteAsync(int brandId)
         {
-            Brand brand = _ctx.Brands.FirstOrDefault(x => x.Id == brandId);
-            brand.IsDeleted = true;
-            _ctx.Brands.Update(brand);
+            IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
+            try
+            {
+                await _ctx.InfoRequestReplies.Where(x => x.InfoRequest.Product.BrandId == brandId)
+                .UpdateFromQueryAsync(x => new InfoRequestReply() { IsDeleted = true });
 
-            _ctx.Products.Where(x => x.BrandId == brandId)
-                .Update(x => new Product() { IsDeleted = true });
+                await _ctx.InfoRequests.Where(x => x.Product.BrandId == brandId)
+                .UpdateFromQueryAsync(x => new InfoRequest() { IsDeleted = true });
 
-            /* TODO
-            var temp = await _ctx.Products.Where(x => x.BrandId == brandId).ToListAsync();
-            _ctx.InfoRequests.Where(x => temp.Select(s => s.Id).Contains(x.ProductId))
-                .Update(x => new InfoRequest() { IsDeleted = true });
-            */
-            return await _ctx.SaveChangesAsync();
+                await _ctx.Products.Where(x => x.BrandId == brandId)
+                .UpdateFromQueryAsync(x => new Product() { IsDeleted = true });
+
+                Brand brand = _ctx.Brands.FirstOrDefault(x => x.Id == brandId);
+                brand.IsDeleted = true;
+                _ctx.Brands.Update(brand);
+                var result = await _ctx.SaveChangesAsync();
+                transaction.Commit();
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+            }
+            return 0;
         }
 
 

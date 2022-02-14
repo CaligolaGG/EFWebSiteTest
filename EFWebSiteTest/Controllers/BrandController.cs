@@ -55,7 +55,7 @@ namespace EFWebSiteTest.Controllers
         /// <returns> BadRequest when pagenum and pagesize are less than 1.
         /// Not found when the List of brands is null or empty.
         /// Ok result with a page of brands in any other case </returns>
-        [HttpGet("BrandPage/{pageNum:int=1}/{pagesize:int:max(10)=5}/{searchByName=}")]
+        [HttpGet("BrandPage/{pageNum:int=1}/{pagesize:int:max(10)=5}/{searchByName?}")]
         public async Task<IActionResult> BrandPage(int pageNum, int pagesize, string searchByName)
         {
             if (pageNum < 1 || pagesize < 1)
@@ -98,8 +98,8 @@ namespace EFWebSiteTest.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            if (brand.Id < 0 || brand is null|| String.IsNullOrEmpty(brand.BrandName))
-                return BadRequest("invalid brand selected");
+            if (!IsBrandValid(brand))
+                return BadRequest(brand);
             int numChangedRows = await _brandService.BrandUpdateAsync(brand);
             if (numChangedRows < 1)
                 return NotFound("brand not updated");
@@ -137,13 +137,26 @@ namespace EFWebSiteTest.Controllers
         [HttpPost("CreateWithProds")]
         public async Task<IActionResult> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
-            if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brandWithProducts.Brand.BrandName))
+            if (!ModelState.IsValid )
                 return BadRequest(ModelState);
+            if (!IsBrandValid(brandWithProducts.Brand))
+                return BadRequest(brandWithProducts.Brand);
             var result = await _brandService.CreateBrandWithProductsAsync(brandWithProducts);
             if (result < 1)
                 return Forbid("brand has not been inserted");
             return Ok(result);
         }
+
+        private bool IsBrandValid(Brand brand) => brand.BrandName.Length > 0 && brand.BrandName.Length <= 50 && brand.Description.Length <= 50 ;
+            
+
+
+
+
+
+
+
+
 
 
 

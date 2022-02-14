@@ -12,11 +12,9 @@ namespace ServiceLayer
     public class ProductService 
     {
         private ProductRepo _productRepo;
-        private ProductCategoryRepo _pcRepo;
         public ProductService(ProductRepo productRepo, ProductCategoryRepo pcRepo) 
         {
             _productRepo = productRepo;
-            _pcRepo = pcRepo;
         }
 
         /// <summary>
@@ -91,18 +89,13 @@ namespace ServiceLayer
         /// <exception cref="ArgumentException">Raised if the product doesnt :  have a brand, have a valid name, price is negative </exception>
         public async Task<int> InsertOrUpdateAsync(Product product) 
         {
-            if(product is null )
+            if(product is null || !IsProductValid(product))
                 throw new ArgumentNullException(nameof(product));
             if (product.BrandId < 1)
                 throw new ArgumentException("product must have a brand");
-            if (String.IsNullOrWhiteSpace(product.Name))
-                throw new ArgumentException("product must have a valid name");
-            if (product.Price < 0)
-                throw new ArgumentException("product price must be positive");
-                
+
             return await _productRepo.CreateOrUpdateAsync(product);
         }
-
 
 
         /// <summary>
@@ -208,26 +201,10 @@ namespace ServiceLayer
         }
 
 
-        /*
-        public async Task<int> CreateProductsWithCategories(List<ProductAndCategoryModel> models)
-        {
-            int numRows = 0;
-            foreach (var model in models)
-            {
-                //creation product
-                numRows += await _productRepo.CreateOrUpdateAsync(model.Product);
-
-                //creation productcategories aka Association categories with Product
-                List<ProductCategory> productCategories = new List<ProductCategory>();
-                foreach (var category in model.Categories)
-                {
-                    productCategories.Add(new ProductCategory { IdProduct = model.Product.Id, IdCategory = category });
-                }
-                numRows +=  await _pcRepo.CreateMultipleAsync(productCategories);
-
-            }
-            return numRows;
-        }*/
+        private bool IsProductValid(Product product) =>
+         product.Name.Length > 0 && product.Name.Length <= 50
+         && product.Description.Length <= 50 && product.ShortDescription.Length <= 20
+         && product.Price > 0 && product.BrandId > 0;
 
 
     }

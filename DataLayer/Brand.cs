@@ -10,6 +10,7 @@ namespace Domain
     /// </summary>
     public class Brand : EntityBase
     {
+        [Range(0.0, int.MaxValue)]
         public int AccountId { get; set; }
 
         [MaxLength(50)]

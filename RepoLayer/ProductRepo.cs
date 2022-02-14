@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Domain;
 using Z.EntityFramework.Plus;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace RepoLayer
 {
@@ -20,8 +21,6 @@ namespace RepoLayer
         }
 
         public IQueryable<Product> GetAll() => _ctx.Products;
-
-
 
         /// <summary>
         /// Insert or update a new product. 
@@ -39,9 +38,6 @@ namespace RepoLayer
             return product.Id;
         }
 
-     
-
-
 
         /// <summary>
         /// logically deletes a product with all the request associated with that product and all the replies to that request
@@ -50,56 +46,37 @@ namespace RepoLayer
         /// <returns>Number of records affected</returns>
         public async Task<int> DeleteLogicalAsync(int productId)
         {
-            Product product = _ctx.Products.Where(x => x.Id == productId).FirstOrDefault();
-            product.IsDeleted = true;
-            _ctx.Products.Update(product);
+            IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
 
-            if (!(product is null))
-            {
-                _ctx.InfoRequests.Where(x => x.ProductId == productId)
-                .Update(x => new InfoRequest() { IsDeleted = true });
+            try
+            { 
+                Product product = _ctx.Products.Where(x => x.Id == productId).FirstOrDefault();
+                product.IsDeleted = true;
+                _ctx.Products.Update(product);
 
-                
-                var temp = await _ctx.InfoRequests.Where(x => x.ProductId == productId).ToListAsync();
+            
+                await _ctx.InfoRequestReplies.Where(x => x.InfoRequest.ProductId == productId)
+                .UpdateFromQueryAsync(x => new InfoRequestReply() { IsDeleted = true });
 
-                /* TODO info request replies
-                var temp =await  _ctx.InfoRequests.Where(x => x.ProductId == productId).ToListAsync();
-
-                _ctx.InfoRequestReplies.
-                    Where(x =>temp.Select(s=>s.Id).Contains(x.InfoRequestId))
-                    .Update(x => new InfoRequestReply() { IsDeleted = true });   
-                */
+                await _ctx.InfoRequests.Where(x => x.ProductId == productId)
+                .UpdateFromQueryAsync(x => new InfoRequest() { IsDeleted = true });
 
                 int z = await _ctx.SaveChangesAsync();
+                transaction.Commit();
                 return z;
             }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+            }
+
+
             return 0;
 
         }
 
 
-        public async Task<int> CreateProductWithCategories(List<ProductAndCategoryModel> ProductsCategs, int brandId)
-        {
-            foreach (ProductAndCategoryModel p in ProductsCategs)
-            {
-                if (String.IsNullOrWhiteSpace(p.Product.Name))
-                    throw new Exception("invalid product " + p.Product.Name);
-                p.Product.BrandId = brandId;
 
-                foreach (int c in p.Categories)
-                {
-                    if (c < 1)
-                        throw new Exception("invalid category");
-                }
-
-                await _ctx.Products.AddAsync(p.Product);
-                await _ctx.SaveChangesAsync();
-
-                foreach (int c in p.Categories)
-                    await _ctx.ProductCategories.AddAsync(new ProductCategory { IdProduct = p.Product.Id, IdCategory = c });
-            }
-           return await _ctx.SaveChangesAsync();
-        }
 
 
         /// <summary>

@@ -9,6 +9,8 @@ namespace Domain
     public class EntityBase
     {
         [Key]
+        [Range(0, int.MaxValue)]
+
         public int Id { get; set; }
 
         public bool IsDeleted { get; set; }

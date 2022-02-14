@@ -1,13 +1,14 @@
 <template>
-    <div>
-        <ul class="pagination justify-content-center">
-            <button @click="previousPage()" v-bind:class="{'btn':true, 'btn-primary':  this.currentpage == 1,'btn-outline-primary':this.currentpage != 1}">Previous</button>
+    <div class="input-group my-4">
+        <div class="pagination justify-content-center input-group">
+            <button @click="previousPage()" v-bind:class="{'btn':true , 'btn-outline-secondary':this.currentpage ==1 ,'btn-outline-primary':this.currentpage != 1} " v-bind:disabled= "this.currentpage == 1">Previous</button>
             <button v-for="(item,index) in closePages()" :key="index" @click="changePage(item)" 
-              class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item),'text-white':isCurrent(item), 'active': !isCurrent(item) }" >
+              class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item), 'text-white':isCurrent(item), 'active': !isCurrent(item) }"  >
               {{item}}
             </button>
-            <button @click="nextPage()" v-bind:class="{'btn':true, 'btn-primary':  this.currentpage == this.totalPagesNumber,'btn-outline-primary':this.currentpage != this.totalPagesNumber}">Next</button>
-        </ul>
+            <button @click="nextPage()" 
+            v-bind:class="{'btn':true, 'btn-outline-secondary':this.currentpage ==this.totalPagesNumber,'btn-outline-primary':this.currentpage != this.totalPagesNumber}" v-bind:disabled="this.currentpage == this.totalPagesNumber">Next</button>
+        </div>
     </div>
 </template>
 

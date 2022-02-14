@@ -18,10 +18,10 @@ namespace ServiceLayer
         }
 
         /// <summary>
-        /// Insert a new product with the associated categories
+        /// Insert a list of product category objects
         /// </summary>
         /// <returns>number of records added</returns>
-        /// <exception cref="ArgumentException">Raised if the product is null</exception>
+        /// <exception cref="ArgumentException">Raised if the list is empty or null</exception>
         public async Task<int> InsertMultiple(List<ProductCategory> productCategories) 
         {
             if (productCategories is null || productCategories.Count < 1 )
@@ -31,7 +31,12 @@ namespace ServiceLayer
         }
 
 
-
+        /// <summary>
+        /// Update the categories of a product by eliminating its existing productCategories and inserting the new ones
+        /// </summary>
+        /// <param name="productCategories"></param>
+        /// <returns>number of rows affected</returns>
+        /// <exception cref="ArgumentException">Raised if the list is empty or  null</exception>
         public async Task<int> UpdateMultiple(List<ProductCategory> productCategories)
         {
             if (productCategories is null || productCategories.Count < 1)

@@ -133,14 +133,14 @@ namespace ServiceLayer
         /// <returns>number of rows affected</returns>
         public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
-            if (String.IsNullOrWhiteSpace(brandWithProducts.Brand.BrandName) || brandWithProducts.Brand.BrandName is null)
+            if (!IsBrandValid(brandWithProducts.Brand))
                 throw new ArgumentException("invalid brand");
             foreach (var p in brandWithProducts.ProductsCategs)
-                if(String.IsNullOrWhiteSpace(p.Product.Name))
-                    throw new ArgumentException("found invalid product name");
-            
-            int brandId = await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts.Account, brandWithProducts.Brand);
-            await _productRepo.CreateProductWithCategories(brandWithProducts.ProductsCategs, brandId);
+                if(!IsProductValid(p.Product))
+                    throw new ArgumentException("found invalid product ");
+
+            int brandId = await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts);
+
             return brandId;
 
         }
@@ -153,7 +153,7 @@ namespace ServiceLayer
         /// <exception cref="ArgumentException">Raise an exception if the inserted brand is null or his id is less than 1</exception>
         public async Task<int> BrandUpdateAsync(Brand brand)
         {
-            if (brand.Id < 1 || brand is null || String.IsNullOrWhiteSpace(brand.BrandName))
+            if (!IsBrandValid(brand))
                 throw new ArgumentException("invalid brand");
             return await _brandRepo.UpdateBrandAsync(brand);
         }
@@ -189,7 +189,11 @@ namespace ServiceLayer
             return await _brandRepo.CreateBrandAsync(brand);
         }
 
-
+        private bool IsBrandValid(Brand brand) => brand.BrandName.Length > 0 && brand.BrandName.Length <= 50 && brand.Description.Length <= 50;
+        private bool IsProductValid(Product product) =>
+            product.Name.Length > 0 && product.Name.Length <= 50
+            && product.Description.Length <= 50 && product.ShortDescription.Length <= 20
+            && product.Price > 0 ;
 
 
     }

@@ -26,12 +26,10 @@
                 <input  required minlength="5" type="password" class="form-control" name="desc"  maxlength="50" v-model="account.Password">
             </div>
 
-            <button type="submit" class="btn btn-primary mt-2">Submit</button>
-        </form>
 
         
             <div v-for="n in this.numProducts" :key="n" class="my-3">
-                <form  id="insert" v-on:submit.prevent="submitForm()" class="bg-light my-2 border " >
+                <form  class="bg-light my-2 border " >
                     <div class="mx-2">
                         <b> Insert new product</b>
                         <div class="form-group mb-2">
@@ -53,18 +51,24 @@
                         <div class="form-group mb-2 row my-4">
                             <b> Categories </b>
                             <div class="col">
-                                
-                            <li  v-for="cat in categories" :key="cat.Id" class="form-check">
-                                <input type="checkbox"  v-model="bundles[n-1].Categories" v-bind:value="cat.id"  class="form-check-input">
-                                <label> {{cat.name}} </label> 
-                            </li></div>
+                                <div class="mx-2 row">
+                                    <li v-for="cat in categories" :key="cat.Id" class="form-check col-4">
+                                        <input type="checkbox"  v-model="bundles[n-1].Categories" v-bind:value="cat.id"  class="form-check-input">
+                                        <label> {{cat.name}} </label> 
+                                    </li>
+                                </div>
+                            </div>
 
                     </div>
                 </div>
-                </form>
+             </form>
+
             
         </div>
-        <button @click="addProduct()" class="btn btn-primary mt-2">Add Product</button>
+            <button type="submit" class="btn btn-outline-primary my-2">Submit</button>
+
+        </form>
+        <button @click="addProduct()" class="btn btn-outline-primary mb-4">Add Product</button>
 
 
 

@@ -85,13 +85,18 @@ namespace EFWebSiteTest.Controllers
         [HttpPost("InsertProductCat")]
         public async Task<IActionResult> InsertProductWithCategories (ProductAndCategoryModel model)
         {
-            if (!ModelState.IsValid || !IsProductValid(model.Product))
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            if(!IsProductValid(model.Product))
+                return BadRequest(model.Product);
+
             var result = await InsertOrUpdateProduct(model.Product);
+
             List<ProductCategory> productCategories = new List<ProductCategory>();
             foreach (int category in model.Categories)
                 productCategories.Add(new ProductCategory { IdCategory = category, IdProduct = model.Product.Id });
             await _productcategoryService.InsertMultiple(productCategories);
+
             return result;
         }
 
@@ -105,8 +110,10 @@ namespace EFWebSiteTest.Controllers
         public async Task<IActionResult> UpdateProductWithCategories(ProductAndCategoryModel model)
         {
 
-            if (!ModelState.IsValid || model.Product.Id < 1 || !IsProductValid(model.Product))
+            if (!ModelState.IsValid )
                 return BadRequest(ModelState);
+            if (model.Product.Id < 1 || !IsProductValid(model.Product))
+                return BadRequest(model.Product);
 
             var result = await InsertOrUpdateProduct(model.Product);
             List<ProductCategory> productCategories = new List<ProductCategory>();
@@ -153,8 +160,10 @@ namespace EFWebSiteTest.Controllers
         /// </returns>
         public async Task<IActionResult> InsertOrUpdateProduct(Product product) 
         {
-            if (!ModelState.IsValid || !IsProductValid(product))
+            if (!ModelState.IsValid )
                 return BadRequest(ModelState);
+            if(!IsProductValid(product))
+                return BadRequest(product);
             if (product is null || product.BrandId < 1 || String.IsNullOrEmpty(product.Name) || product.Price < 0)
                 return BadRequest("product not valid");
 
@@ -211,10 +220,10 @@ namespace EFWebSiteTest.Controllers
         }
 
 
-        public bool IsProductValid(Product product) =>
+        private bool IsProductValid(Product product) =>
         product.Name.Length>0 && product.Name.Length<=50
         && product.Description.Length<=50 && product.ShortDescription.Length<=20
-        && product.Price>0;
+        && product.Price> 0 && product.BrandId > 0;
             
 
     }

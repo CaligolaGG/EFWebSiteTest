@@ -8,7 +8,7 @@
       </div>
       <div class="form-group mb-2">
         <label for="desc">Description</label>
-        <input type="textarea" class="form-control"  maxlength="50" name="desc" v-model="form.product.description">
+        <textarea  class="form-control"   maxlength="50" name="desc" v-model="form.product.description" style="resize:none;" rows=5></textarea>
       </div>
       <div class="form-group mb-2">
         <label for="sdesc">ShortDescription</label>
@@ -16,24 +16,23 @@
       </div>
       <div class="form-group mb-2">
         <label for="price">Price</label>
-        <input type="number"  min="1" class="form-control" name="price" v-model="form.product.price">
+        <input type="number" step="any"  min="1" class="form-control" name="price" v-model="form.product.price">
       </div>
       <div>
         BrandId 
-        <select required name="" id="" class="form-select m-1 "  v-model="form.product.brandId">
+        <select required class="form-select m-1 "  v-model="form.product.brandId">
           <option  value="">Please select one</option>
           <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
         </select>  
-        <div class="row my-4"> <b> Categories </b>
-          <div class="mx-2">
-          <li  v-for="cat in this.categories" :key="cat.Id"  class="form-check">
+        <div class="row my-4"> <b> Categories </b></div>
+          <div class="mx-2 row">
+          <div v-for="cat in this.categories" :key="cat.Id"  class="form-check col-4">
             <input type="checkbox"  v-model="form.categories" v-bind:value="cat.id"  class="form-check-input">
             <label> {{cat.name}} </label> 
-          </li>
           </div>
-        </div>
+          </div>
       </div>
-      <button type="submit" class="btn btn-primary mt-2">Submit</button>
+      <button type="submit" class="btn btn-primary my-2">Submit</button>
     </form>
     </div>
 </template>
@@ -87,7 +86,6 @@ export default{
                 for(let i of c)
                     this.form.categories.push(i.id);
             }
-            console.log(this.form);
           
             let cats = await CategoriesRepository.get();
             let temp3 = await BrandRepository.get();
@@ -98,7 +96,6 @@ export default{
         //update a  product in the db by calling the specific repository function
         async updateProduct (){
             let newProduct = { Product : this.form.product, Categories : this.form.categories }
-            console.log(newProduct);
             this.productId=await ProductsRepository.update(newProduct);
             
         },
@@ -120,7 +117,6 @@ export default{
             else
                 await this.insertProduct()
             
-            console.log(this.productId)
             this.$router.push({path:'/products/'+this.productId.data.id})
         }
     },

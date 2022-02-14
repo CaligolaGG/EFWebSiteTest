@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <button class="btn btn-primary my-4" @click="$router.push({name: 'leads', params: { productId: info.productId, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
+        <button class="btn btn-outline-primary my-4" @click="$router.push({name: 'leads', params: { productId: info.productId, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
 
 <!--
         <div class="row">

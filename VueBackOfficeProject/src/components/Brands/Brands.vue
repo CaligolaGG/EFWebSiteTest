@@ -1,5 +1,5 @@
 <template>
-<div class="container" v-if="!this.loading">
+<div class="container" >
   <div class="row">
     <div class="col-10">
       <h2> Brands </h2>
@@ -11,8 +11,8 @@
       <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
         No Brands Found
       </div>
-    <div >
-        <table class="table table-striped table-light  ">
+    <div  v-if="!this.loading">
+        <table class="table table-striped table-light">
             <thead >
             <tr>
                 <th scope="col" class="position-relative" >BrandId </th>
@@ -38,17 +38,19 @@
                     <td class="col-4">{{brand.brandName}}</td>
                     <td class="col-4">{{brand.description}}</td>
                     <td class="col-1">
-                        <button class="col offset-1 btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})">  </button>
-                        <button class="col btn btn-outline-secondary text-danger bi bi-trash-fill text" @click.stop="Remove(brand.brandId)">  </button>
+                      <div class="input-group">
+                          <button class="col offset-1 btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})">  </button>
+                          <button class="col btn btn-outline-secondary text-danger bi bi-trash-fill " @click.stop="Remove(brand.brandId)">  </button>
+                      </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
 
     </div>
 
 
-    <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
 
 </div>
 </template>
