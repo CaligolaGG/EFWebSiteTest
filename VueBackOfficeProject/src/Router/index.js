@@ -59,7 +59,7 @@ export default new Router({
     },
     {
       path: '/brands/new',
-      name : 'brands',
+      name : 'brandsNew',
       component: BrandsAdd
     },
     {

@@ -90,32 +90,7 @@ namespace RepoLayer
             return await _ctx.SaveChangesAsync();
         }
 
-        /*
-        public async Task<int> DeleteLogicalAsync2(int productId)
-        {
-            Product product = _ctx.Products.Where(x => x.Id == productId).FirstOrDefault();
-            product.IsDeleted = true;
-            _ctx.Products.Update(product);
-            if (!(product is null))
-            {
-                int x = await _ctx.Database.ExecuteSqlRawAsync(@"UPDATE InfoRequestReply
-                    SET InfoRequestReply.isDeleted=1
-                    FROM InfoRequestReply as reply
-                    join InfoRequest as request On reply.InfoRequestId=request.Id
-                    join Product as p On request.ProductId=p.Id
-                    WHERE p.Id=" + productId);
-
-                int y = await _ctx.Database.ExecuteSqlRawAsync(@"UPDATE InfoRequest
-                    SET InfoRequest.isDeleted=1
-                    FROM InfoRequest as request join Product as p On request.ProductId=p.Id
-                    WHERE p.Id=" + productId);
-
-                int z = await _ctx.SaveChangesAsync();
-                return x + y;
-            }
-            return 0;
-
-        }*/
+       
 
 
     }

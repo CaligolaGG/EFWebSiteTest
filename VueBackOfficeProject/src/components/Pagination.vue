@@ -2,12 +2,14 @@
     <div class="input-group my-4">
         <div class="pagination justify-content-center input-group">
             <button @click="previousPage()" v-bind:class="{'btn':true , 'btn-outline-secondary':this.currentpage ==1 ,'btn-outline-primary':this.currentpage != 1} " v-bind:disabled= "this.currentpage == 1">Previous</button>
+            <button v-if="currentpage >2" class="page-item page-link " @click="changePage(1)">1</button>
             <button v-for="(item,index) in closePages()" :key="index" @click="changePage(item)" 
               class="page-item page-link"  v-bind:class="{'bg-primary': isCurrent(item), 'text-white':isCurrent(item), 'active': !isCurrent(item) }"  >
               {{item}}
             </button>
+            <button v-if="currentpage < totalPagesNumber-2" @click="changePage(totalPagesNumber)" class="page-item page-link"> {{totalPagesNumber}}</button>
             <button @click="nextPage()" 
-            v-bind:class="{'btn':true, 'btn-outline-secondary':this.currentpage ==this.totalPagesNumber,'btn-outline-primary':this.currentpage != this.totalPagesNumber}" v-bind:disabled="this.currentpage == this.totalPagesNumber">Next</button>
+            v-bind:class="{'btn':true, 'btn-outline-secondary':this.currentpage == this.totalPagesNumber,'btn-outline-primary':this.currentpage != this.totalPagesNumber}" v-bind:disabled="this.currentpage == this.totalPagesNumber">Next</button>
         </div>
     </div>
 </template>
@@ -18,8 +20,6 @@ export default {
   data(){
    return {
      currentpage:1,
-     arrayPages:[],
-     totalPagesNumber2:1
    }
   }, 
   props:{
@@ -30,6 +30,7 @@ export default {
   ,
 
   methods:{
+    //emit the event for the fetching of a page
     fetchPage(){
         this.$emit('changePage', this.currentpage)
     },
@@ -50,6 +51,7 @@ export default {
       this.currentpage = pageNum;
       this.fetchPage();
     },
+    //return true or false if the parameter passed is equal the current page
     isCurrent(x){
       return this.currentpage == x 
     },
@@ -66,10 +68,9 @@ export default {
     },
   },
   created(){
-    this.totalPagesNumber2 = this.totalPagesNumber
     this.closePages()
   },
-
+  
   watch:{
     totalPagesNumber(){
       this.currentpage=1

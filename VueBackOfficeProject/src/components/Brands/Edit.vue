@@ -2,7 +2,7 @@
 <div class="container" v-if="!this.loading">
 
     <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
-            update Brand
+            <h2> Update this Brand </h2>
             <div class="form-group mb-2">
                 
                 <label for="pname">Name</label>
@@ -28,9 +28,9 @@ const BrandRepository = Repository.get("brands");
 export default {
     data() {
         return {
-            id:0,       //id of the product (from routing)
-            loading:true, //boolean to know if the data has been fetched yet
-            info:{},      //object that contains the info of the brand fetched
+            id:0,           //id of the product (from routing)
+            loading:true,   //boolean to know if the data has been fetched yet
+            info:{},        //object that contains the info of the brand fetched
         }    
     },
     methods:{

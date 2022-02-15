@@ -4,24 +4,26 @@
         <h2>{{info.description}} </h2>
 
         <p>Categories associated to this Brand's Products</p>
-        <ul class="list-group">
-            <li  class="list-group-item" v-for="cat in info.listCategories" :key="cat.categoryId">{{cat.categoryName}} ({{cat.categoryId}})</li>
-        </ul>
+        <div class="row mx-1 ">
+            <div  class="list-group-item col-4 border rounded" v-for="cat in info.listCategories" :key="cat.categoryId">
+                {{cat.categoryName}} ({{cat.categoryId}})
+            </div>
+        </div>
     <hr>
     Requests {{info.numberRequests}}
-    <table class="table table-striped  ">
-        <thead class="bg-mygreen">
+    <table class="table table-striped ">
+        <thead class="bg-mygreen text-white">
             <tr>
-                <th>Id</th>
-                <th>Product Name</th>
-                <th>Request Number</th>
+                <th class="border border-success">Id</th>
+                <th class="border border-success">Product Name</th>
+                <th class="border border-success">Request Number</th>
             </tr>
         </thead>
         <tbody>
-        <tr v-for="prod in productPage" :key="prod.productId">
-            <td>{{prod.productId}} </td>
-            <td>{{prod.productName}}</td>
-            <td>{{prod.productRequestNumber}}</td>
+        <tr class="hover" v-for="prod in productPage" :key="prod.productId" @click="$router.push({path:'/products/'+prod.productId})">
+            <td class="border border-success">{{prod.productId}} </td>
+            <td class="border border-success">{{prod.productName}}</td>
+            <td class="border border-success">{{prod.productRequestNumber}}</td>
         </tr>
         </tbody>
 
@@ -40,9 +42,9 @@ const BrandRepository = Repository.get("brands");
 export default {
     data() {
         return {
-            id:0,  //id of the product (from routing)
-            loading:true, //boolean to know if the data has been fetched yet
-            info:{},      //object that contains the info of the product fetched
+            id:0,           //id of the product (from routing)
+            loading:true,   //boolean to know if the data has been fetched yet
+            info:{},        //object that contains the info of the product fetched
             currentPage:1,
         }    
     },
@@ -77,7 +79,7 @@ export default {
 
 <style scoped> 
 .bg-mygreen{
-    background-color: #79ff2b;
+    background-color: #5cc51f;
  }
 .table-striped>tbody>tr:nth-child(odd)>td, 
 .table-striped>tbody>tr:nth-child(odd)>th {

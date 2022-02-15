@@ -16,6 +16,9 @@
                 </select>
             </div>
         </div>
+        <div v-if="this.loading" >
+            <Skeleton></Skeleton>
+        </div>
 
         <div v-if="!this.loading">
             <table class="table table-striped table-light ">
@@ -34,7 +37,7 @@
                 <tr>
                     <th></th>
                     <th >
-                        <input v-debounce:1000ms="searchDebounced" class="form-control" type="text"  placeholder="Product Name" name="" id="" v-model="searchByProduct">
+                        <input v-debounce:300ms="searchDebounced" class="form-control" type="text"  placeholder="Product Name" name="" id="" v-model="searchByProduct">
                     </th><th colspan="4"></th> 
                 </tr>
                 </thead>
@@ -60,6 +63,7 @@ import Repository from "../../Api/RepoFactory";
 import Vue from 'vue'
 import vueDebounce from 'vue-debounce'
 import Paging from '../Pagination.vue'
+import Skeleton from "../Skeleton.vue";
 const BrandRepository = Repository.get("brands");
 const LeadsRepository = Repository.get("leads");
 
@@ -69,25 +73,23 @@ Vue.use(vueDebounce)
     export default {
         data() {
             return {
-                loading: true, //id of the product (from routing)
-                insert:true,
-                info:{},        //info fetched from the api
-                brands:{},      //list of all brand (id + name)
+                loading: true,          //id of the product (from routing)
+                info:{},                //info fetched from the api
+                brands:{},              //list of all brand (id + name)
 
-                currentpage:1,
-                orderBy:0,    //integer to choose the criteria of ordering
-                isAsc:false,
-                searchByBrand:0,
-                searchByProductId:0,
-                searchByProduct:null,
-                productName:null,
+                orderBy:0,              //integer to choose the criteria of ordering
+                isAsc:false,            //boolean to indicate if the ordering is ascendent or discendent
+                searchByBrand:0,        //search through the ID of a brand
+                searchByProductId:0,    //search through the ID of a product
+                searchByProduct:null,   //search through the NAME of a product
 
-                alertActive:false
+                alertActive:false       //indicate if a problem raised and the alert has to be shown on screen
 
             };
         },  
         components:{
-            Paging
+            Paging,
+            Skeleton,
         },
 
         methods: {
@@ -117,22 +119,22 @@ Vue.use(vueDebounce)
                     }
                 }
             },
+            //makes a debounced search if the number of character inserted is more than 3 or equal 0
             searchDebounced(){if (this.searchByProduct.length > 3 || this.searchByProduct.length ==0) this.fetchPage()},
             
+            //get the data at the loading of the page
             async getData(){
                 await this.fetchPage();
                 let temp= await BrandRepository.get();
                 this.brands = temp.data;
                 this.loading = false;
             },
+            //changes the ordering of the page. 
             async ordering(){
                 this.isAsc = !this.isAsc;
-                await this.updatePage();
+                await this.fetchPage();
             },
-            updateData(){
-                this.currentpage=1;
-                this.fetchPage();
-            },
+            //conversion of a string to a date
             convertToDate(date){
                 return new Date(date).toLocaleDateString("it")
             },

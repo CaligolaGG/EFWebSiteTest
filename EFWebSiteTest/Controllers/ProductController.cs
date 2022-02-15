@@ -78,6 +78,49 @@ namespace EFWebSiteTest.Controllers
         }
 
         /// <summary>
+        /// Api post method to logically Remove a  Product given its id.
+        /// </summary>
+        /// <param name="productId">the product id</param>
+        /// <returns>
+        /// BadRequest if the id provided is less then 1
+        /// NotFound if the call to the repo returns 0, therefore the product was either not found or not deleted
+        /// Ok otherwise
+        /// </returns>
+        [HttpDelete("DeleteProductL/{productId:min(1)}")]
+        public async Task<IActionResult> DeleteProductLogical(int productId)
+        {
+            if (productId < 1)
+                return BadRequest("product must be > 0");
+
+            var result = await _productService.DeleteLogicalAsync(productId);
+            if (result < 1)
+                return NotFound("product has not been found or has not been deleted");
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Method to insert or update a new Product. 
+        /// Insert if the product id is 0 (not set). Update if the id is != 0
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns>Bad request if the product inserted is null, doesnt have a brand or a valid name, or the price is negative.
+        /// Forbid if the product has not been inserted by the db for any reason
+        /// Created with the product created, if the product got created successfully
+        /// </returns>
+        public async Task<IActionResult> InsertOrUpdateProduct(Product product)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (!IsProductValid(product))
+                return BadRequest(product);
+
+            if (await _productService.InsertOrUpdateAsync(product) < 1)
+                return Forbid("product has not been inserted");
+            return Ok(product);
+        }
+
+        /// <summary>
         /// Api post method to create a Product with the categories.
         /// </summary>
         /// <param name="model">List of the of ProductAndCategoryModel which holds both 
@@ -109,13 +152,13 @@ namespace EFWebSiteTest.Controllers
         [HttpPut("UpdateProductCat")]
         public async Task<IActionResult> UpdateProductWithCategories(ProductAndCategoryModel model)
         {
-
             if (!ModelState.IsValid )
                 return BadRequest(ModelState);
-            if (model.Product.Id < 1 || !IsProductValid(model.Product))
+            if (!IsProductValid(model.Product))
                 return BadRequest(model.Product);
 
             var result = await InsertOrUpdateProduct(model.Product);
+
             List<ProductCategory> productCategories = new List<ProductCategory>();
             foreach (int category in model.Categories)
                 productCategories.Add(new ProductCategory { IdCategory = category, IdProduct = model.Product.Id });
@@ -124,9 +167,21 @@ namespace EFWebSiteTest.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Validate a product based on the constraint of the db
+        /// </summary>
+        /// <param name="product">Object of class Product to validate</param>
+        /// <returns>True if the product is valid. False if not</returns>
+        private bool IsProductValid(Product product, int nameMinLenght = 1, int nameMaxLenght = 50, int descrMaxLenght = 50, int shortDescrMaxLenght = 20) =>
+            product.Name.Length >= nameMinLenght && product.Name.Length <= nameMaxLenght
+            && product.Description.Length <= descrMaxLenght && product.ShortDescription.Length <= shortDescrMaxLenght
+            && product.Price > 0;
+
+
+
 
         /// <summary>
-        /// Api post method update a  Product. 
+        /// Api post method insert a Product with no categories. 
         /// </summary>
         /// <param name="product"></param>
         /// <returns>Bad request if the product inserted is null, doesnt have a brand or a valid name, or the price is negative.
@@ -138,7 +193,7 @@ namespace EFWebSiteTest.Controllers
 
 
         /// <summary>
-        /// Api post method update a  Product. 
+        /// Api put method update a Product with no categories. 
         /// </summary>
         /// <param name="product"></param>
         /// <returns>Bad request if the product inserted is null, doesnt have a brand or a valid name, or the price is negative.
@@ -149,56 +204,17 @@ namespace EFWebSiteTest.Controllers
         public async Task<IActionResult> UpdateProduct(Product product) => await InsertOrUpdateProduct(product);
 
 
-        /// <summary>
-        /// Method to insert or update a new Product. 
-        /// Insert if the product id is 0 (not set). Update if the id is != 0
-        /// </summary>
-        /// <param name="product"></param>
-        /// <returns>Bad request if the product inserted is null, doesnt have a brand or a valid name, or the price is negative.
-        /// Forbid if the product has not been inserted by the db for any reason
-        /// Created with the product created, if the product got created successfully
-        /// </returns>
-        public async Task<IActionResult> InsertOrUpdateProduct(Product product) 
-        {
-            if (!ModelState.IsValid )
-                return BadRequest(ModelState);
-            if(!IsProductValid(product))
-                return BadRequest(product);
-            if (product is null || product.BrandId < 1 || String.IsNullOrEmpty(product.Name) || product.Price < 0)
-                return BadRequest("product not valid");
 
-            if (await _productService.InsertOrUpdateAsync(product) < 1)
-                return Forbid("product has not been inserted");
-            return Ok(product);
-        }
 
-        /// <summary>
-        /// Api post method to logically Remove a  Product given its id.
-        /// </summary>
-        /// <param name="productId">the product id</param>
-        /// <returns>
-        /// BadRequest if the id provided is less then 1
-        /// NotFound if the call to the repo returns 0, therefore the product was either not found or not deleted
-        /// Ok otherwise
-        /// </returns>
-        [HttpDelete("DeleteProductL/{productId:min(1)}")]
-        public async Task<IActionResult> DeleteProductLogical(int productId)
-        {
-            if (productId < 1)
-                return BadRequest("product must be > 0");
 
-            var result = await _productService.DeleteLogicalAsync(productId);
-            if (result < 1)
-                return NotFound("product has not been found or not been deleted");
 
-            return Ok(result);
-        }
+
 
 
 
 
         /// <summary>
-        /// #NOTUSED Api post method to Remove a  Product given its id.
+        /// #NOTUSED Api post method to phisically Remove a  Product given its id.
         /// </summary>
         /// <param name="productId">the product id</param>
         /// <returns>
@@ -220,11 +236,7 @@ namespace EFWebSiteTest.Controllers
         }
 
 
-        private bool IsProductValid(Product product) =>
-        product.Name.Length>0 && product.Name.Length<=50
-        && product.Description.Length<=50 && product.ShortDescription.Length<=20
-        && product.Price> 0 && product.BrandId > 0;
-            
+
 
     }
 }

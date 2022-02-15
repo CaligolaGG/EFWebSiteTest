@@ -58,7 +58,7 @@ namespace ServiceLayer
                     break;
                 default:
                     // Brand + Nome
-                    products.OrderBy(x => x.Brand.BrandName).ThenBy(x=> x.Name);
+                    products = products.OrderBy(x => x.Brand.BrandName).ThenBy(x=> x.Name);
                     break;
             }
 

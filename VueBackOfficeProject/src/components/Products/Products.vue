@@ -7,19 +7,26 @@
         <button class="btn btn-outline-primary   " @click="$router.push({path:'/products/new'})" > AddProduct</button> <br>
       </div> <hr>
     </div>
-      <div class="alert alert-danger  " role="alert" v-bind:class="{'d-none':!alertActive}"  >
+      <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}"  >
         No Products Found
       </div>
+    <div v-if="this.loading" >
+      <Skeleton></Skeleton>
+    </div>
     <div v-if="!this.loading" >
       <table class="table table-striped table-light ">
         <thead > 
           <tr>
             <th scope="col" class="position-relative hoverV2"  @click="selectOrderBy(1)">Brand  
               <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(1,false)}"> </i>
-              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(1,true)}" ></i></th>
+              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(1,true)}" ></i>
+              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 text-primary sortArrow" v-if="defaultArrowState" ></i>
+            </th>
+              
             <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(2)">Product 
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(2,false)}"></i>
-              <i class="bi bi-caret-up-fill  position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':defaultArrowState,'text-primary':selectArrow(2,true)}" ></i>
+              <i class="bi bi-caret-up-fill  position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,true)}" ></i>
+              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 text-primary sortArrow" v-if="defaultArrowState" ></i>
             </th>
             <th scope="col" class="position-relative" >Categories </th>
             <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(3)">Price
@@ -35,8 +42,8 @@
                 <option v-for="brand in this.brands" :key="brand.Id" v-bind:value="brand.id" > {{brand.name}} </option>  
               </select>  
             </td>
-            <td></td><td></td><td></td><td></td>
-        </tr>
+            <td colspan="4"></td>
+          </tr>
         </thead>
         
         <tbody >
@@ -65,28 +72,29 @@
 <script>
 import Repository from "../../Api/RepoFactory";
 import Paging from "../Pagination.vue";
+import Skeleton from "../Skeleton.vue";
 const ProductsRepository = Repository.get("products");
 const BrandRepository = Repository.get("brands");
 
 export default {
   data(){
    return {
-     loading: true, //id of the product (from routing)
-     insert:true,
+     loading: true,             //id of the product (from routing)
 
-     orderBy:0,    //integer to choose the criteria of ordering
-     isAsc:true,
-     brandChosen:0,
-     defaultArrowState:true,
+     orderBy:0,                 //integer to choose the criteria of ordering
+     isAsc:true,                //boolean to indicate if the ordering is ascendent or discendent
+     brandChosen:0,             //search through the ID of a brand
+     defaultArrowState:true,    //indicate if the default ordering is active
 
-     info:{}, //object to contain the list of products fetched from the db
+     info:{},                   //object to contain the list of products fetched from the db
      
-     alertActive:false
+     alertActive:false          //indicate if a problem raised and the alert has to be shown on screen
 
    }
   }, 
   components:{
-     Paging
+     Paging,
+     Skeleton
   },
 
   methods:{
@@ -110,6 +118,7 @@ export default {
     },
     //changes the ordering of the data
     async selectOrderBy(n){
+      this.defaultArrowState = false
       this.orderBy==n? this.isAsc = !this.isAsc : this.orderBy= n;
       this.fetchPage();
     },
@@ -121,6 +130,7 @@ export default {
         this.fetchPage();
       }
     },
+    //calculates which arrow is active. Returns a boolean
     selectArrow(orderBy, isAsc ){
       return this.orderBy == orderBy && this.isAsc == isAsc
     }

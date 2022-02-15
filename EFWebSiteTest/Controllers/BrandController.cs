@@ -147,7 +147,8 @@ namespace EFWebSiteTest.Controllers
             return Ok(result);
         }
 
-        private bool IsBrandValid(Brand brand) => brand.BrandName.Length > 0 && brand.BrandName.Length <= 50 && brand.Description.Length <= 50 ;
+        private bool IsBrandValid(Brand brand, int nameMinLenght = 1, int nameMaxLenght = 50, int descrMaxLenght = 50) => 
+            brand.BrandName.Length >= nameMinLenght && brand.BrandName.Length <= nameMaxLenght && brand.Description.Length <= descrMaxLenght;
             
 
 

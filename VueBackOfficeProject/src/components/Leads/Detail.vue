@@ -36,10 +36,10 @@ const LeadsRepository = Repository.get("leads");
 export default {
     data() {
         return {
-            id:0,  //id of the product (from routing)
-            loading:true, //boolean to know if the data has been fetched yet
+            id:0,           //id of the product (from routing)
+            loading:true,   //boolean to know if the data has been fetched yet
             
-            info:{},      //object that contains the info of the product fetched
+            info:{},        //object that contains the info of the product fetched
             currentPage:1,
 
         }    
@@ -56,7 +56,7 @@ export default {
                 this.currentPage--;
         },
         nextPage(){
-            if(this.currentPage + 1 <= this.info.replies.length /1)
+            if(this.currentPage + 1 < this.info.replies.length / 1)
                 this.currentPage ++;
         },
 

@@ -4,10 +4,8 @@
             {{info.brandName}} </h3>
 
         <p class="mt-4 "> <b> Categories associated to the product: </b></p>
-        <div class="row mx-1">
-            <ul class=" list-group">
-                <li class="list-group-item" v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</li>
-            </ul>
+        <div class="row mx-1 ">
+            <div class="list-group-item  col-4 border rounded" v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</div>
         </div>
 
         <p class="mt-5"> <b> Leads for this product: </b></p>
@@ -18,29 +16,9 @@
                 <b>{{info.loggedUsersRequestsNumber}}</b> from <b> Logged Users </b> 
             </div>
         </div>
+        <hr class="text-warning">
+        <button class="btn btn-outline-primary my-2" @click="$router.push({name: 'leads', params: { productId: info.productId, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
 
-        <button class="btn btn-outline-primary my-4" @click="$router.push({name: 'leads', params: { productId: info.productId, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
-
-<!--
-        <div class="row">
-            <table class="table table-striped table-light">
-                <thead>
-                    <tr>
-                        <th>UserName</th>
-                        <th>Number replies</th>
-                        <th>Last Reply Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                   <tr  v-for="req in info.requests" :key="req.Id">
-                       <td>  {{req.fullName}}</td>
-                       <td>{{req.repliesCount}} </td> 
-                       <td> {{req.lastReply}} </td> 
-                    </tr>
-                </tbody>
-            </table>
-        </div>
--->
     </div>
 </template>
 

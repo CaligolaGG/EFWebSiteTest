@@ -70,17 +70,10 @@
         </form>
         <button @click="addProduct()" class="btn btn-outline-primary mb-4">Add Product</button>
 
-
-
-
-
-</div>
+    </div>
 </template>
 
-
-
 <script>
-
 import Repository from "../../Api/RepoFactory";
 const BrandRepository = Repository.get("brands");
 const CategoriesRepository = Repository.get("categories");
@@ -106,13 +99,13 @@ export default {
                 Description:"",
                 isDeleted:0
             },
-            categories: {}, //object to contains a list of cateories 
+            categories: {},         //object to contains a list of cateories 
 
-            bundles:[], //list of Bundle objects
-            error:"", 
+            bundles:[],             //list of Bundle objects
+            error:"",               //indicates if an error was raised
 
-            validMail:true,
-            alertActive: false,
+            validMail:true,         //used to check if the mail is valid or not
+            alertActive: false,     //indicates if the alert div should be shown or not
 
         }    
     },

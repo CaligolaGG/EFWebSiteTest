@@ -4,26 +4,24 @@
         <a class="navbar-brand ms-3" > <router-link to="/" class="navbar-brand" > Navbar </router-link></a>
     </nav>
     <div class="container-fluid" id="app" >
-      
 
-
-      <div class="row" >
+      <div class="row " >
         <div class="col-2 bg-light text-dark h-100 position-fixed">
-          <div class="row">
+          <div class="row hoverV2">
             <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
               <div class="row mt-2 mx-2"  > 
                   <span> Product </span> 
               </div>
             </router-link>
           </div>
-          <div class="row">
+          <div class="row hoverV2">
             <router-link to="/brands" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[1].state }"> 
               <div class="row mx-2"  >
                 <span > Brand </span> 
               </div>
             </router-link>
           </div>
-          <div class="row">
+          <div class="row hoverV2">
             <router-link to="/leads" class="navbar-brand " v-bind:class="{'text-dark': this.tabs[2].state }">  
               <div class="row mx-2" > 
                 <span > Requests </span> 
@@ -81,11 +79,7 @@ export default {
     this.selectTab()}
   },
 
-  
-
-
 }
-
 </script>
 
 <style>
@@ -96,9 +90,9 @@ export default {
   color: #2c3e50;
 }
 .sortArrow {
-  font-size:12px;
-  padding-top: 10px;
-  padding-bottom: 5px;
+  font-size:15px;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 .hover:hover{
   transform: scale(1.001);
@@ -106,7 +100,7 @@ export default {
   cursor: pointer;
 }
 .hoverV2:hover{
-  background-color: #505050a4;
+  background-color: #757575a4;
   cursor: pointer;
 }
 </style>

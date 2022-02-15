@@ -171,6 +171,15 @@ namespace ServiceLayer
             return await _brandRepo.GetById(brandId).FirstOrDefaultAsync();
         }
 
+        private bool IsBrandValid(Brand brand) => brand.BrandName.Length > 0 && brand.BrandName.Length <= 50 && brand.Description.Length <= 50;
+        private bool IsProductValid(Product product) =>
+            product.Name.Length > 0 && product.Name.Length <= 50
+            && product.Description.Length <= 50 && product.ShortDescription.Length <= 20
+            && product.Price > 0;
+
+
+
+
 
 
 
@@ -189,11 +198,7 @@ namespace ServiceLayer
             return await _brandRepo.CreateBrandAsync(brand);
         }
 
-        private bool IsBrandValid(Brand brand) => brand.BrandName.Length > 0 && brand.BrandName.Length <= 50 && brand.Description.Length <= 50;
-        private bool IsProductValid(Product product) =>
-            product.Name.Length > 0 && product.Name.Length <= 50
-            && product.Description.Length <= 50 && product.ShortDescription.Length <= 20
-            && product.Price > 0 ;
+
 
 
     }
