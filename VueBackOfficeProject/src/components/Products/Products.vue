@@ -4,10 +4,11 @@
       <div class="col-10">
         <h2 class="bold">Products</h2></div>
       <div class="col ">
-        <button class="btn btn-outline-primary   " @click="$router.push({path:'/products/new'})" > AddProduct</button> <br>
+        <button class="btn btn-outline-primary" @click="$router.push({path:'/products/new'})" > AddProduct</button> <br>
       </div> <hr>
     </div>
       <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}"  >
+        <button class="btn bg-danger text-white bi bi-x-lg" @click="removeAlert()"  type="button"  data-dismiss="alert" ></button>
         No Products Found
       </div>
     <div v-if="this.loading" >
@@ -46,7 +47,7 @@
           </tr>
         </thead>
         
-        <tbody >
+        <tbody v-if="!alertActive">
           <tr v-for="item in this.getProducts" :key="item.Id" class="hover" @click="$router.push({path:'/products/'+item.id})">
             <td class="col-2" >{{item.brandName}}</td>
             <td class="col-3" > <b> {{item.productName}} </b> |  {{item.description}}</td>
@@ -61,7 +62,7 @@
           </tr>
         </tbody>
       </table>     
-      <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+      <Paging v-if="!alertActive" @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
     </div>
 
     
@@ -133,6 +134,11 @@ export default {
     //calculates which arrow is active. Returns a boolean
     selectArrow(orderBy, isAsc ){
       return this.orderBy == orderBy && this.isAsc == isAsc
+    },
+    removeAlert(){
+      this.alertActive = false;
+      this.brandChosen =0;
+      this.fetchPage();
     }
 
   },

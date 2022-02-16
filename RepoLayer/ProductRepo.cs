@@ -46,7 +46,7 @@ namespace RepoLayer
         /// <returns>Number of records affected</returns>
         public async Task<int> DeleteLogicalAsync(int productId)
         {
-            IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
+            using IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
 
             try
             { 
@@ -68,10 +68,8 @@ namespace RepoLayer
             catch (Exception ex)
             {
                 transaction.Rollback();
+                return -1;
             }
-
-
-            return 0;
 
         }
 

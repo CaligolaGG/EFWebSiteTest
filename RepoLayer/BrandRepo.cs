@@ -86,8 +86,15 @@ namespace RepoLayer
         /// <returns>number of rows affected</returns>
         public async Task<int> UpdateBrandAsync(Brand brand)
         {
-            _ctx.Brands.Update(brand);
-            return await _ctx.SaveChangesAsync();
+            try
+            {
+                _ctx.Brands.Update(brand);
+                return await _ctx.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) 
+            {
+                return -1;
+            }
         }
 
 
@@ -98,7 +105,7 @@ namespace RepoLayer
         /// <returns>number of rows affected</returns>
         public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
-            IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
+            using IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
 
             try
             {
@@ -112,15 +119,8 @@ namespace RepoLayer
 
                 foreach (ProductAndCategoryModel p in brandWithProducts.ProductsCategs)
                 {
-                    if (String.IsNullOrWhiteSpace(p.Product.Name))
-                        throw new Exception("invalid product " + p.Product.Name);
-                    p.Product.BrandId = brandWithProducts.Brand.Id;
 
-                    foreach (int c in p.Categories)
-                    {
-                        if (c < 1)
-                            throw new Exception("invalid category");
-                    }
+                    p.Product.BrandId = brandWithProducts.Brand.Id;
 
                     await _ctx.Products.AddAsync(p.Product);
                     await _ctx.SaveChangesAsync();
@@ -134,6 +134,7 @@ namespace RepoLayer
             catch (Exception ex) 
             {
                 transaction.Rollback();
+                return -1;
             }
 
             return brandWithProducts.Brand.Id;
@@ -147,11 +148,11 @@ namespace RepoLayer
         /// <returns>number of rows changed</returns>
         public async Task<int> LogicalBrandDeleteAsync(int brandId)
         {
-            IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
+            using IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
             try
             {
-                await _ctx.InfoRequestReplies.Where(x => x.InfoRequest.Product.BrandId == brandId)
-                .UpdateFromQueryAsync(x => new InfoRequestReply() { IsDeleted = true });
+                //await _ctx.InfoRequestReplies.Where(x => x.InfoRequest.Product.BrandId == brandId)
+                //.UpdateFromQueryAsync(x => new InfoRequestReply() { IsDeleted = true });
 
                 await _ctx.InfoRequests.Where(x => x.Product.BrandId == brandId)
                 .UpdateFromQueryAsync(x => new InfoRequest() { IsDeleted = true });
@@ -170,6 +171,7 @@ namespace RepoLayer
             catch (Exception ex)
             {
                 transaction.Rollback();
+                return -1;
             }
             return 0;
         }

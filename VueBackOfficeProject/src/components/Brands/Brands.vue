@@ -9,6 +9,7 @@
       </div>
     </div><hr>
         <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
+          <button class="btn bg-danger text-white bi bi-x-lg" @click="removeAlert()" type="button"  data-dismiss="alert" ></button>
           No Brands Found
         </div>
       <div v-if="this.loading" >
@@ -28,14 +29,14 @@
                     <td>
                       <div class="row">
                         <div class="col">
-                          <input v-debounce:300ms="searchDebounced" class="form-control" type="text" v-model="search" placeholder="BrandName">
+                          <input @keyup.enter="fetchPage()" v-debounce:300ms="searchDebounced" class="form-control" type="text" v-model="search" placeholder="BrandName">
                         </div>
                       </div>
-                    </td><td></td> <td></td>
+                    </td> <td colspan=2></td> 
                 </tr>
               </thead>
 
-              <tbody >
+              <tbody v-if="!alertActive">
                   <tr class="bg-light hover" v-for="brand in this.getBrands" :key="brand.brandId" @click.stop="$router.push({path:'/brands/'+brand.brandId})">
                       <td class="col-2" >{{brand.brandId}}</td>
                       <td class="col-4">{{brand.brandName}}</td>
@@ -49,7 +50,7 @@
                   </tr>
               </tbody>
           </table>
-          <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+          <Paging v-if="!alertActive"  @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
       </div>
   </div>
 </template>
@@ -109,6 +110,12 @@ export default {
             await BrandRepository.delete(id);
             this.fetchPage();
         }
+    },
+    removeAlert(){
+      this.alertActive = false;
+      this.search = "";
+      this.fetchPage();
+
     },
 
 

@@ -17,7 +17,7 @@
             </div>
         </div>
         <hr class="text-warning">
-        <button class="btn btn-outline-primary my-2" @click="$router.push({name: 'leads', params: { productId: info.productId, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
+        <button v-if="this.info.guestUsersRequestsNumber + this.info.loggedUsersRequestsNumber " class="btn btn-outline-primary my-2" @click="$router.push({name: 'leads', params: { productId: info.productId, brandId: info.brandId  }});"> Vedi tutte le richieste per questo prodotto </button>
 
     </div>
 </template>

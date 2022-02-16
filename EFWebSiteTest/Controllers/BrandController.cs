@@ -96,8 +96,6 @@ namespace EFWebSiteTest.Controllers
         [HttpPut("BrandUpdate")]
         public async Task<IActionResult> BrandUpdate (Brand brand)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             if (!IsBrandValid(brand))
                 return BadRequest(brand);
             int numChangedRows = await _brandService.BrandUpdateAsync(brand);
@@ -137,18 +135,17 @@ namespace EFWebSiteTest.Controllers
         [HttpPost("CreateWithProds")]
         public async Task<IActionResult> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
-            if (!ModelState.IsValid )
-                return BadRequest(ModelState);
             if (!IsBrandValid(brandWithProducts.Brand))
                 return BadRequest(brandWithProducts.Brand);
             var result = await _brandService.CreateBrandWithProductsAsync(brandWithProducts);
             if (result < 1)
-                return Forbid("brand has not been inserted");
+                return NotFound("brand has not been inserted");
             return Ok(result);
         }
 
         private bool IsBrandValid(Brand brand, int nameMinLenght = 1, int nameMaxLenght = 50, int descrMaxLenght = 50) => 
-            brand.BrandName.Length >= nameMinLenght && brand.BrandName.Length <= nameMaxLenght && brand.Description.Length <= descrMaxLenght;
+            brand.BrandName.Length >= nameMinLenght && brand.BrandName.Length <= nameMaxLenght
+            && brand.Description.Length <= descrMaxLenght && !String.IsNullOrWhiteSpace(brand.BrandName);
             
 
 
@@ -176,7 +173,7 @@ namespace EFWebSiteTest.Controllers
             if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brand.BrandName))
                 return BadRequest(ModelState);
             if (await _brandService.CreateBrandAsync(brand) < 1)
-                return Forbid("brand has not been inserted");
+                return NotFound("brand has not been inserted");
             return Ok(brand);
         }
 

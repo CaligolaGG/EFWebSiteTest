@@ -85,7 +85,7 @@ namespace EFWebSiteTest
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action}/{pageNum=1:int}/{pagesize=1:int:max(100)}"
+                    pattern: "{controller}/{action}"
                 );
                 endpoints.MapControllers();
             });

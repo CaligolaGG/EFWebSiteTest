@@ -14,19 +14,18 @@ namespace ServiceLayer
     public class BrandService
     {
         private readonly BrandRepo _brandRepo;
-        private readonly ProductRepo _productRepo;
 
-        public BrandService(BrandRepo brandRepo, ProductRepo productRepo )
+        public BrandService(BrandRepo brandRepo )
         {
             _brandRepo = brandRepo;
-            _productRepo = productRepo;
         }
 
         /// <summary>
         /// fetch a BrandProjectionBasic object.
         /// </summary>
         /// <returns> a list with id and name of all the brands </returns>
-        public async Task<List<BrandProjectionBasic>> GetAllAsync() => await _brandRepo.GetAll().Select(b=>new BrandProjectionBasic{Id=b.Id, Name=b.BrandName }).ToListAsync();
+        public async Task<List<BrandProjectionBasic>> GetAllAsync() => 
+            await _brandRepo.GetAll().Select(b=>new BrandProjectionBasic{Id=b.Id, Name=b.BrandName }).ToListAsync();
 
         /// <summary>
         /// fetch a BrandAccountProjection object.

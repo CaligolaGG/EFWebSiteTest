@@ -3,13 +3,14 @@
         <h2> Requests </h2>
         <hr>
         <div class="row my-1">
-                  <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
+                <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
+                    <button class="btn bg-danger text-white bi bi-x-lg" @click="removeAlert()" type="button"  data-dismiss="alert" ></button>
                     No Leads Found
                 </div>
-            <div class="col-2">
+            <div class="col-2" v-if="!searchByProductId">
                 Select a Brand
             </div>
-            <div class="col-5">
+            <div class="col-5" v-if="!searchByProductId" >
                 <select  name="" id="" class="form-select m-1"  v-model="searchByBrand" @change="fetchPage()"  >
                     <option default value="0">  No Brand </option>
                     <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
@@ -34,14 +35,14 @@
                     <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':isAsc}" ></i>
                     </th>
                 </tr>
-                <tr>
+                <tr  v-if="!searchByProductId">
                     <th></th>
                     <th >
-                        <input v-debounce:300ms="searchDebounced" class="form-control" type="text"  placeholder="Product Name" name="" id="" v-model="searchByProduct">
+                        <input  @keyup.enter="fetchPage()" v-debounce:300ms="searchDebounced" class="form-control" type="text"  placeholder="Product Name" name="" id="" v-model="searchByProduct">
                     </th><th colspan="4"></th> 
                 </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="!alertActive">
                     <tr v-for="lead in this.getLeads" :key="lead.id" class="hover" @click.stop="$router.push({path:'/leads/'+lead.id})">
                         <td>{{lead.userName}}</td>
                         <td>{{lead.productName}}</td>
@@ -52,7 +53,7 @@
                     </tr>    
                 </tbody>    
             </table>
-            <Paging @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+            <Paging v-if="!alertActive"  @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
         </div>
     </div>
 </template>
@@ -137,6 +138,14 @@ Vue.use(vueDebounce)
             //conversion of a string to a date
             convertToDate(date){
                 return new Date(date).toLocaleDateString("it")
+            },
+            removeAlert(){
+                this.alertActive = false;
+                this.searchByBrand=0,       
+                this.searchByProductId=0,    
+                this.searchByProduct=null,
+                this.fetchPage();
+
             },
 
         },

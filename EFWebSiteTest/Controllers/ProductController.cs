@@ -110,8 +110,6 @@ namespace EFWebSiteTest.Controllers
         /// </returns>
         public async Task<IActionResult> InsertOrUpdateProduct(Product product)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             if (!IsProductValid(product))
                 return BadRequest(product);
 
@@ -128,9 +126,7 @@ namespace EFWebSiteTest.Controllers
         [HttpPost("InsertProductCat")]
         public async Task<IActionResult> InsertProductWithCategories (ProductAndCategoryModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if(!IsProductValid(model.Product))
+            if(!IsProductValid(model.Product) || model.Product.Id != 0)
                 return BadRequest(model.Product);
 
             var result = await InsertOrUpdateProduct(model.Product);
@@ -152,9 +148,7 @@ namespace EFWebSiteTest.Controllers
         [HttpPut("UpdateProductCat")]
         public async Task<IActionResult> UpdateProductWithCategories(ProductAndCategoryModel model)
         {
-            if (!ModelState.IsValid )
-                return BadRequest(ModelState);
-            if (!IsProductValid(model.Product))
+            if (!IsProductValid(model.Product) || model.Product.Id == 0)
                 return BadRequest(model.Product);
 
             var result = await InsertOrUpdateProduct(model.Product);
@@ -175,7 +169,7 @@ namespace EFWebSiteTest.Controllers
         private bool IsProductValid(Product product, int nameMinLenght = 1, int nameMaxLenght = 50, int descrMaxLenght = 50, int shortDescrMaxLenght = 20) =>
             product.Name.Length >= nameMinLenght && product.Name.Length <= nameMaxLenght
             && product.Description.Length <= descrMaxLenght && product.ShortDescription.Length <= shortDescrMaxLenght
-            && product.Price > 0;
+            && product.Price > 0 && !String.IsNullOrWhiteSpace(product.Name);
 
 
 

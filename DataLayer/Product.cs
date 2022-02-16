@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain
@@ -18,6 +19,7 @@ namespace Domain
         [StringLength(20)]
         public string ShortDescription { get; set; }
 
+        [Range(0, Double.MaxValue)]
         public decimal Price { get; set; }
 
 

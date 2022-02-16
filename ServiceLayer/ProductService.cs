@@ -204,7 +204,7 @@ namespace ServiceLayer
         private bool IsProductValid(Product product) =>
          product.Name.Length > 0 && product.Name.Length <= 50
          && product.Description.Length <= 50 && product.ShortDescription.Length <= 20
-         && product.Price > 0 && product.BrandId > 0;
+         && product.Price > 0 ;
 
 
     }

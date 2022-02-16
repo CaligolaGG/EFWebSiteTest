@@ -16,7 +16,7 @@
       </div>
       <div class="form-group mb-2">
         <label for="price">Price</label>
-        <input type="number" step="any"  min="1" class="form-control" name="price" v-model="form.product.price">
+        <input type="number" step=".0001"  min="0.01" class="form-control" name="price" v-model="form.product.price">
       </div>
       <div>
         BrandId 
@@ -32,7 +32,7 @@
           </div>
           </div>
       </div>
-      <button type="submit" class="btn btn-primary my-2">Submit</button>
+      <button @keyup.enter="submitForm()" type="submit" class="btn btn-primary my-2">Submit</button>
     </form>
     </div>
 </template>
@@ -71,6 +71,7 @@ export default{
                     },
                 categories:[],
                 brandName:"",
+                errore:null
             },
         }
     },
@@ -108,10 +109,15 @@ export default{
           {
               let productWithCats = {Product : this.form.product,  Categories : this.form.categories}
               this.productId  = await ProductsRepository.createWithCats(productWithCats)
+
           }
+         
         },
         //submit the form info. calls the specific method (update or insert) based on the id frome the route
         async submitForm(){
+            if(this.form.product.name === ""  || this.form.product.name.match(/^ *$/) !== null)
+              alert("product name invalid")
+            else
             if(this.productId != 0)
                 await this.updateProduct()
             else

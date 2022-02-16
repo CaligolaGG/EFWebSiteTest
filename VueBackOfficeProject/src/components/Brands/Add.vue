@@ -3,8 +3,9 @@
         <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             <h2> Add New Brand </h2>
             <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" fade>
-                Two product have the same name. Brand has not been created
+                {{alertText}}
             </div>
+
             <div class="form-group mb-2">
                 <label for="pname">Name</label>
                 <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="brand.BrandName">
@@ -31,22 +32,19 @@
             <div v-for="n in this.numProducts" :key="n" class="my-3">
                 <form  class="bg-light my-2 border " >
                     <div class="mx-2">
-                        <b> Insert new product</b>
+                        <p class="mt-2"> <b> Insert Product {{n}}</b></p>
                         <div class="form-group mb-2">
-                            <label for="pname">Name</label>
-                            <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
+                            <input placeholder="Name" required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
                         </div>
                         <div class="form-group mb-2">
-                            <label for="desc">Description</label>
-                            <input type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description">
+                            <input placeholder="Description" type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description">
                         </div>
                         <div class="form-group mb-2">
-                            <label for="sdesc">ShortDescription</label>
-                            <input type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
+                            <input placeholder="ShortDescription" type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
                         </div>
                         <div class="form-group mb-2">
                             <label for="price">Price</label>
-                            <input min="1" type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
+                            <input placeholder="Price" min="1" step=".0001"  type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
                         </div>
                         <div class="form-group mb-2 row my-4">
                             <b> Categories </b>
@@ -65,8 +63,7 @@
 
             
         </div>
-            <button type="submit" class="btn btn-outline-primary my-2">Submit</button>
-
+            <button  @keyup.enter="submitForm()" type="submit" class="btn btn-outline-primary my-2">Submit</button>
         </form>
         <button @click="addProduct()" class="btn btn-outline-primary mb-4">Add Product</button>
 
@@ -102,10 +99,11 @@ export default {
             categories: {},         //object to contains a list of cateories 
 
             bundles:[],             //list of Bundle objects
-            error:"",               //indicates if an error was raised
+            error:false,               //indicates if an error was raised
 
             validMail:true,         //used to check if the mail is valid or not
             alertActive: false,     //indicates if the alert div should be shown or not
+            alertText:"",
 
         }    
     },
@@ -117,33 +115,69 @@ export default {
             this.loading=false;
         },
         //method to submit the form
-        //checks if there are duplicated names in products.
+        //checks if the field are valid or if there are duplicated names in products.
+        //if not activates the alert div.
         //redirect to the created brand if this has been created correctly
         async submitForm(){
             var names = []
+            this.error = false
+            this.alertActive =false
             if(this.bundles.length!=0 )
                 for (var p of this.bundles)
                     names.push(p.Product.Name)
 
-            
+            if(this.brand.BrandName === ""  || this.brand.BrandName.match(/^ *$/) !== null )
+            {
+                this.alertText = "Brand name invalid"
+                window.scrollTo(0, 0);
+                this.error = true
+                this.alertActive = true
+            }
+
+            for (var name of names)
+                if(name === ""  || name.match(/^ *$/) !== null)
+                {
+                    this.alertText ="Product name invalid"
+                    window.scrollTo(0, 0);
+                    this.error = true
+                    this.alertActive = true
+                    break;
+                }
+
             if (this.checkProducts(names))
+            {
+                this.alertText = "Two or more product have the same name"
+                window.scrollTo(0, 0);
+                this.error = true
                 this.alertActive=true
-            else 
-            if(this.validateEmail(this.account.Email))
+            }
+            
+            if(!this.validateEmail(this.account.Email))
+            {
+                this.validMail = false
+                this.error = true
+                window.scrollTo(0, 0);
+            }
+            else
+                this.validMail = true
+
+            if(!this.error) 
             {
                 this.alertActive=false
+                this.validMail = true
                 var id = await BrandRepository.create( {Brand : this.brand , ProductsCategs: this.bundles, Account:this.account})
                                                 .catch( (response)=> this.error = response);
 
                 if(id.status!=200)
                 {
-                    console.log(id)
-                    alert("brand name or email already taken. Brand NOT inserted")
+                    this.alertText = "Brand Name or mail already taken"
+                    window.scrollTo(0, 0);
+                    this.alertActive=true
                 }
                 else
                     this.$router.push({path:'/brands/'+id.data})
             }
-            else this.validMail = false
+
         },
         //adds a new Product form, insert a new Bundle object into bundles.
         addProduct(){
@@ -174,11 +208,6 @@ export default {
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
         },
-        showToast(){
-
-        }
-
-
 
     },
     async created(){

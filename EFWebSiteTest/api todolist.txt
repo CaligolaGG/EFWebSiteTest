@@ -94,17 +94,57 @@ X bottoni add
 X brand bottoni edit e cancella metti le icone 
 X cambia select into checkboxes
 
-•tempi di caricamento delle pagine. Mostra la tabella vuota					<-<-<-(Here)
-•component button paging
-
-
+X•tempi di caricamento delle pagine. Mostra la tabella vuota					
+X•component button paging
 
 
 -------------------------------------------------------------------
 •LeftOvers Api
-cambia upsert in api?
-inserts: transactions?
+X inserts: transactions
 Unit Testing?
-iCrud interface?
-Ricontrolla routing, optional routers.		X
+X Ricontrolla routing, optional routers.		
 -------------------------------------------------------------------
+•other stuff
+X filtri si applicano dal terzo in poi
+X input group
+
+X dito su righe
+X data cambia formato. Data hover. arrow più grandi
+X aggiusta posizione dei campi di filtro
+
+X spazio extra orizzontale
+X contains su ricerca
+
+X paginazione bottoni
+X validazioni js
+X altre validazioni api
+
+X alerts di boostrap
+X product detail requests
+X arrows default state
+
+•X? Validazioni
+X input
+X brand-> insert: nome, mail, X products: nomi | update: nome
+•X Products:
+X detail products list request. 
+X editing unisci con insert su product 
+X dopo add -> vai al detail	 
+X sidebar evidenzia fixa
+X valore vuoto per paginazione select-filter		 
+X paginazione su brand e request dopo un filtro
+X paginazione su requestdetail commenti
+•XRequests:
+X search by.
+X detail				  
+•Xstyling
+X detail pages
+X bottoni add
+X brand bottoni edit e cancella metti le icone 
+X cambia select into checkboxes
+X•commenti
+X•tempi di caricamento delle pagine. Mostra la tab vuota
+X•component button paging
+X upsert product. Product with same name and brand already exists
+
+<-<-<-(Here)
