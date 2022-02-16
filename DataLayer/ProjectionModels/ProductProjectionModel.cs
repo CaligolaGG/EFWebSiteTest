@@ -9,6 +9,14 @@ namespace Domain
     }
     #region ProjectionModels
 
+    public class ProductPageSearchInput
+    {
+        public int    pagesize { get; set; }
+        public int    orderBy { get; set; }
+        public bool   isAsc { get; set; }
+        public int    brandId { get; set; }
+    }
+
     public class ProductAndCategories
     {
         public Product Product { get; set; }
@@ -58,7 +66,7 @@ namespace Domain
         public string ProductName { get; set; }
         public string Description { get; set; }
         public string BrandName { get; set; }
-        public string Price { get; set; }
+        public decimal Price { get; set; }
         public IEnumerable<string> Categories { get; set; }
     }
     #endregion

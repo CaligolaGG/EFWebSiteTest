@@ -20,15 +20,15 @@ export default {
     },
     //delete of a brand and its products
     delete(id) {
-        return Base.delete(`${resource}/Delete/${id}`)
+        return Base.delete(`${resource}/${id}`)
     },
     //create a new brand with its products
     create(payload) {
-        return Base.post(`${resource}/CreateWithProds`, payload);
+        return Base.post(`${resource}`, payload);
     },
     //update a brand info
     update(payload) {
-        return Base.put(`${resource}/BrandUpdate`, payload);
+        return Base.put(`${resource}`, payload);
     },
 
 

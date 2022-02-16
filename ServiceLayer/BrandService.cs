@@ -184,21 +184,5 @@ namespace ServiceLayer
 
 
 
-        /// <summary>
-        /// #NOTUSED Create a new brand.
-        /// </summary>
-        /// <param name="brand">brand to insert</param>
-        /// <returns>Number of db rows affected</returns>
-        /// <exception cref="ArgumentException"> Raised if the name of the brand is null, empty, or consist of whitespaces</exception>
-        public async Task<int> CreateBrandAsync(Brand brand)
-        {
-            if (String.IsNullOrWhiteSpace(brand.BrandName) || brand is null)
-                throw new ArgumentException("invalid brand name");
-            return await _brandRepo.CreateBrandAsync(brand);
-        }
-
-
-
-
     }
 }

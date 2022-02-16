@@ -70,14 +70,13 @@ namespace ServiceLayer
                     Description = p.ShortDescription,
                     Categories = p.ProductCategory.Select(x => x.Category.Name),
                     BrandName = p.Brand.BrandName,
-                    Price = p.Price.ToString(), 
+                    Price = p.Price, 
                 })
                 .ToListAsync();
             page.ListEntities = x;
 
             return page;
         }
-
 
         /// <summary>
         /// Update or Insert a new product. 
@@ -87,14 +86,14 @@ namespace ServiceLayer
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Raised if the product is null</exception>
         /// <exception cref="ArgumentException">Raised if the product doesnt :  have a brand, have a valid name, price is negative </exception>
-        public async Task<int> InsertOrUpdateAsync(Product product) 
+        public async Task<int> InsertOrUpdateAsync(ProductAndCategoryModel model)
         {
-            if(product is null || !IsProductValid(product))
-                throw new ArgumentNullException(nameof(product));
-            if (product.BrandId < 1)
+            if (model.Product is null || !IsProductValid(model.Product))
+                throw new ArgumentNullException(nameof(model.Product));
+            if (model.Product.BrandId < 1)
                 throw new ArgumentException("product must have a brand");
 
-            return await _productRepo.CreateOrUpdateAsync(product);
+            return await _productRepo.CreateOrUpdateAsync(model);
         }
 
 
@@ -184,22 +183,6 @@ namespace ServiceLayer
 
            return product;
         }
-
-
-        /// <summary>
-        /// #NOTUSED Phisically Remove a product given an id
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns>number of records affected</returns>
-        /// <exception cref="ArgumentException"> raised if the id is less then 1 </exception>
-        public async Task<int> DeleteAsync(int productId)
-        {
-            if (productId < 1)
-                throw new ArgumentException("product id must be > 0");
-
-            return await _productRepo.DeleteAsync(productId);
-        }
-
 
         private bool IsProductValid(Product product) =>
          product.Name.Length > 0 && product.Name.Length <= 50

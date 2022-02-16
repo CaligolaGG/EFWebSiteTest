@@ -28,13 +28,22 @@ namespace RepoLayer
         /// </summary>
         /// <param name="product">product to insert or change</param>
         /// <returns>Number of rows affected</returns>
-        public async Task<int> CreateOrUpdateAsync(Product product)
+        public async Task<int> CreateOrUpdateAsync(ProductAndCategoryModel model)
         {
+            Product product = model.Product;
+            product.ProductCategory = model.Categories.Select(x => new ProductCategory
+            {
+                IdCategory = x
+            }).ToList();
+
             if (product.Id != 0)
+            {
+                _ctx.ProductCategories.RemoveRange(_ctx.ProductCategories.Where(x => x.IdProduct == product.Id));
                 _ctx.Products.Update(product);
+            }
             else
                 await _ctx.Products.AddAsync(product);
-             await _ctx.SaveChangesAsync();
+            await _ctx.SaveChangesAsync();
             return product.Id;
         }
 
@@ -72,24 +81,7 @@ namespace RepoLayer
             }
 
         }
-
-
-
-
-
-        /// <summary>
-        /// #NOTUSED Phisically delete an item from the table given its id.
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns>number of records affected</returns>
-        public async Task<int> DeleteAsync(int productId)
-        {
-            _ctx.Products.Remove(new Product { Id = productId });
-            return await _ctx.SaveChangesAsync();
-        }
-
        
-
 
     }
 

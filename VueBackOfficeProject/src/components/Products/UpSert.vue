@@ -103,15 +103,10 @@ export default{
         //insert a new product in the db by calling the specific repository function.
         // A different api gets called if no categories are selected for the product to insert
         async insertProduct(){
-          if(this.form.categories.length == 0)
-              this.productId = await ProductsRepository.create(this.form.product)
-          else
-          {
-              let productWithCats = {Product : this.form.product,  Categories : this.form.categories}
-              this.productId  = await ProductsRepository.createWithCats(productWithCats)
-
-          }
-         
+          if( !this.form.categories.length  ||this.form.categories.length == 0)
+            this.form.categories = []
+          let productWithCats = {Product : this.form.product,  Categories : this.form.categories}
+          this.productId  = await ProductsRepository.createWithCats(productWithCats)
         },
         //submit the form info. calls the specific method (update or insert) based on the id frome the route
         async submitForm(){
@@ -123,7 +118,9 @@ export default{
             else
                 await this.insertProduct()
             
-            this.$router.push({path:'/products/'+this.productId.data.id})
+            console.log(this.productId.data)
+            alert(this.productId.data)
+            this.$router.push({path:'/products/'+this.productId.data})
         }
     },
     async created(){

@@ -58,14 +58,17 @@ export default {
     },
     //changes the color of the tabs in the sidebar by checking the route name
     selectTab(){
-      var check =this.$route.name
-      this.activateTabColor(3)
-      if (check.includes("product"))
-        this.activateTabColor(0)
-      if(check.includes("brand"))
-        this.activateTabColor(1)
-      if(check.includes("lead"))
-        this.activateTabColor(2)
+      if(this.$route.name)
+      {
+        var check =this.$route.name
+        this.activateTabColor(3)
+        if (check.includes("product"))
+          this.activateTabColor(0)
+        if(check.includes("brand"))
+          this.activateTabColor(1)
+        if(check.includes("lead"))
+          this.activateTabColor(2)
+      }
     },
 
   },

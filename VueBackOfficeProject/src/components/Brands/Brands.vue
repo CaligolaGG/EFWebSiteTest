@@ -8,50 +8,52 @@
         <button class="btn btn-outline-primary mx-2" @click="$router.push({path:'/brands/new'})">AddBrand</button>
       </div>
     </div><hr>
-        <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
-          <button class="btn bg-danger text-white bi bi-x-lg" @click="removeAlert()" type="button"  data-dismiss="alert" ></button>
-          No Brands Found
-        </div>
-      <div v-if="this.loading" >
-        <Skeleton></Skeleton>
-      </div>
-      <div  v-if="!this.loading">
-          <table class="table table-striped table-light">
-              <thead >
-                <tr>
-                    <th scope="col" class="position-relative" >BrandId </th>
-                    <th scope="col" class="position-relative" >BrandName </th>
-                    <th scope="col" class="position-relative" >Description </th>
-                    <th scope="col"></th>
-                </tr>
-                <tr class="bg-light">
-                  <td></td>
-                    <td>
-                      <div class="row">
-                        <div class="col">
-                          <input @keyup.enter="fetchPage()" v-debounce:300ms="searchDebounced" class="form-control" type="text" v-model="search" placeholder="BrandName">
-                        </div>
-                      </div>
-                    </td> <td colspan=2></td> 
-                </tr>
-              </thead>
+    <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
+      <button class="btn bg-danger text-white" @click="removeAlert()" type="button"  data-dismiss="alert" ><span aria-hidden="true">×</span></button>
+      No Brands Found
+    </div>
 
-              <tbody v-if="!alertActive">
-                  <tr class="bg-light hover" v-for="brand in this.getBrands" :key="brand.brandId" @click.stop="$router.push({path:'/brands/'+brand.brandId})">
-                      <td class="col-2" >{{brand.brandId}}</td>
-                      <td class="col-4">{{brand.brandName}}</td>
-                      <td class="col-4">{{brand.description}}</td>
-                      <td class="col-1">
-                        <div class="input-group">
-                            <button class="col offset-1 btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})"> </button>
-                            <button class="col btn btn-outline-secondary text-danger bi bi-trash-fill " @click.stop="Remove(brand.brandId)">  </button>
-                        </div>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-          <Paging v-if="!alertActive"  @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
-      </div>
+    <div v-if="this.loading" >
+      <Skeleton></Skeleton>
+    </div>
+    
+    <div  v-if="!this.loading">
+        <table class="table table-striped table-light">
+            <thead >
+              <tr>
+                  <th scope="col" class="position-relative" >BrandId </th>
+                  <th scope="col" class="position-relative" >BrandName </th>
+                  <th scope="col" class="position-relative" >Description </th>
+                  <th scope="col"></th>
+              </tr>
+              <tr class="bg-light">
+                <td></td>
+                  <td>
+                    <div class="row">
+                      <div class="col">
+                        <input @keyup.enter="fetchPage()" v-debounce:300ms="searchDebounced" class="form-control" type="text" v-model="search" placeholder="BrandName">
+                      </div>
+                    </div>
+                  </td> <td colspan=2></td> 
+              </tr>
+            </thead>
+
+            <tbody v-if="!alertActive">
+                <tr class="bg-light hover" v-for="brand in this.getBrands" :key="brand.brandId" @click.stop="$router.push({path:'/brands/'+brand.brandId})">
+                    <td class="col-2" >{{brand.brandId}}</td>
+                    <td class="col-4">{{brand.brandName}}</td>
+                    <td class="col-4">{{brand.description}}</td>
+                    <td class="col-1">
+                      <div class="input-group">
+                          <button class="btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})"> </button>
+                          <button class="btn btn-outline-secondary text-danger bi bi-trash-fill " @click.stop="Remove(brand.brandId)">  </button>
+                      </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <Paging v-if="!alertActive"  @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+    </div>
   </div>
 </template>
 

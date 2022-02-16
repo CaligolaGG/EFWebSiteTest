@@ -8,6 +8,8 @@ using Z.EntityFramework.Plus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
+
+
 namespace RepoLayer
 {
     /// <summary>
@@ -98,46 +100,32 @@ namespace RepoLayer
         }
 
 
-        /// <summary>
+        /// <summary>todo
         /// Add a new brand with the associated products and their categories
         /// </summary>
         /// <param name="brandWithProducts">Models that contains all the information to add to the db</param>
         /// <returns>number of rows affected</returns>
         public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
-            using IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
-
-            try
+            Brand brand = brandWithProducts.Brand;
+            brand.Account = brandWithProducts.Account;
+            brand.Products = brandWithProducts.ProductsCategs.Select(y => new Product
             {
-                await _ctx.Accounts.AddAsync(brandWithProducts.Account);
-                await _ctx.SaveChangesAsync();
-
-                brandWithProducts.Brand.AccountId = brandWithProducts.Account.Id;
-                await _ctx.Brands.AddAsync(brandWithProducts.Brand);
-                await _ctx.SaveChangesAsync();
-
-
-                foreach (ProductAndCategoryModel p in brandWithProducts.ProductsCategs)
+                Name = y.Product.Name,
+                Description = y.Product.Description,
+                Price = y.Product.Price,
+                ShortDescription = y.Product.ShortDescription,
+                //-problema
+                ProductCategory = y.Categories.Select(z => new ProductCategory
                 {
+                    IdCategory = z,
+                }).ToList()
+            }).ToList();
 
-                    p.Product.BrandId = brandWithProducts.Brand.Id;
+            await _ctx.Brands.AddAsync(brand);
+            await _ctx.SaveChangesAsync();
+            return brand.Id;
 
-                    await _ctx.Products.AddAsync(p.Product);
-                    await _ctx.SaveChangesAsync();
-
-                    foreach (int c in p.Categories)
-                        await _ctx.ProductCategories.AddAsync(new ProductCategory { IdProduct = p.Product.Id, IdCategory = c });
-                }
-                await _ctx.SaveChangesAsync();
-                transaction.Commit();
-            }
-            catch (Exception ex) 
-            {
-                transaction.Rollback();
-                return -1;
-            }
-
-            return brandWithProducts.Brand.Id;
         }
 
 
@@ -173,23 +161,7 @@ namespace RepoLayer
                 transaction.Rollback();
                 return -1;
             }
-            return 0;
         }
-
-
-
-
-
-
-        /// <summary>
-        /// #NOT USED creates a new brand not yet associated to an account
-        /// </summary>
-        public async Task<int> CreateBrandAsync(Brand brand)
-        {
-            await _ctx.Brands.AddAsync(brand);
-            return await _ctx.SaveChangesAsync();
-        }
-
 
 
     }

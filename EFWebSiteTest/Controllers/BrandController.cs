@@ -55,8 +55,9 @@ namespace EFWebSiteTest.Controllers
         /// <returns> BadRequest when pagenum and pagesize are less than 1.
         /// Not found when the List of brands is null or empty.
         /// Ok result with a page of brands in any other case </returns>
+        [HttpGet("BrandPage/{pagesize:int:max(10)=5}/{searchByName?}")]
         [HttpGet("BrandPage/{pageNum:int=1}/{pagesize:int:max(10)=5}/{searchByName?}")]
-        public async Task<IActionResult> BrandPage(int pageNum, int pagesize, string searchByName)
+        public async Task<IActionResult> BrandPage(int pagesize, string searchByName, int pageNum = 1)
         {
             if (pageNum < 1 || pagesize < 1)
                 return BadRequest("page num and pagesize must be greater than 0");
@@ -93,9 +94,11 @@ namespace EFWebSiteTest.Controllers
         /// NotFound if the brand doesnt get updated for any reason
         /// Ok() otherwise
         /// </returns>
-        [HttpPut("BrandUpdate")]
+        [HttpPut()]
         public async Task<IActionResult> BrandUpdate (Brand brand)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             if (!IsBrandValid(brand))
                 return BadRequest(brand);
             int numChangedRows = await _brandService.BrandUpdateAsync(brand);
@@ -113,7 +116,7 @@ namespace EFWebSiteTest.Controllers
         /// NotFound if the brand doesnt get updated for any reason
         /// Ok() otherwise
         /// </returns>
-        [HttpDelete("Delete/{brandId:int}")]
+        [HttpDelete("{brandId:int}")]
         public async Task<IActionResult> DeleteLogicalAsync(int brandId) 
         {
             if (brandId < 1)
@@ -132,7 +135,7 @@ namespace EFWebSiteTest.Controllers
         /// Forbid if the brand has not been inserted for any reason
         /// Ok with the model inserted otherwise
         /// </returns>
-        [HttpPost("CreateWithProds")]
+        [HttpPost()]
         public async Task<IActionResult> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
             if (!IsBrandValid(brandWithProducts.Brand))
@@ -148,37 +151,6 @@ namespace EFWebSiteTest.Controllers
             && brand.Description.Length <= descrMaxLenght && !String.IsNullOrWhiteSpace(brand.BrandName);
             
 
-
-
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// #NOTUSED Api method to insert a new brand without specifing its products
-        /// </summary>
-        /// <param name="brand">brand to add</param>
-        /// <returns>
-        /// Bad request if the brand inserted is not valid
-        /// Forbid if the brand has not been inserted for any reason
-        /// Ok with the brand inserted otherwise
-        /// </returns>
-        [HttpPost("BrandCreate")]
-        public async Task<IActionResult> CreateBrandAsync(Brand brand)
-        {
-            if (!ModelState.IsValid || String.IsNullOrWhiteSpace(brand.BrandName))
-                return BadRequest(ModelState);
-            if (await _brandService.CreateBrandAsync(brand) < 1)
-                return NotFound("brand has not been inserted");
-            return Ok(brand);
-        }
-
     }
-
-
 
 }

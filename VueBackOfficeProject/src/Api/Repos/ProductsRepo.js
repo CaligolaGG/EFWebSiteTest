@@ -1,11 +1,17 @@
-
 import Base from "../Base";
 const resource = '/Product';
 
 export default {
     //gets a PAGE of products
-    get(page,orderBy="0",isAsc=true,brandName="",pagesize=10) {
-        return Base.get(`${resource}`+"/ProductPage/"+page+"/"+ pagesize +"/"+orderBy+"/"+isAsc+"/"+brandName);
+    get(page,orderBy="0",isAsc=true,brandId=0,pagesize=10) {
+        
+        this.payload = {
+            "isAsc": isAsc,
+            "orderBy": orderBy,
+            "brandId" : brandId,
+            "pagesize" : pagesize
+        }
+        return Base.post(`${resource}/ProductPage/`+page,this.payload);
     },
     //creates a product without categories
     create(payload) {
@@ -23,11 +29,13 @@ export default {
     getProduct(id) {
         return Base.get(`${resource}/${id}`);
     },
+    //update a product
     update(payload) {
         return Base.put(`${resource}/UpdateProductCat`, payload);
     },
+    //logical delete of a product
     delete(id) {
-        return Base.delete(`${resource}/DeleteProductL/${id}`)
+        return Base.delete(`${resource}/${id}`)
     },
 
 };

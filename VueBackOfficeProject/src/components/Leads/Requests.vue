@@ -4,11 +4,11 @@
         <hr>
         <div class="row my-1">
                 <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
-                    <button class="btn bg-danger text-white bi bi-x-lg" @click="removeAlert()" type="button"  data-dismiss="alert" ></button>
+                    <button class="btn btn-danger" @click="removeAlert()" type="button"  data-dismiss="alert" ><span aria-hidden="true">×</span></button>
                     No Leads Found
                 </div>
-            <div class="col-2" v-if="!searchByProductId">
-                Select a Brand
+            <div class="col-2 px-3 pt-2" v-if="!searchByProductId">
+                Select a Brand:
             </div>
             <div class="col-5" v-if="!searchByProductId" >
                 <select  name="" id="" class="form-select m-1"  v-model="searchByBrand" @change="fetchPage()"  >
@@ -17,6 +17,7 @@
                 </select>
             </div>
         </div>
+
         <div v-if="this.loading" >
             <Skeleton></Skeleton>
         </div>
