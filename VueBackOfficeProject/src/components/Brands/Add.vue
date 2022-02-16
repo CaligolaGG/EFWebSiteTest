@@ -12,7 +12,7 @@
             </div>
             <div class="form-group mb-2">
                 <label for="desc">Description</label>
-                <input type="textarea" class="form-control" name="desc"  maxlength="50" v-model="brand.Description">
+                <textarea class="form-control" name="desc"  maxlength="50" v-model="brand.Description" style="resize:none;" rows=5></textarea>
             </div>
 
             <div class="form-group mb-2">
@@ -28,16 +28,22 @@
             </div>
 
 
+            <h2 class="my-3 mt-5" v-if="this.numProducts > 0">Products</h2>
         
             <div v-for="n in this.numProducts" :key="n" class="my-3">
                 <form  class="bg-light my-2 border " >
                     <div class="mx-2">
-                        <p class="mt-2"> <b> Insert Product {{n}}</b></p>
+                        <div class="row">
+                            <h5 class="col pt-3"><b> Insert Product {{n}} </b></h5>
+                            <div class="col-1 ">
+                                <button type="button" class=" btn btn-danger my-2 float-end" @click="removeProduct(n)">X</button>
+                            </div>
+                        </div>
                         <div class="form-group mb-2">
                             <input placeholder="Name" required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
                         </div>
                         <div class="form-group mb-2">
-                            <input placeholder="Description" type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description">
+                            <textarea placeholder="Description" type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description" style="resize:none;" rows=5></textarea>
                         </div>
                         <div class="form-group mb-2">
                             <input placeholder="ShortDescription" type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
@@ -56,16 +62,14 @@
                                     </li>
                                 </div>
                             </div>
-
+                        </div>
                     </div>
-                </div>
-             </form>
-
+                </form>
             
-        </div>
+            </div>
             <button  @keyup.enter="submitForm()" type="submit" class="btn btn-outline-primary my-2">Submit</button>
         </form>
-        <button @click="addProduct()" class="btn btn-outline-primary mb-4">Add Product</button>
+        <button  @click="addProduct()" class="btn btn-outline-primary mb-4">Add Product</button>
 
     </div>
 </template>
@@ -207,6 +211,10 @@ export default {
             .match(
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
+        },
+        removeProduct(n){
+            this.bundles.splice(n-1,1);
+            this.numProducts--;
         },
 
     },

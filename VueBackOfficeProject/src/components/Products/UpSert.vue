@@ -2,35 +2,35 @@
 <div class="container" v-if="!loading">
     <form  id="insert" v-on:submit.prevent="submitForm()">
       <h3 >  {{whatPage}}  Product </h3>
-      <div class="form-group mb-2">
-        <label for="pname">Name</label>
-        <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="form.product.name">
+      <div class="form-group my-2 mt-3">
+        <input placeholder="Name" required type="text" name="pname" id="" class="form-control bg-light"  maxlength="50" v-model="form.product.name">
       </div>
       <div class="form-group mb-2">
-        <label for="desc">Description</label>
-        <textarea  class="form-control"   maxlength="50" name="desc" v-model="form.product.description" style="resize:none;" rows=5></textarea>
+        <textarea placeholder="Description" class="form-control bg-light"   maxlength="50" name="desc" v-model="form.product.description" style="resize:none;" rows=5></textarea>
       </div>
       <div class="form-group mb-2">
-        <label for="sdesc">ShortDescription</label>
-        <input type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="form.product.shortDescription">
+        <input placeholder=ShortDescription type="textarea" class="form-control bg-light"   maxlength="20" name="sdesc" v-model="form.product.shortDescription">
       </div>
-      <div class="form-group mb-2">
-        <label for="price">Price</label>
-        <input type="number" step=".0001"  min="0.01" class="form-control" name="price" v-model="form.product.price">
-      </div>
-      <div>
-        BrandId 
-        <select required class="form-select m-1 "  v-model="form.product.brandId">
-          <option  value="">Please select one</option>
-          <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
-        </select>  
+
+      <div class="row">
+        <div class="form-group mb-2 col-4">
+          <label for="price">Price: </label>
+          <input type="number" step=".0001"  min="0.01" class="form-control bg-light" name="price" v-model="form.product.price">
+        </div>
+        <div class="col">
+          Brand: 
+          <select  required class="form-select bg-light " v-model="form.product.brandId">
+            <option  default value="0"> Select a Brand</option>
+            <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
+          </select> 
+        </div> 
         <div class="row my-4"> <b> Categories </b></div>
-          <div class="mx-2 row">
+        <div class="mx-2 row">
           <div v-for="cat in this.categories" :key="cat.Id"  class="form-check col-4">
             <input type="checkbox"  v-model="form.categories" v-bind:value="cat.id"  class="form-check-input">
             <label> {{cat.name}} </label> 
           </div>
-          </div>
+        </div>
       </div>
       <button @keyup.enter="submitForm()" type="submit" class="btn btn-primary my-2">Submit</button>
     </form>
@@ -66,7 +66,7 @@ export default{
                         description:"",
                         shortDescription:"",
                         price:1,
-                        brandId:null,
+                        brandId:"0",
                         name:"",
                     },
                 categories:[],
