@@ -3,18 +3,21 @@
         <h2> Requests </h2>
         <hr>
         <div class="row my-1">
-                <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
-                    <button type="button" class="btn-close float-end"  @click="removeAlert()"  aria-label="Close"></button>
-                    No Leads Found
-                </div>
-            <div class="col-2 px-3 pt-2" v-if="!searchByProductId">
-                Select a Brand:
+            <div class="alert alert-danger " role="alert" v-bind:class="{'d-none':!alertActive}" >
+                <button type="button" class="btn-close float-end"  @click="removeAlert()"  aria-label="Close"></button>
+                No Leads Found
             </div>
-            <div class="col-5" v-if="!searchByProductId" >
-                <select  name="" id="" class="form-select m-1"  v-model="searchByBrand" @change="fetchPage()"  >
-                    <option default value="0">  No Brand </option>
-                    <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
-                </select>
+
+            <div class="input-group mb-2" v-if="!searchByProductId">
+                <span class="col-2 input-group-text bg-light" >
+                    Select a Brand:
+                </span>
+                <div class="col-5 btn-group" v-if="!searchByProductId" >
+                    <select  name="" id="" class=" form-select rounded-0 "  v-model="searchByBrand" @change="fetchPage()"  >
+                        <option default value="0">  Tutti i Brand </option>
+                        <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
+                    </select>
+                </div>
             </div>
         </div>
 

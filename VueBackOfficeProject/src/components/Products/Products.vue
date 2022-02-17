@@ -20,28 +20,28 @@
       <table class="table table-striped table-light ">
         <thead > 
           <tr>
-            <th scope="col" class="position-relative hoverV2"  @click="selectOrderBy(Order.Brand)">Brand  
+            <th scope="col" class="position-relative hoverV2 col-3"  @click="selectOrderBy(Order.Brand)">Brand  
               <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(0,false)}"> </i>
               <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(0,true)}" ></i>
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 text-primary sortArrow" v-if="defaultArrowState" ></i>
             </th>
               
-            <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(Order.Name)">Product 
+            <th scope="col" class="position-relative hoverV2 col-3" @click="selectOrderBy(Order.Name)">Product 
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(1,false)}"></i>
               <i class="bi bi-caret-up-fill  position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(1,true)}" ></i>
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 text-primary sortArrow" v-if="defaultArrowState" ></i>
             </th>
-            <th scope="col" class="position-relative" >Categories </th>
+            <th scope="col" class="position-relative col-3" >Categories </th>
             <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(Order.Price)">Price
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,false)}"></i> 
               <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,true)}"></i>
             </th>
-            <th scope="col">  </th>
+            <th scope="col" class="col">  </th>
           </tr>
           <tr class="bg-light">
             <td> 
               <select name="" id="" class="form-select m-1 "  v-model="brandChosen" @change="fetchPage()">
-                <option default value="0">  No Brand </option>
+                <option default value="0">  Tutti i Brand </option>
                 <option v-for="brand in this.brands" :key="brand.Id" v-bind:value="brand.id" > {{brand.name}} </option>  
               </select>  
             </td>
@@ -54,7 +54,7 @@
             <td class="col-2" >{{item.brandName}}</td>
             <td class="col-4" > <b> {{item.productName}} </b> |  {{item.description}}</td>
             <td class="col-3" ><span v-for="(cat, index) in item.categories" :key="index" class="rounded-pill bg-primary text-light m-1 ">
-              <small class="p-1" v-bind:title="cat" > {{cat.substring(0, 10)}} </small> </span> 
+              <small class="p-1" v-bind:title="cat" > {{cat.substring(0, 15)}} </small> </span> 
             </td>
             <td class="col-1" > $ {{item.price}} </td>
             <td class="col-1">
