@@ -2,9 +2,12 @@
     <div class="container">
         <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             <h2> Add New Brand </h2>
-            <div class="alert alert-danger my-1" role="alert" v-bind:class="{'d-none':!alertActive}" fade>
+
+            <div class="alert alert-danger my-1 fade-out" role="alert" v-bind:class="{'d-none':!alertActive}" >
                 {{alertText}}
+                <button type="button" class="btn-close float-end" @click="alertActive = false"  aria-label="Close"></button>
             </div>
+            
 
             <div class="form-group mt-3 mb-2">
                 <input placeholder="Name" required type="text" name="pname" id="" class="form-control bg-light"  maxlength="50" v-model="brand.BrandName">
@@ -110,7 +113,7 @@ export default {
             categories: {},         //object to contains a list of cateories 
 
             bundles:[],             //list of Bundle objects
-            error:false,               //indicates if an error was raised
+            error:false,            //indicates if an error was raised
 
             validMail:true,         //used to check if the mail is valid or not
             alertActive: false,     //indicates if the alert div should be shown or not
@@ -133,10 +136,13 @@ export default {
             var names = []
             this.error = false
             this.alertActive =false
+
             if(this.bundles.length!=0 )
                 for (var p of this.bundles)
                     names.push(p.Product.Name)
 
+
+            //form checks
             if( Utilities.isStringInvalid (this.brand.BrandName)  )
             {
                 this.alertText = "Brand name invalid"
@@ -172,18 +178,32 @@ export default {
             else
                 this.validMail = true
 
+
+            //if no error in the form try to insert/update  
             if(!this.error) 
             {
                 this.alertActive=false
                 this.validMail = true
+
                 var id = await BrandRepository.create( {Brand : this.brand , ProductsCategs: this.bundles, Account:this.account})
                                                 .catch( (response)=> this.error = response);
 
                 if(id.status!=200)
                 {
-                    this.alertText = "Brand Name or mail already taken"
-                    window.scrollTo(0, 0);
-                    this.alertActive=true
+                    if(this.error.response.status == 400)
+                    {
+                        this.alertText = ""
+                        for (var key in this.error.response.data)
+                            this.alertText +=  key + " already taken. "
+                        window.scrollTo(0, 0);
+                        this.alertActive=true
+                    }
+                    else
+                    {
+                        this.alertText = "An unexpected error occurred Retry Later"
+                        window.scrollTo(0, 0);
+                        this.alertActive=true
+                    }
                 }
                 else
                     this.$router.push({path:'/brands/'+id.data})
@@ -228,6 +248,12 @@ export default {
     async created(){
         this.id = this.$route.params.id;
         await this.getData();
+    },
+    watch:{
+        alertActive(){
+            if(this.alertActive == true)
+               setTimeout(()=> this.alertActive = false, 3800)
+        }
     }
     
 }
@@ -249,7 +275,7 @@ var bundle = function(){
 
 <style scoped>
   .form-control::placeholder { 
-            color: rgba(8, 8, 8, 0.829);
+            color: rgba(15, 15, 15, 0.377);
             opacity: 1;
 }
 </style>

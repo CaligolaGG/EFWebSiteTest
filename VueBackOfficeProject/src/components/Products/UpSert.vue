@@ -2,6 +2,7 @@
 <div class="container" v-if="!loading">
     <form  id="insert" v-on:submit.prevent="submitForm()">
       <h3 >  {{whatPage}}  Product </h3>
+
       <div class="form-group my-2 mt-3">
         <div v-bind:class="{'invalid-feedback':validName,'text-danger':true}">
             Name must be longer than 1 character and not contain only spaces.
@@ -39,7 +40,7 @@
               </select> 
             </div> 
           </div>
-          <div class="row my-4"> <b> Categories </b></div>
+          <div class="row my-2"> <b> Categories </b></div>
           <div class="mx-2 row">
             <div v-for="cat in this.categories" :key="cat.Id"  class="form-check col-4">
               <input type="checkbox"  v-model="form.categories" v-bind:value="cat.id"  class="form-check-input">

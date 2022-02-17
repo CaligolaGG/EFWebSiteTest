@@ -1,5 +1,7 @@
 <template> 
   <div class="container">
+  <Modal @deleteItem="deleteProduct"></Modal>
+
     <div class="row">
       <div class="col-10">
         <h2 class="bold">Products</h2></div>
@@ -8,7 +10,7 @@
       </div> <hr>
     </div>
       <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}"  >
-        <button class="btn bg-danger text-white" @click="removeAlert()"  type="button"  data-dismiss="alert" ><span aria-hidden="true">×</span></button>
+      <button type="button" class="btn-close float-end"  @click="removeAlert()"  aria-label="Close"></button>
         No Products Found
       </div>
     <div v-if="this.loading" >
@@ -51,12 +53,14 @@
           <tr v-for="item in this.getProducts" :key="item.Id" class="hover" @click="$router.push({path:'/products/'+item.id})">
             <td class="col-2" >{{item.brandName}}</td>
             <td class="col-4" > <b> {{item.productName}} </b> |  {{item.description}}</td>
-            <td class="col-3" ><span v-for="(cat, index) in item.categories" :key="index" class="rounded-pill bg-primary text-light ">  <small class="p-1"> {{cat}} </small> </span> </td>
+            <td class="col-3" ><span v-for="(cat, index) in item.categories" :key="index" class="rounded-pill bg-primary text-light m-1 ">
+              <small class="p-1" v-bind:title="cat" > {{cat.substring(0, 10)}} </small> </span> 
+            </td>
             <td class="col-1" > $ {{item.price}} </td>
             <td class="col-1">
               <div class="input-group ">
                 <button class="  btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/products/'+item.id+'/edit'})"></button>
-                <button class=" btn btn-outline-secondary text-danger bi bi-trash-fill " @click.stop="deleteProduct(item.id)"></button>
+                <button class=" btn btn-outline-secondary text-danger bi bi-trash-fill " data-bs-toggle="modal" data-bs-target="#exampleModal" @click.stop="deleteItem = item.id"></button>
               </div>
             </td>
           </tr>
@@ -74,8 +78,10 @@
 import Repository from "../../Api/RepoFactory";
 import Paging from "../Pagination.vue";
 import Skeleton from "../Skeleton.vue";
+import Modal from "../Modal.vue"
 const ProductsRepository = Repository.get("products");
 const BrandRepository = Repository.get("brands");
+
 
 export default {
   data(){
@@ -97,12 +103,14 @@ export default {
         Price:2,
         Default:3,
       }),
+      deleteItem:null, //id of item to delete
     
    }
   }, 
   components:{
      Paging,
-     Skeleton
+     Skeleton,
+     Modal
   },
 
   methods:{
@@ -132,12 +140,9 @@ export default {
       this.fetchPage();
     },
     //delete a product and refreshes the page
-    async deleteProduct(id){
-      if(confirm("are you sure you want to delete this product?"))
-      {
-        await ProductsRepository.delete(id);
+    async deleteProduct(){
+        await ProductsRepository.delete(this.deleteItem);
         this.fetchPage(this.lastcurrentpage);
-      }
     },
     //calculates which arrow is active. Returns a boolean
     selectArrow(orderBy, isAsc ){

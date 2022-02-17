@@ -162,6 +162,10 @@ namespace RepoLayer
             }
         }
 
+        public async Task<int> CheckName(string name) => await _ctx.Brands.CountAsync(x => x.BrandName == name);
+        public async Task<int> CheckMail(string mail) => await _ctx.Accounts.CountAsync(x => x.Email == mail);
+        
+
 
     }
 }

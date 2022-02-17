@@ -4,12 +4,11 @@
         <a class="navbar-brand ms-3" > <router-link to="/" class="navbar-brand" > Navbar </router-link></a>
     </nav>
     <div class="container-fluid" id="app" >
-
       <div class="row " >
         <div class="col-2 bg-light text-dark h-100 position-fixed">
           <div class="row hoverV2">
             <router-link  to="/products"  class="navbar-brand " v-bind:class="{'text-dark': this.tabs[0].state }"> 
-              <div class="row mt-2 mx-2"  > 
+              <div class="row mt-1 mx-2"  > 
                   <span> Product </span> 
               </div>
             </router-link>
@@ -103,7 +102,24 @@ export default {
   cursor: pointer;
 }
 .hoverV2:hover{
-  background-color: #757575a4;
+  background-color: #d6d3d3a4;
+  
+  box-shadow: 0px 10px 20px rgba(0,0,0,.10), 0 4px 8px rgba(0,0,0,.06);
+
   cursor: pointer;
+}
+.fade-out {
+  animation: fadeOut 1s;
+  opacity: 1;
+  animation-delay: 3s;
+}
+@keyframes fadeOut {
+
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 </style>

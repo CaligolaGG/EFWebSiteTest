@@ -4,7 +4,7 @@
         <hr>
         <div class="row my-1">
                 <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
-                    <button class="btn btn-danger" @click="removeAlert()" type="button"  data-dismiss="alert" ><span aria-hidden="true">×</span></button>
+                    <button type="button" class="btn-close float-end"  @click="removeAlert()"  aria-label="Close"></button>
                     No Leads Found
                 </div>
             <div class="col-2 px-3 pt-2" v-if="!searchByProductId">

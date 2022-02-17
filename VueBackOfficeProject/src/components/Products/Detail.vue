@@ -4,7 +4,7 @@
             {{info.brandName}} </h3>
 
         <p class="mt-4 "> <b> Categories associated to the product: </b></p>
-        <div class="row mx-1 ">
+        <div class="row mx-1 border rounded">
             <div class="list-group-item  col-4 border rounded" v-for="cat in info.categories" :key="cat.Id">{{cat.name}}</div>
         </div>
 

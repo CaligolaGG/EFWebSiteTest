@@ -9,9 +9,12 @@
       </div>
     </div><hr>
     <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
-      <button class="btn bg-danger text-white" @click="removeAlert()" type="button"  data-dismiss="alert" ><span aria-hidden="true">×</span></button>
+      <button type="button" class="btn-close float-end"  @click="removeAlert()"  aria-label="Close"></button>
       No Brands Found
     </div>
+
+    <Modal @deleteItem="Remove"></Modal>
+
 
     <div v-if="this.loading" >
       <Skeleton></Skeleton>
@@ -46,7 +49,7 @@
                     <td class="col-1">
                       <div class="input-group">
                           <button class="btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})"> </button>
-                          <button class="btn btn-outline-secondary text-danger bi bi-trash-fill " @click.stop="Remove(brand.brandId)">  </button>
+                          <button class="btn btn-outline-secondary text-danger bi bi-trash-fill " data-bs-toggle="modal" data-bs-target="#exampleModal" @click.stop="deleteItem = brand.brandId">  </button>
                       </div>
                     </td>
                 </tr>
@@ -64,6 +67,7 @@ import Repository from "../../Api/RepoFactory";
 import vueDebounce from 'vue-debounce';
 import Paging from "../Pagination.vue";
 import Skeleton from "../Skeleton.vue";
+import Modal from "../Modal.vue"
 
 const BrandRepository = Repository.get("brands");
 
@@ -79,13 +83,14 @@ export default {
 
 
     info:{},           //object to contain the list of products fetched from the db
-    alertActive:false  //indicate if a problem raised and the alert has to be shown on screen
-
+    alertActive:false,  //indicate if a problem raised and the alert has to be shown on screen
+    deleteItem:null,
    }
   },
   components:{
     Skeleton,
     Paging,
+    Modal,
   },
 
   methods:{
@@ -109,12 +114,9 @@ export default {
       this.loading = false;
     },
     //remove the brand selected
-    async Remove(id) {
-        if(confirm("are you sure you want to delete this brand?"))
-        {
-            await BrandRepository.delete(id);
+    async Remove() {
+            await BrandRepository.delete(this.deleteItem);
             this.fetchPage(this.lastcurrentpage);
-        }
     },
     removeAlert(){
       this.alertActive = false;

@@ -140,6 +140,11 @@ namespace EFWebSiteTest.Controllers
         {
             if (!IsBrandValid(brandWithProducts.Brand))
                 return BadRequest(brandWithProducts.Brand);
+            Dictionary<string, string> errors = await _brandService.BrandFieldsValidation(brandWithProducts.Brand.BrandName, brandWithProducts.Account.Email);
+            foreach (KeyValuePair<string, string> entry in errors)
+                ModelState.AddModelError(entry.Key, entry.Value);
+            if(!ModelState.IsValid)
+                return BadRequest(errors);
             var result = await _brandService.CreateBrandWithProductsAsync(brandWithProducts);
             if (result < 1)
                 return NotFound("brand has not been inserted");

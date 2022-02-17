@@ -178,7 +178,16 @@ namespace ServiceLayer
 
 
 
+        public async Task<Dictionary<string,string>> BrandFieldsValidation(string name, string email)
+        {
+            Dictionary<string,string> errors = new Dictionary<string, string>();
+            if (await _brandRepo.CheckName(name) != 0)
+                errors.Add("Name","brand name already taken");
+            if (await _brandRepo.CheckMail(email) != 0)
+                errors.Add("Mail","mail already taken");
+            return errors;
 
+        }
 
 
 
