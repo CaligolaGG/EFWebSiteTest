@@ -3,8 +3,8 @@
     <div class="row">
       <div class="col-10">
         <h2 class="bold">Products</h2></div>
-      <div class="col ">
-        <button class="btn btn-outline-primary" @click="$router.push({path:'/products/new'})" > AddProduct</button> <br>
+      <div class="col-2 ">
+        <button class="btn btn-outline-primary float-end" @click="$router.push({path:'/products/new'})" > AddProduct</button> <br>
       </div> <hr>
     </div>
       <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}"  >
@@ -18,21 +18,21 @@
       <table class="table table-striped table-light ">
         <thead > 
           <tr>
-            <th scope="col" class="position-relative hoverV2"  @click="selectOrderBy(1)">Brand  
-              <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(1,false)}"> </i>
-              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(1,true)}" ></i>
+            <th scope="col" class="position-relative hoverV2"  @click="selectOrderBy(Order.Brand)">Brand  
+              <i  class="bi bi-caret-down-fill position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(0,false)}"> </i>
+              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(0,true)}" ></i>
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 text-primary sortArrow" v-if="defaultArrowState" ></i>
             </th>
               
-            <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(2)">Product 
-              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(2,false)}"></i>
-              <i class="bi bi-caret-up-fill  position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,true)}" ></i>
+            <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(Order.Name)">Product 
+              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow " v-bind:class="{'text-primary':selectArrow(1,false)}"></i>
+              <i class="bi bi-caret-up-fill  position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(1,true)}" ></i>
               <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 text-primary sortArrow" v-if="defaultArrowState" ></i>
             </th>
             <th scope="col" class="position-relative" >Categories </th>
-            <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(3)">Price
-              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(3,false)}"></i> 
-              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(3,true)}"></i>
+            <th scope="col" class="position-relative hoverV2" @click="selectOrderBy(Order.Price)">Price
+              <i class="bi bi-caret-down-fill  position-absolute bottom-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,false)}"></i> 
+              <i class="bi bi-caret-up-fill position-absolute top-0 end-0 sortArrow" v-bind:class="{'text-primary':selectArrow(2,true)}"></i>
             </th>
             <th scope="col">  </th>
           </tr>
@@ -81,16 +81,23 @@ export default {
   data(){
    return {
      loading: true,             //id of the product (from routing)
+     lastcurrentpage:1,         //used to keep the current page when deleting an item
 
-     orderBy:0,                 //integer to choose the criteria of ordering
+     orderBy:4 ,                 //integer to choose the criteria of ordering
      isAsc:true,                //boolean to indicate if the ordering is ascendent or discendent
      brandChosen:0,             //search through the ID of a brand
      defaultArrowState:true,    //indicate if the default ordering is active
 
      info:{},                   //object to contain the list of products fetched from the db
      
-     alertActive:false          //indicate if a problem raised and the alert has to be shown on screen
-
+     alertActive:false,          //indicate if a problem raised and the alert has to be shown on screen
+     Order :Object.freeze({
+        Brand: 0,
+        Name:1,
+        Price:2,
+        Default:3,
+      }),
+    
    }
   }, 
   components:{
@@ -102,6 +109,7 @@ export default {
     //fetch a page of products through the repository get method
     async fetchPage(pageNum=1){
       var error = false
+      this.lastcurrentpage = pageNum
       let temp=await ProductsRepository.get(pageNum, this.orderBy,this.isAsc,this.brandChosen)
                                           .catch(()=>{this.alertActive = true; error=true});
       if(!error)
@@ -128,7 +136,7 @@ export default {
       if(confirm("are you sure you want to delete this product?"))
       {
         await ProductsRepository.delete(id);
-        this.fetchPage();
+        this.fetchPage(this.lastcurrentpage);
       }
     },
     //calculates which arrow is active. Returns a boolean
@@ -153,5 +161,8 @@ export default {
   }
   
 }
+
+
+
 </script>
 

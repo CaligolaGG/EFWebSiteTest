@@ -115,7 +115,6 @@ namespace RepoLayer
                 Description = y.Product.Description,
                 Price = y.Product.Price,
                 ShortDescription = y.Product.ShortDescription,
-                //-problema
                 ProductCategory = y.Categories.Select(z => new ProductCategory
                 {
                     IdCategory = z,

@@ -3,6 +3,9 @@
     <form  id="insert" v-on:submit.prevent="submitForm()">
       <h3 >  {{whatPage}}  Product </h3>
       <div class="form-group my-2 mt-3">
+        <div v-bind:class="{'invalid-feedback':validName,'text-danger':true}">
+            Name must be longer than 1 character and not contain only spaces.
+        </div>
         <input placeholder="Name" required type="text" name="pname" id="" class="form-control bg-light"  maxlength="50" v-model="form.product.name">
       </div>
       <div class="form-group mb-2">
@@ -13,22 +16,35 @@
       </div>
 
       <div class="row">
-        <div class="form-group mb-2 col-4">
-          <label for="price">Price: </label>
-          <input type="number" step=".0001"  min="0.01" class="form-control bg-light" name="price" v-model="form.product.price">
+        <div class="row">
+          <div class="col-4"></div>
+          <div v-bind:class="{'invalid-feedback':validBrand,'text-danger':true, 'col':true}">
+            Select a brand dummy
+          </div>
         </div>
-        <div class="col">
-          Brand: 
-          <select  required class="form-select bg-light " v-model="form.product.brandId">
-            <option  default value="0"> Select a Brand</option>
-            <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
-          </select> 
-        </div> 
-        <div class="row my-4"> <b> Categories </b></div>
-        <div class="mx-2 row">
-          <div v-for="cat in this.categories" :key="cat.Id"  class="form-check col-4">
-            <input type="checkbox"  v-model="form.categories" v-bind:value="cat.id"  class="form-check-input">
-            <label> {{cat.name}} </label> 
+
+        <div class="row">
+          <div class="form-group mb-2 col-4">
+            <div class="input-group">
+              <label for="price" class="input-group-text">Price: </label>
+              <input type="number" step=".01"  min="0.01" class="form-control bg-light" name="price" v-model="form.product.price">
+            </div>
+          </div>
+          <div class="col">
+            <div class="input-group">
+              <label for="brands" class="input-group-text"> Brand: </label> 
+              <select  required class="form-select bg-light " v-model="form.product.brandId" name="brands">
+                <option  default value="0"> Select a Brand</option>
+                <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
+              </select> 
+            </div> 
+          </div>
+          <div class="row my-4"> <b> Categories </b></div>
+          <div class="mx-2 row">
+            <div v-for="cat in this.categories" :key="cat.Id"  class="form-check col-4">
+              <input type="checkbox"  v-model="form.categories" v-bind:value="cat.id"  class="form-check-input">
+              <label> {{cat.name}} </label> 
+            </div>
           </div>
         </div>
       </div>
@@ -42,6 +58,7 @@
 
 
 import Repository from "../../Api/RepoFactory";
+import Utilities from "../../Utilities/utilityFunctions.js";
 const ProductsRepository = Repository.get("products");
 
 const BrandRepository = Repository.get("brands");
@@ -71,8 +88,11 @@ export default{
                     },
                 categories:[],
                 brandName:"",
-                errore:null
             },
+
+            validName:true, //used to check if the product name is valid or not
+            validBrand:true,
+            error:false,
         }
     },
     methods:{
@@ -110,17 +130,28 @@ export default{
         },
         //submit the form info. calls the specific method (update or insert) based on the id frome the route
         async submitForm(){
-            if(this.form.product.name === ""  || this.form.product.name.match(/^ *$/) !== null)
-              alert("product name invalid")
-            else
-            if(this.productId != 0)
-                await this.updateProduct()
-            else
-                await this.insertProduct()
-            
-            console.log(this.productId.data)
-            alert(this.productId.data)
-            this.$router.push({path:'/products/'+this.productId.data})
+            this.error = false
+            this.validName=true
+            this.validBrand=true
+
+            if(Utilities.isStringInvalid(this.form.product.name))
+            {
+                this.validName = false
+                this.error = true
+                window.scroll(0,0)
+            }
+
+            if(this.form.product.brandId ==0)
+            {
+              this.error = true
+              this.validBrand = false
+            }
+
+            if(!this.error)
+            {
+              this.productId != 0 ? await this.updateProduct() : await this.insertProduct()
+              this.$router.push({path:'/products/'+this.productId.data})
+            }
         }
     },
     async created(){
@@ -141,3 +172,9 @@ export default{
 </script>
 
 
+<style scoped>
+  .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: rgba(8, 8, 8, 0.829);
+            opacity: 1; /* Firefox */
+}
+</style>

@@ -10,7 +10,7 @@
                 </div>
                 
                 <label for="pname">Name</label>
-                <input type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="info.data.brandName" >
+                <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="info.data.brandName" >
             </div>
             <div class="form-group mb-2">
                 <label for="desc">Description</label>
@@ -26,7 +26,7 @@
 <script>
 
 import Repository from "../../Api/RepoFactory";
-//const ProductsRepository = Repository.get("products");
+import Utilities from "../../Utilities/utilityFunctions.js";
 const BrandRepository = Repository.get("brands");
 
 export default {
@@ -48,16 +48,19 @@ export default {
         },
         //submit the updated info from the form
         async submitForm(){
-            let id = await BrandRepository.update(this.info.data).catch( (response)=> this.error = response);
-            if(this.error && this.error.response.status == 404)
+            if( Utilities.isStringInvalid(this.info.data.brandName))
+                alert("name invalid")
+            else            
+            {
+                let id = await BrandRepository.update(this.info.data).catch( (response)=> this.error = response);
+                if(this.error && this.error.response.status == 404)
                 {
-                    this.alertActive=true
-                    this.alertText = "Brand Name already taken. " + this.error.response.data
+                        this.alertActive=true
+                        this.alertText = "Brand Name already taken. " + this.error.response.data
                 }
-            else
-                this.$router.push({path:'/brands/'+id.data.id})
-            //else go to brand detail
-
+                else
+                    this.$router.push({path:'/brands/'+id.data.id})
+            }
         }
 
     },

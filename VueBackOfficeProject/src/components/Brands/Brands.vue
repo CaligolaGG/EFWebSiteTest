@@ -5,7 +5,7 @@
         <h2> Brands </h2>
       </div> 
       <div class="col">
-        <button class="btn btn-outline-primary mx-2" @click="$router.push({path:'/brands/new'})">AddBrand</button>
+        <button class="btn btn-outline-primary float-end" @click="$router.push({path:'/brands/new'})">AddBrand</button>
       </div>
     </div><hr>
     <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" >
@@ -75,6 +75,8 @@ export default {
    return {
     loading: true,     //id of the product (from routing)
     search:"",         //variable that holds the  string searched by the user
+    lastcurrentpage:1,         //used to keep the current page when deleting an item
+
 
     info:{},           //object to contain the list of products fetched from the db
     alertActive:false  //indicate if a problem raised and the alert has to be shown on screen
@@ -90,6 +92,7 @@ export default {
     //fetch a page of products through the repository get method
     async fetchPage(pageNum=1){
         var error = false
+        this.lastcurrentpage = pageNum
 
         let temp =  await BrandRepository.getAll(pageNum,this.search.trim(),10)
                                         .catch(()=>{this.alertActive=true; error=true});
@@ -110,7 +113,7 @@ export default {
         if(confirm("are you sure you want to delete this brand?"))
         {
             await BrandRepository.delete(id);
-            this.fetchPage();
+            this.fetchPage(this.lastcurrentpage);
         }
     },
     removeAlert(){

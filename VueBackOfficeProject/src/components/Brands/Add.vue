@@ -2,29 +2,25 @@
     <div class="container">
         <form  v-if="!this.loading" id="insert" v-on:submit.prevent="submitForm()">
             <h2> Add New Brand </h2>
-            <div class="alert alert-danger" role="alert" v-bind:class="{'d-none':!alertActive}" fade>
+            <div class="alert alert-danger my-1" role="alert" v-bind:class="{'d-none':!alertActive}" fade>
                 {{alertText}}
             </div>
 
-            <div class="form-group mb-2">
-                <label for="pname">Name</label>
-                <input required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="brand.BrandName">
+            <div class="form-group mt-3 mb-2">
+                <input placeholder="Name" required type="text" name="pname" id="" class="form-control bg-light"  maxlength="50" v-model="brand.BrandName">
             </div>
             <div class="form-group mb-2">
-                <label for="desc">Description</label>
-                <textarea class="form-control" name="desc"  maxlength="50" v-model="brand.Description" style="resize:none;" rows=5></textarea>
+                <textarea placeholder="Description" class="form-control bg-light" name="desc"  maxlength="50" v-model="brand.Description" style="resize:none;" rows=5></textarea>
             </div>
 
             <div class="form-group mb-2">
                 <div v-bind:class="{'invalid-feedback':validMail,'text-danger':true}">
                    Please choose a valid mail.
                 </div>
-                <label for="desc">Email</label>
-                <input required  type="text" class="form-control" name="desc"  maxlength="50" v-model="account.Email">
+                <input placeholder="Email" required  type="text" class="form-control bg-light" name="desc"  maxlength="50" v-model="account.Email">
             </div>
             <div class="form-group mb-2">
-                <label for="desc">Password</label>
-                <input  required minlength="5" type="password" class="form-control" name="desc"  maxlength="50" v-model="account.Password">
+                <input placeholder="Password"  required minlength="5" type="password" class="form-control bg-light" name="desc"  maxlength="50" v-model="account.Password">
             </div>
 
 
@@ -36,7 +32,7 @@
                         <div class="row">
                             <h5 class="col pt-3"><b> Insert Product {{n}} </b></h5>
                             <div class="col-1 ">
-                                <button type="button" class=" btn btn-danger my-2 float-end" @click="removeProduct(n)">X</button>
+                                <button type="button" class=" btn btn-danger rounded-circle my-2 float-end" @click="removeProduct(n)">X</button>
                             </div>
                         </div>
                         <div class="form-group mb-2">
@@ -45,13 +41,21 @@
                         <div class="form-group mb-2">
                             <textarea placeholder="Description" type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description" style="resize:none;" rows=5></textarea>
                         </div>
-                        <div class="form-group mb-2">
-                            <input placeholder="ShortDescription" type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
+                        <div class="row">
+                            <div class="form-group mb-2 col-8">
+                                <input placeholder="ShortDescription" type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
+                            </div>
+                            <div class="col">
+                                <div class="input-group ">
+                                    <label class="input-group-text ">
+                                        <span for="price">Price</span></label>
+                                    <div class="col-10">
+                                        <input placeholder="Price" min="1" step=".0001"  type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group mb-2">
-                            <label for="price">Price</label>
-                            <input placeholder="Price" min="1" step=".0001"  type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
-                        </div>
+
                         <div class="form-group mb-2 row my-4">
                             <b> Categories </b>
                             <div class="col">
@@ -65,11 +69,12 @@
                         </div>
                     </div>
                 </form>
-            
             </div>
-            <button  @keyup.enter="submitForm()" type="submit" class="btn btn-outline-primary my-2">Submit</button>
+            <div class="offset-4 col-4 mb-4">
+                <button type="button"  @click="addProduct()" class="btn btn-outline-primary m-2 ">+ Add Product</button>
+                <button  @keyup.enter="submitForm()" type="submit" class="btn btn-outline-primary m-2">Submit</button>
+            </div>
         </form>
-        <button  @click="addProduct()" class="btn btn-outline-primary mb-4">Add Product</button>
 
     </div>
 </template>
@@ -78,6 +83,8 @@
 import Repository from "../../Api/RepoFactory";
 const BrandRepository = Repository.get("brands");
 const CategoriesRepository = Repository.get("categories");
+import Utilities from "../../Utilities/utilityFunctions.js";
+
 
 
 export default {
@@ -130,7 +137,7 @@ export default {
                 for (var p of this.bundles)
                     names.push(p.Product.Name)
 
-            if(this.brand.BrandName === ""  || this.brand.BrandName.match(/^ *$/) !== null )
+            if( Utilities.isStringInvalid (this.brand.BrandName)  )
             {
                 this.alertText = "Brand name invalid"
                 window.scrollTo(0, 0);
@@ -139,9 +146,9 @@ export default {
             }
 
             for (var name of names)
-                if(name === ""  || name.match(/^ *$/) !== null)
+                if( Utilities.isStringInvalid (name))
                 {
-                    this.alertText ="Product name invalid"
+                    this.alertText ="One or more Products name invalid"
                     window.scrollTo(0, 0);
                     this.error = true
                     this.alertActive = true
@@ -239,3 +246,10 @@ var bundle = function(){
 
 
 </script>
+
+<style scoped>
+  .form-control::placeholder { 
+            color: rgba(8, 8, 8, 0.829);
+            opacity: 1;
+}
+</style>

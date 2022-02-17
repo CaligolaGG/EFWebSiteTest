@@ -55,8 +55,8 @@ namespace EFWebSiteTest.Controllers
         /// <returns> BadRequest when pagenum and pagesize are less than 1.
         /// Not found when the List of brands is null or empty.
         /// Ok result with a page of brands in any other case </returns>
-        [HttpGet("BrandPage/{pagesize:int:max(10)=5}/{searchByName?}")]
-        [HttpGet("BrandPage/{pageNum:int=1}/{pagesize:int:max(10)=5}/{searchByName?}")]
+        [HttpGet("BrandPage/{pagesize:int:max(20)=5}/{searchByName?}")]
+        [HttpGet("BrandPage/{pageNum:int=1}/{pagesize:int:max(20)=5}/{searchByName?}")]
         public async Task<IActionResult> BrandPage(int pagesize, string searchByName, int pageNum = 1)
         {
             if (pageNum < 1 || pagesize < 1)

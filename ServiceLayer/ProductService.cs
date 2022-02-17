@@ -24,7 +24,7 @@ namespace ServiceLayer
         /// <param name="pageSize">size of the page. must be greater than 0</param>
         /// <returns>An EntityPage object with the info relative to the paging and the list of products</returns>
         /// <exception cref="ArgumentOutOfRangeException"> if pagenum and pagesize less than 1 throw exception</exception>
-        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, int orderBy, bool isAsc, int brandId =0)
+        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, Order orderBy, bool isAsc, int brandId =0)
         {
             if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException("pageSize must be > 0");
@@ -44,15 +44,15 @@ namespace ServiceLayer
             page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
             switch (orderBy)
             {
-                case 1:
+                case Order.Brand:
                     // Brand
                     products =  isAsc? products.OrderBy(x => x.Brand.BrandName): products.OrderByDescending(x => x.Brand.BrandName);
                     break;
-                case 2:
+                case Order.Name:
                     // Nome
                     products = isAsc ? products.OrderBy(x => x.Name) : products.OrderByDescending(x => x.Name);
                     break;
-                case 3:
+                case Order.Price:
                     //Prezzo
                     products = isAsc ? products.OrderBy(x=>x.Price) : products.OrderByDescending(x => x.Price);
                     break;
@@ -191,4 +191,7 @@ namespace ServiceLayer
 
 
     }
+
+
+
 }

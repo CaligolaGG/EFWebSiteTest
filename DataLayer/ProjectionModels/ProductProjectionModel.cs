@@ -9,14 +9,31 @@ namespace Domain
     }
     #region ProjectionModels
 
+    /// <summary>
+    /// enum to select the order of the data of a product page
+    /// </summary>
+    public enum Order
+    {
+        Brand,
+        Name,
+        Price,
+        Default
+    }
+
+    /// <summary>
+    /// class to get search input from an api.
+    /// </summary>
     public class ProductPageSearchInput
     {
         public int    pagesize { get; set; }
-        public int    orderBy { get; set; }
+        public Order orderBy { get; set; }
         public bool   isAsc { get; set; }
         public int    brandId { get; set; }
     }
 
+    /// <summary>
+    /// Projection class to hold a product with its categories
+    /// </summary>
     public class ProductAndCategories
     {
         public Product Product { get; set; }
