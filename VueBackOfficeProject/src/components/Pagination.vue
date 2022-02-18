@@ -80,7 +80,7 @@ export default {
     },
 
     selectPage(){
-      if(this.customPage < this.totalPagesNumber && this.customPage && this.customPage > 0)
+      if(this.customPage <= this.totalPagesNumber && this.customPage && this.customPage > 0)
         this.currentpage = parseInt(this.customPage)
       else
         this.currentpage = 1
