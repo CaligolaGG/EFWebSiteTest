@@ -35,7 +35,8 @@ export default {
   }, 
   props:{
       totalPagesNumber: Number,
-      page: Number
+      page: Number,
+      resetTo: Number,
   }
   
   ,
@@ -92,9 +93,9 @@ export default {
   },
   
   watch:{
-    totalPagesNumber(){
-      this.currentpage=1
-    },
+    resetTo(){
+      this.currentpage=this.resetTo
+    }
   }
   
 }

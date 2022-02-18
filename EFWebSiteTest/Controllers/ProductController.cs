@@ -13,10 +13,10 @@ namespace EFWebSiteTest.Controllers
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly ProductService _productService;
+        private readonly IProductService _productService;
         private readonly ProductCategoryService _productcategoryService;
 
-        public ProductController(ProductService productService, ProductCategoryService productcategoryService) 
+        public ProductController(IProductService productService, ProductCategoryService productcategoryService) 
         {
             _productService = productService;
             _productcategoryService = productcategoryService;

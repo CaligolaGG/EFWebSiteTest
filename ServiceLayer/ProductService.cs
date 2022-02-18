@@ -9,10 +9,10 @@ using System.Linq;
 
 namespace ServiceLayer
 {
-    public class ProductService 
+    public class ProductService : IProductService
     {
         private ProductRepo _productRepo;
-        public ProductService(ProductRepo productRepo, ProductCategoryRepo pcRepo) 
+        public ProductService(ProductRepo productRepo, ProductCategoryRepo pcRepo)
         {
             _productRepo = productRepo;
         }
@@ -24,7 +24,7 @@ namespace ServiceLayer
         /// <param name="pageSize">size of the page. must be greater than 0</param>
         /// <returns>An EntityPage object with the info relative to the paging and the list of products</returns>
         /// <exception cref="ArgumentOutOfRangeException"> if pagenum and pagesize less than 1 throw exception</exception>
-        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, Order orderBy, bool isAsc, int brandId =0)
+        public async Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, Order orderBy, bool isAsc, int brandId = 0)
         {
             if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException("pageSize must be > 0");
@@ -38,15 +38,15 @@ namespace ServiceLayer
 
 
             var products = _productRepo.GetAll();
-            if(brandId > 0)
-                products = products.Where(x=> x.BrandId == brandId);
+            if (brandId > 0)
+                products = products.Where(x => x.BrandId == brandId);
             page.TotalEntitiesNumber = await products.CountAsync();
             page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
             switch (orderBy)
             {
                 case Order.Brand:
                     // Brand
-                    products =  isAsc? products.OrderBy(x => x.Brand.BrandName): products.OrderByDescending(x => x.Brand.BrandName);
+                    products = isAsc ? products.OrderBy(x => x.Brand.BrandName) : products.OrderByDescending(x => x.Brand.BrandName);
                     break;
                 case Order.Name:
                     // Nome
@@ -54,23 +54,24 @@ namespace ServiceLayer
                     break;
                 case Order.Price:
                     //Prezzo
-                    products = isAsc ? products.OrderBy(x=>x.Price) : products.OrderByDescending(x => x.Price);
+                    products = isAsc ? products.OrderBy(x => x.Price) : products.OrderByDescending(x => x.Price);
                     break;
                 default:
                     // Brand + Nome
-                    products = products.OrderBy(x => x.Brand.BrandName).ThenBy(x=> x.Name);
+                    products = products.OrderBy(x => x.Brand.BrandName).ThenBy(x => x.Name);
                     break;
             }
 
-            var x = await  products
+            var x = await products
                 .Skip((pageNum - 1) * pageSize).Take(pageSize)
-                .Select(p => new ProductSelect {
-                    Id = p.Id, 
-                    ProductName = p.Name, 
+                .Select(p => new ProductSelect
+                {
+                    Id = p.Id,
+                    ProductName = p.Name,
                     Description = p.ShortDescription,
                     Categories = p.ProductCategory.Select(x => x.Category.Name),
                     BrandName = p.Brand.BrandName,
-                    Price = p.Price, 
+                    Price = p.Price,
                 })
                 .ToListAsync();
             page.ListEntities = x;
@@ -159,35 +160,35 @@ namespace ServiceLayer
             if (productId < 1)
                 throw new ArgumentOutOfRangeException("product id must be > 0");
 
-             var product = await _productRepo.GetAll().Where(p => p.Id == productId)
-                .Select(p => new ProductAndCategories
-                {
-                    Product = new Product
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Description = p.Description,
-                        ShortDescription = p.ShortDescription,
-                        Price = p.Price,
-                        BrandId = p.BrandId,
-                    },
-                    
-                    BrandName = p.Brand.BrandName,
-                    Categories = p.ProductCategory.Select(pc => new Category
-                    {
-                        Id = pc.IdCategory,
-                        Name = pc.Category.Name
-                    }),
+            var product = await _productRepo.GetAll().Where(p => p.Id == productId)
+               .Select(p => new ProductAndCategories
+               {
+                   Product = new Product
+                   {
+                       Id = p.Id,
+                       Name = p.Name,
+                       Description = p.Description,
+                       ShortDescription = p.ShortDescription,
+                       Price = p.Price,
+                       BrandId = p.BrandId,
+                   },
 
-                }).FirstOrDefaultAsync();
+                   BrandName = p.Brand.BrandName,
+                   Categories = p.ProductCategory.Select(pc => new Category
+                   {
+                       Id = pc.IdCategory,
+                       Name = pc.Category.Name
+                   }),
 
-           return product;
+               }).FirstOrDefaultAsync();
+
+            return product;
         }
 
         private bool IsProductValid(Product product) =>
          product.Name.Length > 0 && product.Name.Length <= 50
          && product.Description.Length <= 50 && product.ShortDescription.Length <= 20
-         && product.Price > 0 ;
+         && product.Price > 0;
 
 
     }

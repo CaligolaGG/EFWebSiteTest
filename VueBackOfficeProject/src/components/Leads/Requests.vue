@@ -57,7 +57,7 @@
                     </tr>    
                 </tbody>    
             </table>
-            <Paging v-if="!alertActive"  @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
+            <Paging v-if="!alertActive"  @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber" v-bind:resetTo="resetTo"/> 
         </div>
     </div>
 </template>
@@ -88,7 +88,8 @@ Vue.use(vueDebounce)
                 searchByProductId:0,    //search through the ID of a product
                 searchByProduct:null,   //search through the NAME of a product
 
-                alertActive:false       //indicate if a problem raised and the alert has to be shown on screen
+                alertActive:false,       //indicate if a problem raised and the alert has to be shown on screen
+                resetTo:1,
 
             };
         },  
@@ -100,6 +101,7 @@ Vue.use(vueDebounce)
         methods: {
             //fetch a page of products through the repository get method
             async fetchPage(pageNum = 1){
+                this.resetTo = pageNum
                 var error = false
                 if(!this.searchByProductId)
                 {

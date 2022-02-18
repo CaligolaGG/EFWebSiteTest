@@ -37,9 +37,10 @@ namespace EFWebSiteTest
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
-            services.AddScoped<BrandService>();
-            services.AddScoped<InfoRequestService>();
-            services.AddScoped<ProductService>();
+            services.AddScoped<IBrandService,BrandService>();
+            services.AddScoped<IInfoRequestService, InfoRequestService>();
+            services.AddScoped<IProductService,ProductService>();
+
             services.AddScoped<ProductRepo>();
             services.AddScoped<BrandRepo>();
             services.AddScoped<RequestRepo>();

@@ -15,9 +15,9 @@ namespace EFWebSiteTest.Controllers
     [Route("[controller]")]
     public class BrandController : ControllerBase
     {
-        private readonly BrandService _brandService;
+        private readonly IBrandService _brandService;
 
-        public BrandController( BrandService brandService)
+        public BrandController( IBrandService brandService)
         {
             _brandService = brandService;
         }

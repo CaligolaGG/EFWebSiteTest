@@ -11,11 +11,11 @@ namespace ServiceLayer
     /// <summary>
     /// Service that uses the BrandRepo for actions relative to the Brand table of the db
     /// </summary>
-    public class BrandService
+    public class BrandService : IBrandService
     {
         private readonly BrandRepo _brandRepo;
 
-        public BrandService(BrandRepo brandRepo )
+        public BrandService(BrandRepo brandRepo)
         {
             _brandRepo = brandRepo;
         }
@@ -24,14 +24,14 @@ namespace ServiceLayer
         /// fetch a BrandProjectionBasic object.
         /// </summary>
         /// <returns> a list with id and name of all the brands </returns>
-        public async Task<List<BrandProjectionBasic>> GetAllAsync() => 
-            await _brandRepo.GetAll().Select(b=>new BrandProjectionBasic{Id=b.Id, Name=b.BrandName }).ToListAsync();
+        public async Task<List<BrandProjectionBasic>> GetAllAsync() =>
+            await _brandRepo.GetAll().Select(b => new BrandProjectionBasic { Id = b.Id, Name = b.BrandName }).ToListAsync();
 
         /// <summary>
         /// fetch a BrandAccountProjection object.
         /// </summary>
         /// <returns>a list with  name and account mail of all the brands</returns>
-        public async Task<List<BrandAccountProjection>> GetAllBrandAccountAsync() => 
+        public async Task<List<BrandAccountProjection>> GetAllBrandAccountAsync() =>
             await _brandRepo.GetAll()
                 .Select(b => new BrandAccountProjection { Name = b.BrandName, Email = b.Account.Email })
                 .ToListAsync();
@@ -84,7 +84,7 @@ namespace ServiceLayer
         {
             if (pageNum < 1 || pageSize < 1)
                 throw new ArgumentOutOfRangeException("pagenumber and pagesize must be greater than 0");
-            
+
             EntityPage<BrandSelect> page = new EntityPage<BrandSelect>();
             page.CurrentPageNumber = pageNum;
             page.PageSize = pageSize;
@@ -106,7 +106,7 @@ namespace ServiceLayer
                     ProductIds = brand.Products.Select(product => product.Id)
                 });
             page.ListEntities = await result.ToListAsync();
-            
+
             return page;
         }
 
@@ -120,7 +120,7 @@ namespace ServiceLayer
         /// <exception cref="ArgumentException">Raised if the brandId is less than 1</exception>
         public async Task<int> BrandDeleteLogicalAsync(int brandId)
         {
-            if (brandId < 1 )
+            if (brandId < 1)
                 throw new ArgumentException("invalid brandId");
             return await _brandRepo.LogicalBrandDeleteAsync(brandId);
         }
@@ -135,7 +135,7 @@ namespace ServiceLayer
             if (!IsBrandValid(brandWithProducts.Brand))
                 throw new ArgumentException("invalid brand");
             foreach (var p in brandWithProducts.ProductsCategs)
-                if(!IsProductValid(p.Product))
+                if (!IsProductValid(p.Product))
                     throw new ArgumentException("found invalid product ");
 
             int brandId = await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts);
@@ -178,13 +178,13 @@ namespace ServiceLayer
 
 
 
-        public async Task<Dictionary<string,string>> BrandFieldsValidation(string name, string email)
+        public async Task<Dictionary<string, string>> BrandFieldsValidation(string name, string email)
         {
-            Dictionary<string,string> errors = new Dictionary<string, string>();
+            Dictionary<string, string> errors = new Dictionary<string, string>();
             if (await _brandRepo.CheckName(name) != 0)
-                errors.Add("Name","brand name already taken");
+                errors.Add("Name", "brand name already taken");
             if (await _brandRepo.CheckMail(email) != 0)
-                errors.Add("Mail","mail already taken");
+                errors.Add("Mail", "mail already taken");
             return errors;
 
         }

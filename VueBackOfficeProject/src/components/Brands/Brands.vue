@@ -49,7 +49,7 @@
                     <td class="col-1">
                       <div class="input-group">
                           <button class="btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})"> </button>
-                          <button class="btn btn-outline-secondary text-danger bi bi-trash-fill " data-bs-toggle="modal" data-bs-target="#exampleModal" @click.stop="deleteItem = brand.brandId">  </button>
+                          <button class="btn btn-outline-secondary text-danger bi bi-trash-fill " data-bs-toggle="modal" data-bs-target="#exampleModal" @click.stop="selectItem(brand)">  </button>
                       </div>
                     </td>
                 </tr>
@@ -57,6 +57,7 @@
         </table>
         <Paging v-if="!alertActive"  @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
     </div>
+    <ToastComponent v-show="toastActive" v-bind:itemType="'Brand'" v-bind:deleteItemName="deleteItemName" ></ToastComponent>
   </div>
 </template>
 
@@ -67,7 +68,9 @@ import Repository from "../../Api/RepoFactory";
 import vueDebounce from 'vue-debounce';
 import Paging from "../Pagination.vue";
 import Skeleton from "../Skeleton.vue";
-import Modal from "../Modal.vue"
+import Modal from "../Modal.vue";
+import {Toast} from "bootstrap/dist/js/bootstrap.esm.js";
+import ToastComponent from "../Toast.vue"
 
 const BrandRepository = Repository.get("brands");
 
@@ -85,12 +88,15 @@ export default {
     info:{},           //object to contain the list of products fetched from the db
     alertActive:false,  //indicate if a problem raised and the alert has to be shown on screen
     deleteItem:null,
+    deleteItemName:null,
+    toastActive:false,
    }
   },
   components:{
     Skeleton,
     Paging,
     Modal,
+    ToastComponent,
   },
 
   methods:{
@@ -115,14 +121,21 @@ export default {
     },
     //remove the brand selected
     async Remove() {
-            await BrandRepository.delete(this.deleteItem);
-            this.fetchPage(this.lastcurrentpage);
+      await BrandRepository.delete(this.deleteItem);
+      this.toastActive = true
+      var toast = new Toast(document.getElementById("liveToast"));
+      toast.show();
+      this.fetchPage(this.lastcurrentpage);
     },
     removeAlert(){
       this.alertActive = false;
       this.search = "";
       this.fetchPage();
 
+    },
+    selectItem(brand){
+      this.deleteItem = brand.brandId
+      this.deleteItemName = brand.brandName
     },
 
 

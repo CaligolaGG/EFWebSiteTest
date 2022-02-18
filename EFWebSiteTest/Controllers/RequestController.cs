@@ -11,9 +11,9 @@ namespace EFWebSiteTest.Controllers
     [Route("[controller]")]
     public class RequestController : Controller
     {
-        private readonly InfoRequestService _requestService;
+        private readonly IInfoRequestService _requestService;
 
-        public RequestController(InfoRequestService requestService) 
+        public RequestController(IInfoRequestService requestService) 
         {
             _requestService = requestService;
         }

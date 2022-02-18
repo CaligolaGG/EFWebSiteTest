@@ -60,16 +60,18 @@
             <td class="col-1">
               <div class="input-group ">
                 <button class="  btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/products/'+item.id+'/edit'})"></button>
-                <button class=" btn btn-outline-secondary text-danger bi bi-trash-fill " data-bs-toggle="modal" data-bs-target="#exampleModal" @click.stop="deleteItem = item.id"></button>
+                <button class=" btn btn-outline-secondary text-danger bi bi-trash-fill " data-bs-toggle="modal" data-bs-target="#exampleModal" @click.stop="setItem(item)"></button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>     
-      <Paging v-if="!alertActive" @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber"/> 
-    </div>
+      <Paging v-if="!alertActive" @changePage="fetchPage" v-bind:totalPagesNumber="info.data.totalPagesNumber" v-bind:resetTo="resetTo"/> 
 
-    
+
+
+    </div>
+    <ToastComponent v-show="toastActive" v-bind:itemType="'Product'" v-bind:deleteItemName="deleteItemName"></ToastComponent>
   </div>
 </template>
 
@@ -79,6 +81,9 @@ import Repository from "../../Api/RepoFactory";
 import Paging from "../Pagination.vue";
 import Skeleton from "../Skeleton.vue";
 import Modal from "../Modal.vue"
+import {Toast} from "bootstrap/dist/js/bootstrap.esm.js"
+import ToastComponent from "../Toast.vue"
+
 const ProductsRepository = Repository.get("products");
 const BrandRepository = Repository.get("brands");
 
@@ -103,19 +108,25 @@ export default {
         Price:2,
         Default:3,
       }),
-      deleteItem:null, //id of item to delete
+      deleteItem:null,      //id of item to delete
+      deleteItemName:null,  //name of the item to delete
+      toastActive:false,  
+      
+      resetTo:1,
     
    }
   }, 
   components:{
      Paging,
      Skeleton,
-     Modal
+     Modal,
+     ToastComponent,
   },
 
   methods:{
     //fetch a page of products through the repository get method
     async fetchPage(pageNum=1){
+      this.resetTo = pageNum
       var error = false
       this.lastcurrentpage = pageNum
       let temp=await ProductsRepository.get(pageNum, this.orderBy,this.isAsc,this.brandChosen)
@@ -142,7 +153,11 @@ export default {
     //delete a product and refreshes the page
     async deleteProduct(){
         await ProductsRepository.delete(this.deleteItem);
+        this.toastActive = true;
+        var toast = new Toast(document.getElementById("liveToast"));
+        toast.show();
         this.fetchPage(this.lastcurrentpage);
+
     },
     //calculates which arrow is active. Returns a boolean
     selectArrow(orderBy, isAsc ){
@@ -152,6 +167,10 @@ export default {
       this.alertActive = false;
       this.brandChosen =0;
       this.fetchPage();
+    },
+    setItem(item){
+      this.deleteItem = item.id
+      this.deleteItemName = item.productName
     }
 
   },
