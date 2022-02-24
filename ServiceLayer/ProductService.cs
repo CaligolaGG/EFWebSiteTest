@@ -6,15 +6,19 @@ using System.Threading.Tasks;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace ServiceLayer
 {
     public class ProductService : IProductService
     {
-        private ProductRepo _productRepo;
-        public ProductService(ProductRepo productRepo, ProductCategoryRepo pcRepo)
+        private IProductRepository _productRepo;
+        private IMapper _mapper;
+        public ProductService(IProductRepository productRepo, IMapper mapper)
         {
             _productRepo = productRepo;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -62,19 +66,10 @@ namespace ServiceLayer
                     break;
             }
 
-            var x = await products
+            page.ListEntities = await products
                 .Skip((pageNum - 1) * pageSize).Take(pageSize)
-                .Select(p => new ProductSelect
-                {
-                    Id = p.Id,
-                    ProductName = p.Name,
-                    Description = p.ShortDescription,
-                    Categories = p.ProductCategory.Select(x => x.Category.Name),
-                    BrandName = p.Brand.BrandName,
-                    Price = p.Price,
-                })
+                .ProjectTo<ProductSelect>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-            page.ListEntities = x;
 
             return page;
         }
@@ -124,30 +119,18 @@ namespace ServiceLayer
             if (productId < 1)
                 throw new ArgumentOutOfRangeException("product id must be > 0");
 
-            ProductDetail product = await _productRepo.GetAll().Where(p => p.Id == productId)
-                .Select(p => new ProductDetail
-                {
-                    ProductId = p.Id,
-                    ProductName = p.Name,
-                    BrandId = p.BrandId,
-                    BrandName = p.Brand.BrandName,
-                    GuestUsersRequestsNumber = p.InfoRequests.Where(u => u.UserId == null).Count(),
-                    LoggedUsersRequestsNumber = p.InfoRequests.Where(u => u.UserId != null).Count(),
-                    Categories = p.ProductCategory.Select(pc => new Category
-                    {
-                        Id = pc.IdCategory,
-                        Name = pc.Category.Name
-                    }),
-                    Requests = p.InfoRequests.Select(ir => new InfoRequestTemp
-                    {
-                        RequestId = ir.Id,
-                        FullName = ir.UserId == null ? ir.Name + " " + ir.LastName : ir.User.Name + " " + ir.User.LastName + " LOGGED",
-                        RepliesCount = ir.InfoRequestReplies.Count,
-                        LastReply = ir.InfoRequestReplies.OrderByDescending(r => r.InsertDate).Select(reply => reply.InsertDate).FirstOrDefault()
-                    })
-                }).FirstOrDefaultAsync();
+            Product product = await _productRepo.GetAll().Where(p => p.Id == productId).SingleOrDefaultAsync();
 
-            return product;
+            //ProductDetail product = await _productRepo.GetAll().Where(p => p.Id == productId)
+            //    .ProjectTo<ProductDetail>(_mapper.ConfigurationProvider)
+            //    .FirstOrDefaultAsync()
+            //    ;
+
+            ProductDetail productDetail = _mapper.Map<Product,ProductDetail>(product);
+
+  
+
+            return productDetail;
         }
 
         /// <summary>
@@ -161,26 +144,8 @@ namespace ServiceLayer
                 throw new ArgumentOutOfRangeException("product id must be > 0");
 
             var product = await _productRepo.GetAll().Where(p => p.Id == productId)
-               .Select(p => new ProductAndCategories
-               {
-                   Product = new Product
-                   {
-                       Id = p.Id,
-                       Name = p.Name,
-                       Description = p.Description,
-                       ShortDescription = p.ShortDescription,
-                       Price = p.Price,
-                       BrandId = p.BrandId,
-                   },
-
-                   BrandName = p.Brand.BrandName,
-                   Categories = p.ProductCategory.Select(pc => new Category
-                   {
-                       Id = pc.IdCategory,
-                       Name = pc.Category.Name
-                   }),
-
-               }).FirstOrDefaultAsync();
+                .ProjectTo<ProductAndCategories>(_mapper.ConfigurationProvider)
+               .FirstOrDefaultAsync();
 
             return product;
         }

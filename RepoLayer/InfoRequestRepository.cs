@@ -11,11 +11,11 @@ namespace RepoLayer
     /// <summary>
     /// Class to interact with the InfoRequest table in the db
     /// </summary>
-    public class RequestRepo
+    public class InfoRequestRepository : IInfoRequestRepository
     {
         private MyDbContext _ctx;
 
-        public RequestRepo(MyDbContext ctx)
+        public InfoRequestRepository(MyDbContext ctx)
         {
             _ctx = ctx;
         }

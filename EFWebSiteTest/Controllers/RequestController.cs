@@ -30,7 +30,7 @@ namespace EFWebSiteTest.Controllers
         {
             if (requestId < 1)
                 return BadRequest("id must be greater than 0");
-            RequestDetail result = await _requestService.GetRequestDetailAsync(requestId);
+            InfoRequestDetail result = await _requestService.GetRequestDetailAsync(requestId);
             if (result is null)
                 return NotFound(String.Format("request {0} not found", requestId));
             return Ok(result);
@@ -49,7 +49,7 @@ namespace EFWebSiteTest.Controllers
         {
             if (pageNum < 1 || pagesize < 1)
                 return BadRequest("page num and pagesize must be greater than 0");
-            EntityPage<RequestSelect> result = await _requestService.GetPageAsync(pageNum, pagesize, productName, brandId, Asc, productId);
+            EntityPage<InfoRequestSelect> result = await _requestService.GetPageAsync(pageNum, pagesize, productName, brandId, Asc, productId);
             if (result.ListEntities is null || !result.ListEntities.Any())
                 return NotFound("page not found ");
             return Ok(result);

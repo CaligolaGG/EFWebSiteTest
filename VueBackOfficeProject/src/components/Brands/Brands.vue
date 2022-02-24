@@ -42,13 +42,13 @@
             </thead>
 
             <tbody v-if="!alertActive">
-                <tr class="bg-light hover" v-for="brand in this.getBrands" :key="brand.brandId" @click.stop="$router.push({path:'/brands/'+brand.brandId})">
-                    <td class="col-2" >{{brand.brandId}}</td>
+                <tr class="bg-light hover" v-for="brand in this.getBrands" :key="brand.id" @click.stop="$router.push({path:'/brands/'+brand.id})">
+                    <td class="col-2" >{{brand.id}}</td>
                     <td class="col-4">{{brand.brandName}}</td>
                     <td class="col-4">{{brand.description}}</td>
                     <td class="col-1">
                       <div class="input-group">
-                          <button class="btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.brandId+'/edit'})"> </button>
+                          <button class="btn btn-outline-secondary bi bi-pencil-square" @click.stop="$router.push({path:'/brands/'+brand.id+'/edit'})"> </button>
                           <button class="btn btn-outline-secondary text-danger bi bi-trash-fill " data-bs-toggle="modal" data-bs-target="#exampleModal" @click.stop="selectItem(brand)">  </button>
                       </div>
                     </td>
@@ -134,7 +134,7 @@ export default {
 
     },
     selectItem(brand){
-      this.deleteItem = brand.brandId
+      this.deleteItem = brand.id
       this.deleteItemName = brand.brandName
     },
 

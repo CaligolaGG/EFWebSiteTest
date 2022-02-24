@@ -8,10 +8,10 @@ using Domain;
 
 namespace RepoLayer
 {
-    public class ProductCategoryRepo
+    public class ProductCategoryRepository : IProductCategoryRepository
     {
         private MyDbContext _ctx;
-        public ProductCategoryRepo(MyDbContext ctx)
+        public ProductCategoryRepository(MyDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -23,7 +23,7 @@ namespace RepoLayer
         /// <returns>Number of rows that have been affected</returns>
         public async Task<int> CreateMultipleAsync(List<ProductCategory> productCategories)
         {
-            await _ctx.ProductCategories.AddRangeAsync (productCategories);
+            await _ctx.ProductCategories.AddRangeAsync(productCategories);
             return await _ctx.SaveChangesAsync();
         }
 
@@ -35,7 +35,7 @@ namespace RepoLayer
         /// <returns>Number of rows that have been affected</returns>
         public async Task<int> DeleteMultipleAsync(int productId)
         {
-            List<ProductCategory> pc = await _ctx.ProductCategories.Where(x=>x.IdProduct == productId).ToListAsync();
+            List<ProductCategory> pc = await _ctx.ProductCategories.Where(x => x.IdProduct == productId).ToListAsync();
             _ctx.ProductCategories.RemoveRange(pc);
             return await _ctx.SaveChangesAsync();
         }

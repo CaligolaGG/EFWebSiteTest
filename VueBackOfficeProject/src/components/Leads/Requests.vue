@@ -15,7 +15,7 @@
                 <div class="col-5 btn-group" v-if="!searchByProductId" >
                     <select  name="" id="" class=" form-select rounded-0 "  v-model="searchByBrand" @change="fetchPage()"  >
                         <option default value="0">  Tutti i Brand </option>
-                        <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.name}} </option>  
+                        <option v-for="brand in this.brands" :key="brand.Id" v-bind:value='brand.id'> {{brand.brandName}} </option>  
                     </select>
                 </div>
             </div>
@@ -48,7 +48,7 @@
                 </thead>
                 <tbody v-if="!alertActive">
                     <tr v-for="lead in this.getLeads" :key="lead.id" class="hover" @click.stop="$router.push({path:'/leads/'+lead.id})">
-                        <td>{{lead.userName}}</td>
+                        <td>{{lead.userFullName}}</td>
                         <td>{{lead.productName}}</td>
                         <td>{{lead.phoneNumber}}</td>
                         <td>{{lead.email}}</td>

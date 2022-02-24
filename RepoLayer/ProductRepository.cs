@@ -6,21 +6,28 @@ using System.Threading.Tasks;
 using Domain;
 using Z.EntityFramework.Plus;
 using Microsoft.EntityFrameworkCore.Storage;
+using AutoMapper;
 
 namespace RepoLayer
 {
     /// <summary>
     /// Class to interact with the Product table in the db
     /// </summary>
-    public class ProductRepo
+    public class ProductRepository : IProductRepository
     {
         private MyDbContext _ctx;
-        public ProductRepo(MyDbContext ctx) 
+        private IMapper _mapper;
+        public ProductRepository(MyDbContext ctx, IMapper mapper)
         {
             _ctx = ctx;
+            _mapper = mapper;
         }
 
-        public IQueryable<Product> GetAll() => _ctx.Products;
+        public IQueryable<Product> GetAll() => _ctx.Products
+            .Include(x=>x.Brand)
+            .Include(x=>x.InfoRequests)
+            .Include(x=>x.ProductCategory)
+                .ThenInclude(x=>x.Category);
 
         /// <summary>
         /// Insert or update a new product. 
@@ -30,11 +37,16 @@ namespace RepoLayer
         /// <returns>Number of rows affected</returns>
         public async Task<int> CreateOrUpdateAsync(ProductAndCategoryModel model)
         {
+            /*
             Product product = model.Product;
             product.ProductCategory = model.Categories.Select(x => new ProductCategory
             {
                 IdCategory = x
-            }).ToList();
+            }).ToList();*/
+
+            Product product = new Product();
+            //_mapper.Map(model, product);
+            product = _mapper.Map<Product>(model);
 
             if (product.Id != 0)
             {
@@ -58,12 +70,12 @@ namespace RepoLayer
             using IDbContextTransaction transaction = _ctx.Database.BeginTransaction();
 
             try
-            { 
+            {
                 Product product = _ctx.Products.Where(x => x.Id == productId).FirstOrDefault();
                 product.IsDeleted = true;
                 _ctx.Products.Update(product);
 
-            
+
                 await _ctx.InfoRequestReplies.Where(x => x.InfoRequest.ProductId == productId)
                 .UpdateFromQueryAsync(x => new InfoRequestReply() { IsDeleted = true });
 

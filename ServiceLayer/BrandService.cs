@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using RepoLayer;
+using AutoMapper.QueryableExtensions;
+using AutoMapper;
 
 namespace ServiceLayer
 {
@@ -13,11 +15,13 @@ namespace ServiceLayer
     /// </summary>
     public class BrandService : IBrandService
     {
-        private readonly BrandRepo _brandRepo;
+        private readonly IBrandRepository _brandRepo;
+        private readonly IMapper _mapper;
 
-        public BrandService(BrandRepo brandRepo)
+        public BrandService(IBrandRepository brandRepo, IMapper mapper)
         {
             _brandRepo = brandRepo;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -25,7 +29,7 @@ namespace ServiceLayer
         /// </summary>
         /// <returns> a list with id and name of all the brands </returns>
         public async Task<List<BrandProjectionBasic>> GetAllAsync() =>
-            await _brandRepo.GetAll().Select(b => new BrandProjectionBasic { Id = b.Id, Name = b.BrandName }).ToListAsync();
+            await _brandRepo.GetAll().ProjectTo<BrandProjectionBasic>(_mapper.ConfigurationProvider).ToListAsync();
 
         /// <summary>
         /// fetch a BrandAccountProjection object.
@@ -33,7 +37,7 @@ namespace ServiceLayer
         /// <returns>a list with  name and account mail of all the brands</returns>
         public async Task<List<BrandAccountProjection>> GetAllBrandAccountAsync() =>
             await _brandRepo.GetAll()
-                .Select(b => new BrandAccountProjection { Name = b.BrandName, Email = b.Account.Email })
+                .ProjectTo<BrandAccountProjection>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
 
@@ -49,25 +53,14 @@ namespace ServiceLayer
             if (brandId < 1)
                 throw new ArgumentOutOfRangeException("brand id must be > 0");
 
-
             var categories1 = _brandRepo.GetRelativeCategories(brandId);
 
             BrandDetail brandsProductsCategories = await _brandRepo.GetAll()
                 .Where(x => x.Id == brandId)
-                .Select(brand => new BrandDetail
-                {
-                    BrandName = brand.BrandName,
-                    NumberRequests = brand.Products.SelectMany(x => x.InfoRequests).Count(),
+                .ProjectTo<BrandDetail>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
 
-                    ListCategories = categories1,
-
-                    ListProducts = brand.Products.Select(product => new ProductTemp
-                    {
-                        ProductId = product.Id,
-                        ProductName = product.Name,
-                        ProductRequestNumber = product.InfoRequests.Count
-                    })
-                }).FirstOrDefaultAsync();
+            brandsProductsCategories.ListCategories = categories1.ToList();
 
             return brandsProductsCategories;
         }
@@ -98,13 +91,7 @@ namespace ServiceLayer
 
             IQueryable<BrandSelect> result = brands.OrderBy(x => x.BrandName)
                 .Skip((pageNum - 1) * pageSize).Take(pageSize)
-                .Select(brand => new BrandSelect
-                {
-                    BrandId = brand.Id,
-                    BrandName = brand.BrandName,
-                    Description = brand.Description,
-                    ProductIds = brand.Products.Select(product => product.Id)
-                });
+                .ProjectTo<BrandSelect>(_mapper.ConfigurationProvider);
             page.ListEntities = await result.ToListAsync();
 
             return page;

@@ -11,18 +11,17 @@ namespace RepoLayer
     /// <summary>
     /// Class to interact with the Category table in the db
     /// </summary>
-    public class CategoryRepo
+    public class CategoryRepository : ICategoryRepository
     {
         private MyDbContext _ctx;
 
-        public CategoryRepo(MyDbContext ctx)
+        public CategoryRepository(MyDbContext ctx)
         {
             _ctx = ctx;
         }
-
         public async Task<List<Category>> GetAllAsync() => await _ctx.Categories.ToListAsync();
-           
-        
+
+
 
     }
 

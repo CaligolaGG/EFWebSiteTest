@@ -20,8 +20,8 @@
             </tr>
         </thead>
         <tbody>
-        <tr class="hover" v-for="prod in productPage" :key="prod.productId" @click="$router.push({path:'/products/'+prod.productId})">
-            <td class="border border-success">{{prod.productId}} </td>
+        <tr class="hover" v-for="prod in productPage" :key="prod.id" @click="$router.push({path:'/products/'+prod.id})">
+            <td class="border border-success">{{prod.id}} </td>
             <td class="border border-success">{{prod.productName}}</td>
             <td class="border border-success">{{prod.productRequestNumber}}</td>
         </tr>

@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepoLayer", "RepoLayer\Repo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "DataLayer\Domain.csproj", "{B82ECB94-6E66-42FF-879B-FB4A94741783}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "AutoMapper\Mapper.csproj", "{C902CE98-D25A-4967-85F3-2E34E0B76DBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection", "DependencyInjection\DependencyInjection.csproj", "{97079CAB-EC84-4746-AA69-955D6642D396}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{B82ECB94-6E66-42FF-879B-FB4A94741783}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B82ECB94-6E66-42FF-879B-FB4A94741783}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B82ECB94-6E66-42FF-879B-FB4A94741783}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C902CE98-D25A-4967-85F3-2E34E0B76DBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C902CE98-D25A-4967-85F3-2E34E0B76DBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C902CE98-D25A-4967-85F3-2E34E0B76DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C902CE98-D25A-4967-85F3-2E34E0B76DBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97079CAB-EC84-4746-AA69-955D6642D396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97079CAB-EC84-4746-AA69-955D6642D396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97079CAB-EC84-4746-AA69-955D6642D396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97079CAB-EC84-4746-AA69-955D6642D396}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

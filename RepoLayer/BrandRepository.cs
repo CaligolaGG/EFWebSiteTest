@@ -15,21 +15,21 @@ namespace RepoLayer
     /// <summary>
     /// Class to interact with the Brand table in the db
     /// </summary>
-    public class BrandRepo
+    public class BrandRepository : IBrandRepository
     {
         private MyDbContext _ctx;
 
-        public BrandRepo(MyDbContext ctx)
+        public BrandRepository(MyDbContext ctx)
         {
             _ctx = ctx;
         }
 
 
         /// <returns> An IQueryable to interrogate the db on all the brands </returns>
-        public IQueryable<Brand> GetAll() =>  _ctx.Brands;
+        public IQueryable<Brand> GetAll() => _ctx.Brands;
 
         /// <returns> An IQueryable to interrogate the db on a single brand </returns>
-        public IQueryable<Brand> GetById(int Id) => _ctx.Brands.Where(brand=> brand.Id == Id);
+        public IQueryable<Brand> GetById(int Id) => _ctx.Brands.Where(brand => brand.Id == Id);
 
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace RepoLayer
                 _ctx.Brands.Update(brand);
                 return await _ctx.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) 
+            catch (DbUpdateException ex)
             {
                 return -1;
             }
@@ -164,7 +164,7 @@ namespace RepoLayer
 
         public async Task<int> CheckName(string name) => await _ctx.Brands.CountAsync(x => x.BrandName == name);
         public async Task<int> CheckMail(string mail) => await _ctx.Accounts.CountAsync(x => x.Email == mail);
-        
+
 
 
     }

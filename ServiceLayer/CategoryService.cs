@@ -10,8 +10,8 @@ namespace ServiceLayer
 {
     public class CategoryService
     {
-        private CategoryRepo _categoryRepo;
-        public CategoryService(CategoryRepo categoryRepo)
+        private ICategoryRepository _categoryRepo;
+        public CategoryService(ICategoryRepository categoryRepo)
         {
             _categoryRepo = categoryRepo;
         }

@@ -20,6 +20,46 @@ namespace Domain
         Default
     }
 
+    public class ProductBasic 
+    {
+        public int Id { get; set; }
+        public string ProductName { get; set; }
+    }
+
+    public class ProductBasicWithBrand : ProductBasic
+    {
+        public string BrandName { get; set; }
+    }
+
+    /// <summary>
+    /// projection class that hold details of a product
+    /// </summary>
+    public class ProductDetail : ProductBasicWithBrand
+    {
+
+        public int BrandId { get; set; }
+        public int GuestUsersRequestsNumber { get; set; }
+        public int LoggedUsersRequestsNumber { get; set; }
+        public IEnumerable<Category> Categories { get; set; }
+
+        /// <summary>
+        /// list of projection of InfoRequests.
+        /// </summary>
+        public IEnumerable<InfoRequestTemp> Requests { get; set; }
+    }
+
+
+
+    /// <summary>
+    ///  projection class of Product  for the ProductDetail class
+    /// </summary>
+    public class ProductSelect : ProductBasicWithBrand
+    {
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public IEnumerable<string> Categories { get; set; }
+    }
+
     /// <summary>
     /// class to get search input from an api.
     /// </summary>
@@ -43,48 +83,13 @@ namespace Domain
     }
 
     /// <summary>
-    /// projection class that hold details of a product
+    /// projection class of product for the BrandDetail class
     /// </summary>
-    public class ProductDetail
+    public class ProductTemp : ProductBasic
     {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public int BrandId { get; set; }
-        public string BrandName { get; set; }
-        public int GuestUsersRequestsNumber { get; set; }
-        public int LoggedUsersRequestsNumber { get; set; }
-        public IEnumerable<Category> Categories { get; set; }
-
-        /// <summary>
-        /// list of projection of InfoRequests.
-        /// </summary>
-        public IEnumerable<InfoRequestTemp> Requests { get; set; }
-    }
-
-    /// <summary>
-    /// projection class of infoRequest  for the ProductDetail class.
-    /// Hold the id of the info request, name of the person who made the request, 
-    /// number of replies to that request and the date of the last reply.
-    /// </summary>
-    public class InfoRequestTemp
-    {
-        public int RequestId { get; set; }
-        public string FullName { get; set; }
-        public int RepliesCount { get; set; }
-        public DateTime LastReply { get; set; }
-    }
-
-    /// <summary>
-    ///  projection class of Product  for the ProductDetail class
-    /// </summary>
-    public class ProductSelect
-    {
-        public int Id { get; set; }
-        public string ProductName { get; set; }
-        public string Description { get; set; }
-        public string BrandName { get; set; }
-        public decimal Price { get; set; }
-        public IEnumerable<string> Categories { get; set; }
+        //public int ProductId { get; set; }
+        //public string ProductName { get; set; }
+        public int ProductRequestNumber { get; set; }
     }
     #endregion
 }

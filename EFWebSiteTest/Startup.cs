@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 using RepoLayer;
 using ServiceLayer;
 using Domain;
+using Mapper;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 
 namespace EFWebSiteTest
 {
@@ -27,10 +30,15 @@ namespace EFWebSiteTest
         }
 
         public IConfiguration Configuration { get; }
+        public IContainer ApplicationContainer { get; private set; }
+        public IServiceProvider ServiceProvider { get; private set; }
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ServiceProvider = new AutofacServiceProvider(this.ApplicationContainer);
+
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 //options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Error;
@@ -40,20 +48,31 @@ namespace EFWebSiteTest
             services.AddScoped<IBrandService,BrandService>();
             services.AddScoped<IInfoRequestService, InfoRequestService>();
             services.AddScoped<IProductService,ProductService>();
-
-            services.AddScoped<ProductRepo>();
-            services.AddScoped<BrandRepo>();
-            services.AddScoped<RequestRepo>();
-            services.AddScoped<ProductCategoryRepo>();
-            services.AddScoped<ProductCategoryService>();
-            services.AddScoped<CategoryRepo>();
             services.AddScoped<CategoryService>();
+            services.AddScoped<ProductCategoryService>();
+
+            services.AddScoped<IProductRepository,ProductRepository>();
+            services.AddScoped<IBrandRepository,BrandRepository>();
+            services.AddScoped<IInfoRequestRepository,InfoRequestRepository>();
+            services.AddScoped<IProductCategoryRepository,ProductCategoryRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+
+            services.AddAutoMapper(typeof(InfoRequest),typeof(InfoRequestMapperConfig));
+            services.AddAutoMapper(typeof(InfoRequestReply), typeof(InfoRequestMapperConfig));
+            services.AddAutoMapper(typeof(Product), typeof(ProductMapperConfig));
+            services.AddAutoMapper(typeof(Brand), typeof(BrandMapperConfig));
+
+
 
 
             services.AddDbContextPool<MyDbContext>(optionsBuilder => {
                 string ConnectionString = Configuration.GetConnectionString("Default");
                 optionsBuilder.UseSqlServer(ConnectionString).EnableSensitiveDataLogging(true);
             });
+
+
+
 
             services.AddCors(options =>
             {

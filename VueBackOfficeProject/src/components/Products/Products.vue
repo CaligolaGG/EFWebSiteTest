@@ -42,7 +42,7 @@
             <td> 
               <select name="" id="" class="form-select m-1 "  v-model="brandChosen" @change="fetchPage()">
                 <option default value="0">  Tutti i Brand </option>
-                <option v-for="brand in this.brands" :key="brand.Id" v-bind:value="brand.id" > {{brand.name}} </option>  
+                <option v-for="brand in this.brands" :key="brand.Id" v-bind:value="brand.id" > {{brand.brandName}} </option>  
               </select>  
             </td>
             <td colspan="4"></td>

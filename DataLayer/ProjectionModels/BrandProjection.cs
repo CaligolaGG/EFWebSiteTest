@@ -4,10 +4,16 @@ using System.Text;
 
 namespace Domain
 {
-    public class BrandProjection
-    {
 
+    /// <summary>
+    /// basic projection of the class Brand. hold name and id
+    /// </summary>
+    public class BrandProjectionBasic
+    {
+        public int Id { get; set; }
+        public string BrandName { get; set; }
     }
+
     public class BrandWithProducts
     {
         public Brand Brand { get; set; }
@@ -15,21 +21,13 @@ namespace Domain
         public List<ProductAndCategoryModel> ProductsCategs { get; set; }
     }
 
-    /// <summary>
-    /// basic projection of the class Brand. hold name and id
-    /// </summary>
-    public class BrandProjectionBasic 
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+
 
     /// <summary>
     /// projection of the class brand and account. holds name of brand and account email.Usefull for validation purposes
     /// </summary>
-    public class BrandAccountProjection
+    public class BrandAccountProjection : BrandProjectionBasic
     {
-        public string Name { get; set; }
         public string Email { get; set; }
     }
 
@@ -59,6 +57,21 @@ namespace Domain
         public IEnumerable<ProductTemp> ListProducts { get; set; }
     }
 
+
+
+    /// <summary>
+    /// projection class for the brands paging method
+    /// </summary>
+    public class BrandSelect : BrandProjectionBasic
+    {
+        public string Description { get; set; }
+        public IEnumerable<int> ProductIds { get; set; }
+    }
+
+
+
+
+
     /// <summary>
     /// Class for the BrandDetail class, with the category properties and 
     /// the number of the brand's products that belong to that category
@@ -68,27 +81,6 @@ namespace Domain
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public int TotalProducts { get; set; }
-    }
-
-    /// <summary>
-    /// projection class of product for the BrandDetail class
-    /// </summary>
-    public class ProductTemp
-    {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public int ProductRequestNumber { get; set; }
-    }
-
-    /// <summary>
-    /// projection class for the brands paging method
-    /// </summary>
-    public class BrandSelect
-    {
-        public int BrandId { get; set; }
-        public string BrandName { get; set; }
-        public string Description { get; set; }
-        public IEnumerable<int> ProductIds { get; set; }
     }
     #endregion
 }

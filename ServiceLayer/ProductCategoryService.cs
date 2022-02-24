@@ -11,8 +11,8 @@ namespace ServiceLayer
 {
     public class ProductCategoryService
     {
-        private ProductCategoryRepo _productCategoryRepo;
-        public ProductCategoryService(ProductCategoryRepo productCategoryrepo)
+        private IProductCategoryRepository _productCategoryRepo;
+        public ProductCategoryService(IProductCategoryRepository productCategoryrepo)
         {
             _productCategoryRepo = productCategoryrepo;
         }
