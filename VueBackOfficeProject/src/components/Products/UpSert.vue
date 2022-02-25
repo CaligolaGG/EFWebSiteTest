@@ -36,7 +36,7 @@
               <label for="brands" class="input-group-text"> Brand: </label> 
               <select  required class="form-select bg-light " v-model="form.product.brandId" name="brands">
                 <option  default value="0"> Select a Brand</option>
-                <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.name}}</option>  
+                <option v-for="brand in this.brands" :key="brand.id" v-bind:value="brand.id" > {{brand.brandName}}</option>  
               </select> 
             </div> 
           </div>
@@ -117,16 +117,37 @@ export default{
         },
         //update a  product in the db by calling the specific repository function
         async updateProduct (){
-            let newProduct = { Product : this.form.product, Categories : this.form.categories }
+            //let newProduct = { Product : this.form.product, Categories : this.form.categories }
+            let newProduct = {
+                Id: this.form.product.id,
+                Description: this.form.product.description,
+                ShortDescription: this.form.product.shortDescription,
+                Price: this.form.product.price,
+                BrandId: this.form.product.brandId,
+                Name: this.form.product.name,
+                Categories: this.form.categories,
+                BrandName: this.form.brandName
+            }
+            console.log(newProduct)
             this.productId=await ProductsRepository.update(newProduct);
-            
         },
+
         //insert a new product in the db by calling the specific repository function.
         // A different api gets called if no categories are selected for the product to insert
         async insertProduct(){
           if( !this.form.categories.length  ||this.form.categories.length == 0)
             this.form.categories = []
-          let productWithCats = {Product : this.form.product,  Categories : this.form.categories}
+          //let productWithCats = {Product : this.form.product,  Categories : this.form.categories}
+            let productWithCats = {
+                Id: this.form.product.id,
+                Description: this.form.product.description,
+                ShortDescription: this.form.product.shortDescription,
+                Price: this.form.product.price,
+                BrandId: this.form.product.brandId,
+                Name: this.form.product.name,
+                Categories: this.form.categories,
+                BrandName: this.form.brandName
+            }
           this.productId  = await ProductsRepository.createWithCats(productWithCats)
         },
         //submit the form info. calls the specific method (update or insert) based on the id frome the route

@@ -44,26 +44,29 @@ namespace Mapper
                ;
 
             CreateMap<Product, ProductTemp>()
-                //.ForMember(d => d.ProductId, o => o.MapFrom(s => s.Id))
                 .ForMember(d => d.ProductName, o => o.MapFrom(s => s.Name))
                 .ForMember(d => d.ProductRequestNumber, o => o.MapFrom(s => s.InfoRequests.Count))
                 ;
 
+            CreateMap<ProductAndCategoryModel2, Product >()
+                .ForMember(d => d.Name, o => o.MapFrom(s => s.Name))
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+                .ForMember(d => d.Description, o => o.MapFrom(s => s.Description))
+                .ForMember(d => d.ShortDescription, o => o.MapFrom(s => s.ShortDescription))
+                .ForMember(d => d.Price, o => o.MapFrom(s => s.Price))
+                .ForMember(d => d.BrandId, o => o.MapFrom(s => s.BrandId))
 
+                .ForMember(d => d.ProductCategory, o => o.MapFrom(s => s.Categories.Select(x => new ProductCategory
+                { IdCategory = x}).ToList()))
+            ;
 
-
-
-
-            CreateMap<Product, ProductAndCategoryModel>()
-                .ForMember(d => d.Product, o => o.MapFrom(s => s))
-                .ForMember(d => d.Categories, o => o.MapFrom(s => s.ProductCategory.Select(x => x.Category)))
-                //.ReverseMap()
-                //.ForPath(d=> d.ProductCategory , o=>o.MapFrom(s=>s.Categories.Select(x => new ProductCategory 
-                //{ IdCategory = x, IdProduct = s.Product.Id})))
-                ;
 
             //CreateMap<Product, Product>();
-
+            //CreateMap<ProductAndCategoryModel, Product>()
+            //    .ForMember(d => d, o => o.MapFrom(s => s.Product))
+            //    .ForMember(d => d.ProductCategory, o => o.MapFrom(s => s.Categories.Select(x => new ProductCategory
+            //    { IdCategory = x }).ToList()))
+            //;
 
 
         }

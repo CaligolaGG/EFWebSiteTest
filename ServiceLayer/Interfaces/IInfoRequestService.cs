@@ -1,7 +1,7 @@
 ﻿using Domain;
 using System.Threading.Tasks;
 
-namespace ServiceLayer
+namespace ServiceLayer.Interfaces
 {
     public interface IInfoRequestService
     {

@@ -1,5 +1,4 @@
-﻿using RepoLayer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using ServiceLayer.Interfaces;
+using RepositoryLayer.Interfaces;
 
 namespace ServiceLayer
 {
@@ -82,12 +83,12 @@ namespace ServiceLayer
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Raised if the product is null</exception>
         /// <exception cref="ArgumentException">Raised if the product doesnt :  have a brand, have a valid name, price is negative </exception>
-        public async Task<int> InsertOrUpdateAsync(ProductAndCategoryModel model)
+        public async Task<int> InsertOrUpdateAsync(ProductAndCategoryModel2 model)
         {
-            if (model.Product is null || !IsProductValid(model.Product))
-                throw new ArgumentNullException(nameof(model.Product));
-            if (model.Product.BrandId < 1)
-                throw new ArgumentException("product must have a brand");
+            //if (model.Product is null || !IsProductValid(model.Product))
+            //    throw new ArgumentNullException(nameof(model.Product));
+            //if (model.Product.BrandId < 1)
+            //    throw new ArgumentException("product must have a brand");
 
             return await _productRepo.CreateOrUpdateAsync(model);
         }
@@ -119,18 +120,15 @@ namespace ServiceLayer
             if (productId < 1)
                 throw new ArgumentOutOfRangeException("product id must be > 0");
 
-            Product product = await _productRepo.GetAll().Where(p => p.Id == productId).SingleOrDefaultAsync();
+            //Product product = await _productRepo.GetAll().Where(p => p.Id == productId).SingleOrDefaultAsync();
+            //ProductDetail productDetail = _mapper.Map<Product, ProductDetail>(product);
 
-            //ProductDetail product = await _productRepo.GetAll().Where(p => p.Id == productId)
-            //    .ProjectTo<ProductDetail>(_mapper.ConfigurationProvider)
-            //    .FirstOrDefaultAsync()
-            //    ;
+            ProductDetail product = await _productRepo.GetAll().Where(p => p.Id == productId)
+                .ProjectTo<ProductDetail>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync()
+                ;
 
-            ProductDetail productDetail = _mapper.Map<Product,ProductDetail>(product);
-
-  
-
-            return productDetail;
+            return product;
         }
 
         /// <summary>
@@ -145,7 +143,7 @@ namespace ServiceLayer
 
             var product = await _productRepo.GetAll().Where(p => p.Id == productId)
                 .ProjectTo<ProductAndCategories>(_mapper.ConfigurationProvider)
-               .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
 
             return product;
         }

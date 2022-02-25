@@ -18,7 +18,8 @@
   <ItemGroup>
     <ProjectReference Include="..\AutoMapper\Mapper.csproj" />
     <ProjectReference Include="..\DataLayer\Domain.csproj" />
-    <ProjectReference Include="..\RepoLayer\RepoLayer.csproj" />
+    <ProjectReference Include="..\DependencyInjection\DependencyInjection.csproj" />
+    <ProjectReference Include="..\RepoLayer\RepositoryLayer.csproj" />
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
   </ItemGroup>
 

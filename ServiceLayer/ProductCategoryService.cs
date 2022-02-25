@@ -1,15 +1,16 @@
-﻿using RepoLayer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using ServiceLayer.Interfaces;
+using RepositoryLayer.Interfaces;
 
 namespace ServiceLayer
 {
-    public class ProductCategoryService
+    public class ProductCategoryService : IProductCategoryService
     {
         private IProductCategoryRepository _productCategoryRepo;
         public ProductCategoryService(IProductCategoryRepository productCategoryrepo)
@@ -22,9 +23,9 @@ namespace ServiceLayer
         /// </summary>
         /// <returns>number of records added</returns>
         /// <exception cref="ArgumentException">Raised if the list is empty or null</exception>
-        public async Task<int> InsertMultiple(List<ProductCategory> productCategories) 
+        public async Task<int> InsertMultiple(List<ProductCategory> productCategories)
         {
-            if (productCategories is null || productCategories.Count < 1 )
+            if (productCategories is null || productCategories.Count < 1)
                 throw new ArgumentException(nameof(productCategories));
 
             return await _productCategoryRepo.CreateMultipleAsync(productCategories);

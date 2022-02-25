@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataLayer\Domain.csproj" />
-    <ProjectReference Include="..\RepoLayer\RepoLayer.csproj" />
+    <ProjectReference Include="..\RepoLayer\RepositoryLayer.csproj" />
   </ItemGroup>
 
 </Project>

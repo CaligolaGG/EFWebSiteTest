@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFWebSiteTest", "EFWebSiteT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{53245899-AA36-47C3-BECC-CE948EB57818}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepoLayer", "RepoLayer\RepoLayer.csproj", "{B9D89F8E-FA70-4ACA-A145-3BB5737A67A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryLayer", "RepoLayer\RepositoryLayer.csproj", "{B9D89F8E-FA70-4ACA-A145-3BB5737A67A3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "DataLayer\Domain.csproj", "{B82ECB94-6E66-42FF-879B-FB4A94741783}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "AutoMapper\Mapper.csproj", "{C902CE98-D25A-4967-85F3-2E34E0B76DBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection", "DependencyInjection\DependencyInjection.csproj", "{97079CAB-EC84-4746-AA69-955D6642D396}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "DependencyInjection\DependencyInjection.csproj", "{97079CAB-EC84-4746-AA69-955D6642D396}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

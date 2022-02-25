@@ -39,21 +39,21 @@
                             </div>
                         </div>
                         <div class="form-group mb-2">
-                            <input placeholder="Name" required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Product.Name">
+                            <input placeholder="Name" required type="text" name="pname" id="" class="form-control"  maxlength="50" v-model="bundles[n-1].Name">
                         </div>
                         <div class="form-group mb-2">
-                            <textarea placeholder="Description" type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Product.Description" style="resize:none;" rows=5></textarea>
+                            <textarea placeholder="Description" type="textarea" class="form-control"  maxlength="50" name="desc" v-model="bundles[n-1].Description" style="resize:none;" rows=5></textarea>
                         </div>
                         <div class="row">
                             <div class="form-group mb-2 col-8">
-                                <input placeholder="ShortDescription" type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].Product.ShortDescription">
+                                <input placeholder="ShortDescription" type="textarea" class="form-control"   maxlength="20" name="sdesc" v-model="bundles[n-1].ShortDescription">
                             </div>
                             <div class="col">
                                 <div class="input-group ">
                                     <label class="input-group-text ">
                                         <span for="price">Price</span></label>
                                     <div class="col-10">
-                                        <input placeholder="Price" min="1" step=".0001"  type="number" class="form-control" name="price" v-model.number="bundles[n-1].Product.Price">
+                                        <input placeholder="Price" min="1" step=".0001"  type="number" class="form-control" name="price" v-model.number="bundles[n-1].Price">
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +139,7 @@ export default {
 
             if(this.bundles.length!=0 )
                 for (var p of this.bundles)
-                    names.push(p.Product.Name)
+                    names.push(p.Name)
 
 
             //form checks
@@ -260,13 +260,13 @@ export default {
 
 //class that holds a product with its categories
 var bundle = function(){
-            this.Product=//object to hold the data inserted in the form that has to be passed to the api
-            {
-                Name:"",
-                Description:"",
-                ShortDescription:"",
-                Price:1
-            },
+            //this.Product=//object to hold the data inserted in the form that has to be passed to the api
+            //{
+                this.Name=""
+                this.Description=""
+                this.ShortDescription=""
+                this.Price=1
+            //},
             this.Categories=[] //array to hold the list of classes selected for the product to insert 
 }
 

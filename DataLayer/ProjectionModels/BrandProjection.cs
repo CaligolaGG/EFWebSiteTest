@@ -18,7 +18,7 @@ namespace Domain
     {
         public Brand Brand { get; set; }
         public Account Account { get; set; }
-        public List<ProductAndCategoryModel> ProductsCategs { get; set; }
+        public List<ProductAndCategoryModel2> ProductsCategs { get; set; }
     }
 
 
@@ -50,14 +50,11 @@ namespace Domain
         /// list of categories of the brand,with the number of the brand's products that belong to that category
         /// </summary>
         public IEnumerable<CategoryTemp> ListCategories { get; set; }
-
         /// <summary>
         /// list of product(projections) related to the brand
         /// </summary>
         public IEnumerable<ProductTemp> ListProducts { get; set; }
     }
-
-
 
     /// <summary>
     /// projection class for the brands paging method
@@ -67,6 +64,15 @@ namespace Domain
         public string Description { get; set; }
         public IEnumerable<int> ProductIds { get; set; }
     }
+
+
+
+
+
+
+
+
+
 
 
 

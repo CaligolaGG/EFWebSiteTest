@@ -25,12 +25,20 @@ namespace Mapper
                 .ForMember(d => d.ProductIds, o => o.MapFrom(s => s.Products.Select(p => p.Id)))
                 ;
 
-            //da rivedere
             CreateMap<Brand, BrandDetail>()
                 .ForMember(d => d.NumberRequests, o => o.MapFrom(s => s.Products.SelectMany(x => x.InfoRequests).Count()))
                 .ForMember(d => d.ListProducts, o => o.MapFrom(s => s.Products))
                 ;
 
+
+            CreateMap<Account, Account>();
+            CreateMap<BrandWithProducts, Brand>()
+                .ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand.BrandName))
+                .ForMember(d=>d.Id, o=> o.MapFrom(s=>s.Brand.Id))
+                .ForMember(d => d.Account, o => o.MapFrom(s => s.Account))
+                .ForMember(d => d.Products, o => o.MapFrom(s => s.ProductsCategs.ToList()))
+                ;
+                
 
 
 

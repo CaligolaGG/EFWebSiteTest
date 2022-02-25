@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using RepoLayer;
-using ServiceLayer;
+using RepositoryLayer;
+using ServiceLayer.Interfaces;
 using System.Threading.Tasks;
 using Domain;
 using System.Collections.Generic;
@@ -12,9 +12,9 @@ namespace EFWebSiteTest.Controllers
     [Route("[controller]")]
     public class CategoryController : Controller
     {
-        private readonly CategoryService _categoryService;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(CategoryService categoryService)
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }

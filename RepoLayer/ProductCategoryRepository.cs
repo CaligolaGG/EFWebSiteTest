@@ -4,9 +4,9 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Domain;
+using RepositoryLayer.Interfaces;
 
-
-namespace RepoLayer
+namespace RepositoryLayer
 {
     public class ProductCategoryRepository : IProductCategoryRepository
     {

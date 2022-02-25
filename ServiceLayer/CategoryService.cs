@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Domain;
-using RepoLayer;
+using RepositoryLayer.Interfaces;
+using ServiceLayer.Interfaces;
 
 
 namespace ServiceLayer
 {
-    public class CategoryService
+    public class CategoryService : ICategoryService
     {
         private ICategoryRepository _categoryRepo;
         public CategoryService(ICategoryRepository categoryRepo)
@@ -17,6 +18,6 @@ namespace ServiceLayer
         }
 
         public async Task<List<Category>> GetAllAsync() => await _categoryRepo.GetAllAsync();
-        
+
     }
 }

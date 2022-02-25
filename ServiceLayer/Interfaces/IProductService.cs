@@ -1,7 +1,7 @@
 ﻿using Domain;
 using System.Threading.Tasks;
 
-namespace ServiceLayer
+namespace ServiceLayer.Interfaces
 {
     public interface IProductService
     {
@@ -9,6 +9,6 @@ namespace ServiceLayer
         Task<ProductDetail> GetProductDetailAsync(int productId);
         Task<EntityPage<ProductSelect>> GetProductPageAsync(int pageNum, int pageSize, Order orderBy, bool isAsc, int brandId = 0);
         Task<ProductAndCategories> GetProductWithCategoriesAsync(int productId);
-        Task<int> InsertOrUpdateAsync(ProductAndCategoryModel model);
+        Task<int> InsertOrUpdateAsync(ProductAndCategoryModel2 model);
     }
 }

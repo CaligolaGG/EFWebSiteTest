@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using ServiceLayer;
+using ServiceLayer.Interfaces;
 using System.Threading.Tasks;
 using Domain;
 using System;
+using ServiceLayer;
 using System.Collections.Generic;
 
 namespace EFWebSiteTest.Controllers
@@ -14,12 +15,10 @@ namespace EFWebSiteTest.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly ProductCategoryService _productcategoryService;
 
-        public ProductController(IProductService productService, ProductCategoryService productcategoryService) 
+        public ProductController(IProductService productService) 
         {
             _productService = productService;
-            _productcategoryService = productcategoryService;
         }
 
         //todo oggetto in post
@@ -110,10 +109,10 @@ namespace EFWebSiteTest.Controllers
         /// Forbid if the product has not been inserted by the db for any reason
         /// Created with the product created, if the product got created successfully
         /// </returns>
-        public async Task<int> InsertOrUpdateProduct(ProductAndCategoryModel model)
+        public async Task<int> InsertOrUpdateProduct(ProductAndCategoryModel2 model)
         {
-            if (!IsProductValid(model.Product))
-                return -1;
+            //if (!IsProductValid(model.Product))
+                //return -1;
             return await _productService.InsertOrUpdateAsync(model);
         }
 
@@ -123,10 +122,10 @@ namespace EFWebSiteTest.Controllers
         /// <param name="model">List of the of ProductAndCategoryModel which holds both 
         /// the product to create and the list of categories associated </param>
         [HttpPost("InsertProductCat")]
-        public async Task<IActionResult> InsertProductWithCategories (ProductAndCategoryModel model)
+        public async Task<IActionResult> InsertProductWithCategories (ProductAndCategoryModel2 model)
         {
-            if(!IsProductValid(model.Product) || model.Product.Id != 0)
-                return BadRequest(model.Product);
+            //if(!IsProductValid(model.Product) || model.Product.Id != 0)
+                //return BadRequest(model.Product);
             var result = await InsertOrUpdateProduct(model);
             return Ok(result);
         }
@@ -137,10 +136,10 @@ namespace EFWebSiteTest.Controllers
         /// <param name="model">List of the of ProductAndCategoryModel which holds both 
         /// the product to create and the list of categories associated </param>
         [HttpPut("UpdateProductCat")]
-        public async Task<IActionResult> UpdateProductWithCategories(ProductAndCategoryModel model)
+        public async Task<IActionResult> UpdateProductWithCategories(ProductAndCategoryModel2 model)
         {
-            if (!IsProductValid(model.Product) || model.Product.Id == 0)
-                return BadRequest(model.Product);
+            //if (!IsProductValid(model.Product) || model.Product.Id == 0)
+                //return BadRequest(model.Product);
             var result = await InsertOrUpdateProduct(model);
             return Ok(result);
         }

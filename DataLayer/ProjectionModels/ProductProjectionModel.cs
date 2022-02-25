@@ -87,8 +87,6 @@ namespace Domain
     /// </summary>
     public class ProductTemp : ProductBasic
     {
-        //public int ProductId { get; set; }
-        //public string ProductName { get; set; }
         public int ProductRequestNumber { get; set; }
     }
     #endregion

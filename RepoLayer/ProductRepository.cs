@@ -7,8 +7,9 @@ using Domain;
 using Z.EntityFramework.Plus;
 using Microsoft.EntityFrameworkCore.Storage;
 using AutoMapper;
+using RepositoryLayer.Interfaces;
 
-namespace RepoLayer
+namespace RepositoryLayer
 {
     /// <summary>
     /// Class to interact with the Product table in the db
@@ -23,11 +24,8 @@ namespace RepoLayer
             _mapper = mapper;
         }
 
-        public IQueryable<Product> GetAll() => _ctx.Products
-            .Include(x=>x.Brand)
-            .Include(x=>x.InfoRequests)
-            .Include(x=>x.ProductCategory)
-                .ThenInclude(x=>x.Category);
+        public IQueryable<Product> GetAll() => _ctx.Products;
+
 
         /// <summary>
         /// Insert or update a new product. 
@@ -35,18 +33,9 @@ namespace RepoLayer
         /// </summary>
         /// <param name="product">product to insert or change</param>
         /// <returns>Number of rows affected</returns>
-        public async Task<int> CreateOrUpdateAsync(ProductAndCategoryModel model)
+        public async Task<int> CreateOrUpdateAsync(ProductAndCategoryModel2 model)
         {
-            /*
-            Product product = model.Product;
-            product.ProductCategory = model.Categories.Select(x => new ProductCategory
-            {
-                IdCategory = x
-            }).ToList();*/
-
-            Product product = new Product();
-            //_mapper.Map(model, product);
-            product = _mapper.Map<Product>(model);
+            Product product = _mapper.Map<Product>(model);
 
             if (product.Id != 0)
             {

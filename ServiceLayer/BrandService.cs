@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using RepoLayer;
 using AutoMapper.QueryableExtensions;
 using AutoMapper;
+using ServiceLayer.Interfaces;
+using RepositoryLayer.Interfaces;
 
 namespace ServiceLayer
 {
@@ -15,7 +16,7 @@ namespace ServiceLayer
     /// </summary>
     public class BrandService : IBrandService
     {
-        private readonly IBrandRepository _brandRepo;
+        private IBrandRepository _brandRepo;
         private readonly IMapper _mapper;
 
         public BrandService(IBrandRepository brandRepo, IMapper mapper)
@@ -28,18 +29,22 @@ namespace ServiceLayer
         /// fetch a BrandProjectionBasic object.
         /// </summary>
         /// <returns> a list with id and name of all the brands </returns>
-        public async Task<List<BrandProjectionBasic>> GetAllAsync() =>
-            await _brandRepo.GetAll().ProjectTo<BrandProjectionBasic>(_mapper.ConfigurationProvider).ToListAsync();
+        public async Task<List<BrandProjectionBasic>> GetAllAsync() => await _brandRepo.GetAll()
+            .ProjectTo<BrandProjectionBasic>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+            //return _mapper.Map<List<BrandProjectionBasic>>(brands);
+        
 
         /// <summary>
         /// fetch a BrandAccountProjection object.
         /// </summary>
         /// <returns>a list with  name and account mail of all the brands</returns>
         public async Task<List<BrandAccountProjection>> GetAllBrandAccountAsync() =>
-            await _brandRepo.GetAll()
+           await _brandRepo.GetAll()
                 .ProjectTo<BrandAccountProjection>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-
+            //return _mapper.Map<List<Brand>, List<BrandAccountProjection>>(brands);
+        
 
         /// <summary>
         /// Fetch the details of a specific brand given the id.
@@ -89,10 +94,11 @@ namespace ServiceLayer
             page.TotalEntitiesNumber = brands.Count();
             page.TotalPagesNumber = (int)Math.Ceiling(Convert.ToDecimal(page.TotalEntitiesNumber) / pageSize);
 
-            IQueryable<BrandSelect> result = brands.OrderBy(x => x.BrandName)
+            page.ListEntities = await brands.OrderBy(x => x.BrandName)
                 .Skip((pageNum - 1) * pageSize).Take(pageSize)
-                .ProjectTo<BrandSelect>(_mapper.ConfigurationProvider);
-            page.ListEntities = await result.ToListAsync();
+                .ProjectTo<BrandSelect>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+            //page.ListEntities = _mapper.Map<List<BrandSelect>>(result);
 
             return page;
         }
@@ -121,9 +127,9 @@ namespace ServiceLayer
         {
             if (!IsBrandValid(brandWithProducts.Brand))
                 throw new ArgumentException("invalid brand");
-            foreach (var p in brandWithProducts.ProductsCategs)
-                if (!IsProductValid(p.Product))
-                    throw new ArgumentException("found invalid product ");
+            //foreach (var p in brandWithProducts.ProductsCategs)
+            //    if (!IsProductValid(p.Product))
+            //        throw new ArgumentException("found invalid product ");
 
             int brandId = await _brandRepo.CreateBrandWithProductsAsync(brandWithProducts);
 

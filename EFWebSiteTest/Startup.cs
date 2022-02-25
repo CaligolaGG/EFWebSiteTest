@@ -13,12 +13,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RepoLayer;
+using RepositoryLayer;
 using ServiceLayer;
 using Domain;
 using Mapper;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using System.Reflection;
+using System.Configuration;
+using AutoMapper;
+using DependencyInjection;
 
 namespace EFWebSiteTest
 {
@@ -30,14 +34,14 @@ namespace EFWebSiteTest
         }
 
         public IConfiguration Configuration { get; }
-        public IContainer ApplicationContainer { get; private set; }
-        public IServiceProvider ServiceProvider { get; private set; }
+        //public IContainer ApplicationContainer { get; private set; }
+        //public IServiceProvider ServiceProvider { get; private set; }
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            ServiceProvider = new AutofacServiceProvider(this.ApplicationContainer);
+            //ServiceProvider = new AutofacServiceProvider(this.ApplicationContainer);
 
             services.AddControllers().AddNewtonsoftJson(options =>
             {
@@ -45,34 +49,10 @@ namespace EFWebSiteTest
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
-            services.AddScoped<IBrandService,BrandService>();
-            services.AddScoped<IInfoRequestService, InfoRequestService>();
-            services.AddScoped<IProductService,ProductService>();
-            services.AddScoped<CategoryService>();
-            services.AddScoped<ProductCategoryService>();
-
-            services.AddScoped<IProductRepository,ProductRepository>();
-            services.AddScoped<IBrandRepository,BrandRepository>();
-            services.AddScoped<IInfoRequestRepository,InfoRequestRepository>();
-            services.AddScoped<IProductCategoryRepository,ProductCategoryRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-
-
-            services.AddAutoMapper(typeof(InfoRequest),typeof(InfoRequestMapperConfig));
-            services.AddAutoMapper(typeof(InfoRequestReply), typeof(InfoRequestMapperConfig));
-            services.AddAutoMapper(typeof(Product), typeof(ProductMapperConfig));
-            services.AddAutoMapper(typeof(Brand), typeof(BrandMapperConfig));
-
-
-
-
             services.AddDbContextPool<MyDbContext>(optionsBuilder => {
                 string ConnectionString = Configuration.GetConnectionString("Default");
                 optionsBuilder.UseSqlServer(ConnectionString).EnableSensitiveDataLogging(true);
             });
-
-
-
 
             services.AddCors(options =>
             {
@@ -84,6 +64,34 @@ namespace EFWebSiteTest
                     .AllowAnyOrigin();
                 });
             });
+
+            services.AddAutoMapper(typeof(InfoRequest), typeof(InfoRequestMapperConfig));
+            services.AddAutoMapper(typeof(InfoRequestReply), typeof(InfoRequestMapperConfig));
+            services.AddAutoMapper(typeof(Product), typeof(ProductMapperConfig));
+            services.AddAutoMapper(typeof(Brand), typeof(BrandMapperConfig));
+
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new DependencyRegistrar());
+
+            #region old services
+            /*
+            services.AddScoped<IBrandService,BrandService>();
+            //services.AddScoped<IInfoRequestService, InfoRequestService>();
+            services.AddScoped<IProductService,ProductService>();
+            services.AddScoped<CategoryService>();
+            services.AddScoped<ProductCategoryService>();
+
+            services.AddScoped<IProductRepository,ProductRepository>();
+            services.AddScoped<IBrandRepository,BrandRepository>();
+            services.AddScoped<IInfoRequestRepository,InfoRequestRepository>();
+            services.AddScoped<IProductCategoryRepository,ProductCategoryRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            */
+            #endregion
+
+            builder.Populate(services);
+            var container = builder.Build();
+            return new AutofacServiceProvider(container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using RepoLayer;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using ServiceLayer.Interfaces;
+using RepositoryLayer.Interfaces;
 
 namespace ServiceLayer
 {

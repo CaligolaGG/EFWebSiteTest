@@ -5,8 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Domain;
+using RepositoryLayer.Interfaces;
 
-namespace RepoLayer
+namespace RepositoryLayer
 {
     /// <summary>
     /// Class to interact with the InfoRequest table in the db

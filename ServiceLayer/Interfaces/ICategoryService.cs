@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RepositoryLayer.Interfaces
+namespace ServiceLayer.Interfaces
 {
-    public interface ICategoryRepository
+    public interface ICategoryService
     {
         Task<List<Category>> GetAllAsync();
     }

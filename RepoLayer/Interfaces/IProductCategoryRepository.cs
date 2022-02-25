@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RepoLayer
+namespace RepositoryLayer.Interfaces
 {
     public interface IProductCategoryRepository
     {

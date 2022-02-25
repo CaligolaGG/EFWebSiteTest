@@ -1,7 +1,7 @@
 ﻿using Domain;
 using System.Linq;
 
-namespace RepoLayer
+namespace RepositoryLayer.Interfaces
 {
     public interface IInfoRequestRepository
     {

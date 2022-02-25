@@ -1,5 +1,4 @@
-﻿using RepoLayer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,10 +6,10 @@ using Domain;
 using Z.EntityFramework.Plus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using AutoMapper;
+using RepositoryLayer.Interfaces;
 
-
-
-namespace RepoLayer
+namespace RepositoryLayer
 {
     /// <summary>
     /// Class to interact with the Brand table in the db
@@ -18,10 +17,12 @@ namespace RepoLayer
     public class BrandRepository : IBrandRepository
     {
         private MyDbContext _ctx;
+        private readonly IMapper _mapper;
 
-        public BrandRepository(MyDbContext ctx)
+        public BrandRepository(MyDbContext ctx, IMapper mapper)
         {
             _ctx = ctx;
+            _mapper = mapper;
         }
 
 
@@ -74,6 +75,7 @@ namespace RepoLayer
                     TotalProducts = category.ProductCategory.Where(p => p.Product.BrandId == brandId).Count()
                 };
             #endregion
+
             List<CategoryTemp> categories1 = _ctx.Products.Where(x => x.BrandId == brandId)
                 .SelectMany(y => y.ProductCategory)
                 .GroupBy(x => new { CatId = x.Category.Id, CategoryName = x.Category.Name })
@@ -107,19 +109,7 @@ namespace RepoLayer
         /// <returns>number of rows affected</returns>
         public async Task<int> CreateBrandWithProductsAsync(BrandWithProducts brandWithProducts)
         {
-            Brand brand = brandWithProducts.Brand;
-            brand.Account = brandWithProducts.Account;
-            brand.Products = brandWithProducts.ProductsCategs.Select(y => new Product
-            {
-                Name = y.Product.Name,
-                Description = y.Product.Description,
-                Price = y.Product.Price,
-                ShortDescription = y.Product.ShortDescription,
-                ProductCategory = y.Categories.Select(z => new ProductCategory
-                {
-                    IdCategory = z,
-                }).ToList()
-            }).ToList();
+            Brand brand = _mapper.Map<Brand>(brandWithProducts);
 
             await _ctx.Brands.AddAsync(brand);
             await _ctx.SaveChangesAsync();
